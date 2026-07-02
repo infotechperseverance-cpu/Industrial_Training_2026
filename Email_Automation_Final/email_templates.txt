@@ -1,8 +1,0 @@
-[Ayush]
-HI
-hi  this is new template\nends
------
-[Demo]
-Testing of program
-This is demo testing creation
------
