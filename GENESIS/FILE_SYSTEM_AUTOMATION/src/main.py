@@ -1,50 +1,91 @@
 from validatation import validate_name
-from Classify_file import create_file
-from Classify_file import rename_file
-from Classify_file import delete_file
-from Classify_file import display_records
+from Classify_file import (
+    create_file,
+    rename_file,
+    delete_file,
+    display_records
+)
 from Password import password_protection
+from backup import backup_menu
+
 
 while True:
-    print("===============FILE MANAGEMENT SYSTEM====================")
+
+    print("\n===================================================")
+    print("          FILE MANAGEMENT SYSTEM"                     )
+    print("=====================================================")
     print("1. Create File")
     print("2. Rename File")
     print("3. Delete File")
-    print("4. Display Records")
-    print("5. Exit")
-    
-    choice=int(input("Enter the Choice:"))
+    print("4. Display File Records")
+    print("5. Backup System")
+    print("6. Exit")
+    print("===================================================")
+
+    try:
+        choice = int(input("Enter Your Choice: "))
+    except ValueError:
+        print("Invalid Input! Please enter a number.")
+        continue
 
     match choice:
+
+        # ---------------- Create File ----------------
+
         case 1:
-            filename=input("Enter the file name:")
+
+            filename = input("Enter File Name: ").strip()
 
             if validate_name(filename):
-               success, password = password_protection()
 
-               if success:
-                  create_file(filename)
-                  print("File created with password protection.")
-               else:
-                  create_file(filename)
-                  print("File created without password protection.")
+                success, password = password_protection()
+
+                create_file(filename)
+
+                if success:
+                    print("Password Protection Enabled.")
+                else:
+                    print("Password Protection Skipped.")
+
+        # ---------------- Rename File ----------------
 
         case 2:
-            
-            old_name = input("Enter the old file name: ")
 
-            new_name = input("Enter the new file name: ")
+            old_name = input("Enter Old File Name: ").strip()
+            new_name = input("Enter New File Name: ").strip()
 
-            rename_file(old_name, new_name)
-               
+            if validate_name(new_name):
+                rename_file(old_name, new_name)
+
+        # ---------------- Delete File ----------------
+
         case 3:
-            filename=input("Enter file name which you want to delete")
+
+            filename = input("Enter File Name to Delete: ").strip()
+
             delete_file(filename)
+
+        # ---------------- Display Records ----------------
+
         case 4:
+
             display_records()
+
+        # ---------------- Backup System ----------------
+
         case 5:
-            print("Thank you for Using File Management System......!!!!!")
+
+            backup_menu()
+
+        # ---------------- Exit ----------------
+
+        case 6:
+
+            print("\nThank You For Using File Management System.")
             break
+
+        # ---------------- Invalid Choice ----------------
+
         case _:
-            print("Invalid Choice....!! Please try again.")
-          
+
+            print("Invalid Choice! Please Try Again.")
