@@ -7,6 +7,9 @@ from Classify_file import (
 )
 from Password import password_protection
 from backup import backup_menu
+from file_sorting import sorting_menu
+from file_history import show_history
+from file_sizee import analyze
 
 
 while True:
@@ -19,7 +22,10 @@ while True:
     print("3. Delete File")
     print("4. Display File Records")
     print("5. Backup System")
-    print("6. Exit")
+    print("6. Sorting of files")
+    print("7. File History")
+    print("8. File size Analyser")
+    print("9. Exit")
     print("===================================================")
 
     try:
@@ -77,9 +83,20 @@ while True:
 
             backup_menu()
 
-        # ---------------- Exit ----------------
 
         case 6:
+             sorting_menu()
+
+        case 7:
+             show_history()
+
+        case 8:
+             analyze()
+
+
+        # ---------------- Exit ----------------
+
+        case 9:
 
             print("\nThank You For Using File Management System.")
             break
