@@ -40,7 +40,7 @@ def save_command(command_name, status):
     history.append(command)   
     
 
-    
+    #---Save updated history back to history.json---
     with open(history_file, "w") as file:
         json.dump(history, file, indent=4)
 

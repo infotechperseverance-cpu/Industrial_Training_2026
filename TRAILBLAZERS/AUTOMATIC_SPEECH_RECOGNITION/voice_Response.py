@@ -4,7 +4,7 @@ import win32com.client
 #--Handles all voice responses
 class VoiceResponse:
 
-    # Convert text into speech
+    #---Convert text into speech
     @staticmethod
     def speak(text):
         print(f"Assistant: {text}")
