@@ -1,3 +1,92 @@
 {
-    "backups": []
+    "backups": [
+        {
+            "backup_id": 1,
+            "file_name": "resume.pdf",
+            "category": "Documents/PDF",
+            "source_path": "File_Manager\\Documents/PDF\\resume.pdf",
+            "backup_path": "d:\\Project\\mansi\\project\\Industrial_Training_2026\\GENESIS\\FILE_SYSTEM_AUTOMATION\\src\\backup\\resume.pdf",
+            "backup_date": "03-07-2026",
+            "backup_time": "11:43:12",
+            "file_size": 0,
+            "status": "Failed"
+        },
+        {
+            "backup_id": 2,
+            "file_name": "password.pdf",
+            "category": "Documents/PDF",
+            "source_path": "File_Manager\\Documents/PDF\\password.pdf",
+            "backup_path": "d:\\Project\\mansi\\project\\Industrial_Training_2026\\GENESIS\\FILE_SYSTEM_AUTOMATION\\src\\backup\\password.pdf",
+            "backup_date": "03-07-2026",
+            "backup_time": "11:43:12",
+            "file_size": 22,
+            "status": "Skipped"
+        },
+        {
+            "backup_id": 3,
+            "file_name": "information.pdf",
+            "category": "Documents/PDF",
+            "source_path": "File_Manager\\Documents/PDF\\information.pdf",
+            "backup_path": "d:\\Project\\mansi\\project\\Industrial_Training_2026\\GENESIS\\FILE_SYSTEM_AUTOMATION\\src\\backup\\information.pdf",
+            "backup_date": "03-07-2026",
+            "backup_time": "11:43:12",
+            "file_size": 22,
+            "status": "Skipped"
+        },
+        {
+            "backup_id": 4,
+            "file_name": "software.ppt",
+            "category": "Documents/PowerPoint",
+            "source_path": "File_Manager\\Documents/PowerPoint\\software.ppt",
+            "backup_path": "d:\\Project\\mansi\\project\\Industrial_Training_2026\\GENESIS\\FILE_SYSTEM_AUTOMATION\\src\\backup\\software.ppt",
+            "backup_date": "03-07-2026",
+            "backup_time": "11:43:12",
+            "file_size": 22,
+            "status": "Skipped"
+        },
+        {
+            "backup_id": 5,
+            "file_name": "image.jpeg",
+            "category": "Media/Pictures",
+            "source_path": "File_Manager\\Media/Pictures\\image.jpeg",
+            "backup_path": "d:\\Project\\mansi\\project\\Industrial_Training_2026\\GENESIS\\FILE_SYSTEM_AUTOMATION\\src\\backup\\image.jpeg",
+            "backup_date": "03-07-2026",
+            "backup_time": "11:43:12",
+            "file_size": 22,
+            "status": "Skipped"
+        },
+        {
+            "backup_id": 6,
+            "file_name": "hello.doc",
+            "category": "Documents/Word",
+            "source_path": "File_Manager\\Documents/Word\\hello.doc",
+            "backup_path": "d:\\Project\\mansi\\project\\Industrial_Training_2026\\GENESIS\\FILE_SYSTEM_AUTOMATION\\src\\backup\\hello.doc",
+            "backup_date": "03-07-2026",
+            "backup_time": "11:43:12",
+            "file_size": 22,
+            "status": "Skipped"
+        },
+        {
+            "backup_id": 7,
+            "file_name": "student.excel",
+            "category": "Others",
+            "source_path": "File_Manager\\Others\\student.excel",
+            "backup_path": "d:\\Project\\mansi\\project\\Industrial_Training_2026\\GENESIS\\FILE_SYSTEM_AUTOMATION\\src\\backup\\student.excel",
+            "backup_date": "03-07-2026",
+            "backup_time": "11:43:13",
+            "file_size": 22,
+            "status": "Skipped"
+        },
+        {
+            "backup_id": 8,
+            "file_name": "copy.pdf",
+            "category": "Documents/PDF",
+            "source_path": "File_Manager\\Documents/PDF\\copy.pdf",
+            "backup_path": "d:\\Project\\mansi\\project\\Industrial_Training_2026\\GENESIS\\FILE_SYSTEM_AUTOMATION\\src\\backup\\copy.pdf",
+            "backup_date": "03-07-2026",
+            "backup_time": "11:43:13",
+            "file_size": 22,
+            "status": "Skipped"
+        }
+    ]
 }

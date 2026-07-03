@@ -4,10 +4,6 @@
         "category": "Documents/PDF"
     },
     {
-        "filename": "resume.pdf",
-        "category": "Documents/PDF"
-    },
-    {
         "filename": "password.pdf",
         "category": "Documents/PDF"
     },
@@ -30,5 +26,9 @@
     {
         "filename": "student.excel",
         "category": "Others"
+    },
+    {
+        "filename": "copy.pdf",
+        "category": "Documents/PDF"
     }
 ]
