@@ -3,11 +3,13 @@ import subprocess
 import speech_recognition as sr
 import win32com.client
 
+#-------------Text-To-Speech
 speaker = win32com.client.Dispatch("SAPI.SpVoice")
 def speak(text):
     print(text)
     speaker.Speak(text)
 
+#--------------Desktop Automation-------------
 def open_calculator():
     os.system("calc")
 
