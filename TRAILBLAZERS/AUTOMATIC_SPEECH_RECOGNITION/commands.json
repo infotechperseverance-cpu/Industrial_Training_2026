@@ -1,0 +1,11 @@
+{
+    "open chrome": "chrome",
+    "open calculator": "calculator",
+    "open notepad": "notepad",
+    "open explorer": "explorer",
+    "open downloads": "downloads",
+    "open documents": "documents",
+    "time": "time",
+    "date": "date",
+    "exit": "exit"
+}
