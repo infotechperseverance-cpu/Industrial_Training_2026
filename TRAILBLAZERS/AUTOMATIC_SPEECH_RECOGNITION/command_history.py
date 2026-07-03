@@ -5,32 +5,32 @@ import os
 from datetime import datetime
 
 
-# JSON file to store command history
-h_file = "history.json"
+#---JSON file to store command history---
+history_file = "history.json"
 
 
-# Create history.json file if it does not exist
+#---Create history.json file if it does not exist---
 def create_history_file():
-    if not os.path.exists(h_file):
-        with open(h_file, "w") as file:
+    if not os.path.exists(history_file):
+        with open(history_file, "w") as file:
             json.dump([], file, indent=4)
 
 
 
-# Save executed command details into history.json
+#---Save executed command details in history.json---
 def save_command(command_name, status):
 
-    # Ensure history file exists
+    #---Ensure history file exists---
     create_history_file()
 
-    with open(h_file, "r") as file:
+    with open(history_file, "r") as file:
         history = json.load(file)   
 
-    now = datetime.now()      # ← इथे
+    now = datetime.now()     
 
 
-    # Create a new command record
-    command = {               # ← हे पण इथे
+    
+    command = {               
         "Command Name": command_name,
         "Date": now.strftime("%d-%m-%Y"),
         "Time": now.strftime("%H:%M:%S"),
@@ -40,16 +40,16 @@ def save_command(command_name, status):
     history.append(command)   
     
 
-    # Save updated history back to history.json
-    with open(h_file, "w") as file:
+    
+    with open(history_file, "w") as file:
         json.dump(history, file, indent=4)
 
 
-# Display all saved command history
+#---Display all saved command history---
 def view_history():
     create_history_file()
 
-    with open(h_file, "r") as file:
+    with open(history_file, "r") as file:
         history = json.load(file)        
 
     if len(history) == 0:
@@ -58,7 +58,7 @@ def view_history():
     
 
 
-    # Display each command record
+    #---Display each command record---
     print("\n------ Command History ------\n")
 
     for i, item in enumerate(history, start=1):

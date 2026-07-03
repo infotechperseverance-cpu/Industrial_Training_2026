@@ -1,36 +1,35 @@
 
 import win32com.client
 
-#----This class provides voice responses such as greeting the user,
-#----speaking success and error messages, and saying goodbye.
+#--Handles all voice responses
 class VoiceResponse:
 
-    #----Converts text into speech using Windows SAPI
+    # Convert text into speech
     @staticmethod
     def speak(text):
         print(f"Assistant: {text}")
         speaker = win32com.client.Dispatch("SAPI.SpVoice")
         speaker.Speak(text)
 
-    #----Greets the user when the application starts
+    #--Greets the user when the application starts
     @staticmethod
     def greet():
         VoiceResponse.speak(
             "Hello! I am your Smart Voice Assistant. Ready to help you."
         )
 
-    #----Speaks a confirmation message after a successful command
+     #--Speak a success message
     @staticmethod
     def success(message):
         VoiceResponse.speak(message)
 
-    #----Speaks an error message when a command fails
+    #--Speak an error message
     @staticmethod
     def failure(message):
         VoiceResponse.speak(message)
             
 
-    #----Speaks a goodbye message before the application closes
+    #--Say goodbye to the user
     @staticmethod
     def goodbye():
         VoiceResponse.speak(
@@ -38,14 +37,3 @@ class VoiceResponse:
         )
 
 
-# ------------------ Testing ------------------
-
-VoiceResponse.greet()
-
-VoiceResponse.success("Google has been opened successfully.")
-VoiceResponse.success("Calculator has been opened successfully.")
-VoiceResponse.success("Screenshot captured successfully.")
-
-VoiceResponse.failure("sorry ,i have internet problem")
-
-VoiceResponse.goodbye()
