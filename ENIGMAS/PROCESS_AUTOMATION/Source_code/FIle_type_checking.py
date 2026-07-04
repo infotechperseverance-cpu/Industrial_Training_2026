@@ -45,11 +45,7 @@ def check_file_type(file_path):
         # Remove spaces and quotes
         file_path = file_path.strip()
         file_path = file_path.strip('"').strip("'")
-
-        # Convert '\' to '/'
-        file_path = file_path.replace("\\", "/")
-
-        # Create Path object
+        
         file_path = Path(file_path)
 
         # Validation
