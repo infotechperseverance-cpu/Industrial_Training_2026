@@ -46,29 +46,5 @@ class Input :
         else:
             print("file does not exist")
 
-s = Handling()
-a = Input()
-t = True
-while t:
-    print("_________________________________")
-    c = int(input("enter choise : \n1. add customer\n2. update customer\n3. remove customer\n4. show all customers info\n5. exit\n choise : "))
-
-    if c == 1:
-        a.add_customer()
-    elif c == 2:
-        a.update_customer()
-    elif c == 3:
-        a.remove_customer()
-    elif c == 4:
-        s.show_customers_info()
-    elif c == 5:
-        t = False
-    else:
-        print("invalid choice")
-
-
-
-
-
 
 

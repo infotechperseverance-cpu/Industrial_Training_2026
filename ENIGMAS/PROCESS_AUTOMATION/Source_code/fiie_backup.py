@@ -105,5 +105,3 @@ def Backup_File(source_file):
         print(e)
         return False
 
-
-Backup_File(r"D:\settings.json")
