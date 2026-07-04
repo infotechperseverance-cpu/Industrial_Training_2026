@@ -3,7 +3,7 @@ import csv
 import os
 from datetime import datetime
 
-FILE_NAME = "recipients.json"
+FILE_NAME = "email_records.json"
 
 
 def load():
@@ -49,9 +49,9 @@ def add_recipient():
         message = input("Enter Message: ")
 
         schedule_date = input("Enter Schedule Date (DD-MM-YYYY): ")
-        schedule_time = input("Enter Schedule Time (HH:MM): ")
+        schedule_time = input("Enter Schedule Time (HH:MM AM/PM): ")
 
-        schedule = datetime.strptime(schedule_date + " " + schedule_time, "%d-%m-%Y %H:%M")
+        schedule = datetime.strptime(schedule_date + " " + schedule_time, "%d-%m-%Y %I:%M %p")
 
         if schedule < datetime.now():
             print("Past Date and Time Not Allowed!")
@@ -96,9 +96,9 @@ def add_multiple():
         message = input("Enter Message: ")
 
         schedule_date = input("Enter Schedule Date (DD-MM-YYYY): ")
-        schedule_time = input("Enter Schedule Time (HH:MM): ")
+        schedule_time = input("Enter Schedule Time (HH:MM AM/PM): ")
 
-        schedule = datetime.strptime(schedule_date + " " + schedule_time, "%d-%m-%Y %H:%M")
+        schedule = datetime.strptime(schedule_date + " " + schedule_time, "%d-%m-%Y %I:%M %p")
 
         if schedule < datetime.now():
             print("Past Date and Time Not Allowed!")
@@ -153,9 +153,9 @@ def edit_recipient():
             recipient["message"] = input("Enter New Message: ")
 
             schedule_date = input("Enter New Schedule Date (DD-MM-YYYY): ")
-            schedule_time = input("Enter New Schedule Time (HH:MM): ")
+            schedule_time = input("Enter New Schedule Time (HH:MM AM/PM): ")
 
-            schedule = datetime.strptime(schedule_date + " " + schedule_time, "%d-%m-%Y %H:%M")
+            schedule = datetime.strptime(schedule_date + " " + schedule_time, "%d-%m-%Y %I:%M %p")
 
             if schedule < datetime.now():
                 print("Past Date and Time Not Allowed!")
