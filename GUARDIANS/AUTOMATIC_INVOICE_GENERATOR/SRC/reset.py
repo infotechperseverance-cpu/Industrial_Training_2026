@@ -31,5 +31,3 @@ class InvoiceManager:
             print("Error:", e)
 
 
-# obj = InvoiceManager()
-# obj.reset_data()

@@ -151,14 +151,3 @@ class InvoiceManager:
             print("Error:", e)
 
 
-# obj = InvoiceManager("invoices.json")
-
-# try:
-#     with open("invoices.json", "r") as file:
-#         invoices = json.load(file)
-
-#     for invoice_id in invoices:
-#         obj.pdf_generation(invoice_id)
-
-# except FileNotFoundError:
-#     print("Invoice File Not Found")

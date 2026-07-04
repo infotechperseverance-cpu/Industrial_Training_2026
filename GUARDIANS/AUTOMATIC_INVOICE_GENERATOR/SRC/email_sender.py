@@ -54,24 +54,3 @@ class InvoiceManager:
 
         except Exception as e:
             print(  "Error:",   e )
-# #create object
-# obj = InvoiceManager(    "customer.json",   )
-
-# #method call
-# try:
-#     with open("invoices.json", "r") as file:
-#        invoices = json.load(file)
-
-#     for invoice_id, invoice in invoices.items():
-
-#         customer_id = invoice["customer_id"]
-
-#         obj.email_sending(
-#             sender="pratimakadam308@gmail.com",
-#             password="srfv fhoe vnal kqeo",
-#             customer_id=customer_id,
-#             pdf_file=f"{invoice_id}.pdf"
-#         )
-
-# except json.JSONDecodeError:
-#      print( "Invalid JSON File" )
