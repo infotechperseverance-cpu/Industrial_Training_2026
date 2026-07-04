@@ -1,6 +1,7 @@
 import json
 import csv
 from datetime import datetime
+from voice import speak
 
 EMAIL_FILE = "email_records.json"
 REPORT_FILE = "email_report.csv"
@@ -182,9 +183,10 @@ def view_logs():
 
 def reports_logs_menu():
 
+    speak("\n---------- REPORTS & LOGS -----------")
+
     while True:
 
-        print("\n========== REPORTS & LOGS ==========")
         print("1. View Report Summary")
         print("2. Export Report to CSV")
         print("3. View Logs")

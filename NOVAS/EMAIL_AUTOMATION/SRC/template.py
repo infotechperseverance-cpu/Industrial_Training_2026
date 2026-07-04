@@ -1,6 +1,6 @@
 import json
 from datetime import datetime
-
+from voice import speak
 
 def load_json():
     try:
@@ -84,6 +84,9 @@ def view_template():
 
 
 def template_menu():
+
+    speak("\n========== Templates ==========")
+
     while True:
       print("\n1. Create Template")
       print("2. Update Template")

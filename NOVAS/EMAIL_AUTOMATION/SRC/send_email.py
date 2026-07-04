@@ -11,7 +11,7 @@ from datetime import datetime
 from email_tracking import load_email_history, save_email_history
 from email_management import load_email_records, save_email_records,validate_email,update_email_status
 from reports_logs import save_log
-
+from voice import speak
 
 # EMAIL_RECORDS_FILE = "email_records.json"
 # EMAIL_HISTORY_FILE = "email_history.json"
@@ -71,6 +71,8 @@ def send_email(sender_email,
         return False
     
 def process_emails(sender_email, sender_password):
+
+    speak("\n----- Pending Email Send -----")
 
     records = load_email_records()
 

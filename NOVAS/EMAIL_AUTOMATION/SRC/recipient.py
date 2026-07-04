@@ -2,6 +2,7 @@ import json
 import csv
 import os
 from datetime import datetime
+from voice import speak
 
 FILE_NAME = "email_records.json"
 
@@ -188,6 +189,9 @@ def delete_recipient():
 
 
 def recipient_menu():
+   
+   speak("\n----------- Recipients -----------")
+
    while True:
     print("\n1. Add Recipient")
     print("2. Add Multiple Recipients")
