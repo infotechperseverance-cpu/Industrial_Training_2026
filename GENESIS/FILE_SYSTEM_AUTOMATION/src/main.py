@@ -13,6 +13,9 @@ from file_sizee import analyze
 from Qrcode_gen import shareqr
 from dublication_file import duplicate_file_management
 from recycle import movetobin, restore_file,show_recycle_bin
+from report import weekly_health_report
+from search import search_menu
+
 while True:
 
     print("\n===================================================")
@@ -30,7 +33,9 @@ while True:
     print("10.Duplicate file Management")
     print("11.Show Recycle bin ")
     print("12.Restore file ")
-    print("13. Exit")
+    print("13.Weekly Health Report")
+    print("14.Smart Search System")
+    print("15. Exit")
     print("===================================================")
 
     try:
@@ -40,8 +45,6 @@ while True:
         continue
 
     match choice:
-
-        # ---------------- Create File ----------------
 
         case 1:
 
@@ -58,8 +61,6 @@ while True:
                 else:
                     print("Password Protection Skipped.")
 
-        # ---------------- Rename File ----------------
-
         case 2:
 
             old_name = input("Enter Old File Name: ").strip()
@@ -68,21 +69,15 @@ while True:
             if validate_name(new_name):
                 rename_file(old_name, new_name)
 
-        # ---------------- Delete File ----------------
-
         case 3:
 
             filename = input("Enter File Name to Delete: ").strip()
 
             delete_file(filename)
 
-        # ---------------- Display Records ----------------
-
         case 4:
 
             display_records()
-
-        # ---------------- Backup System ----------------
 
         case 5:
 
@@ -90,40 +85,44 @@ while True:
 
 
         case 6:
+             
              sorting_menu()
 
         case 7:
+             
              show_history()
 
         case 8:
+             
              analyze()
 
         case 9:
+             
              shareqr()
 
         case 10:
+             
              duplicate_file_management()
 
         case 11:
+             
              show_recycle_bin()
 
         case 12:
+              
               filename = input("Enter File Name : ")
               restore_file(filename)
 
-
-        
-
-
-
-        # ---------------- Exit ----------------
-
         case 13:
+             weekly_health_report()
+
+        case 14:
+             search_menu()
+
+        case 15:
 
             print("\nThank You For Using File Management System.")
             break
-
-        # ---------------- Invalid Choice ----------------
 
         case _:
 
