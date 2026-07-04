@@ -1,7 +1,7 @@
 import json
 from reportlab.pdfgen import canvas
 from datetime import datetime
-
+from qr_code import QRCodeGenerator
 
 class InvoiceManager:
     def __init__(self, invoice_file):
@@ -136,6 +136,11 @@ class InvoiceManager:
             )
 
             pdf.line(40, 285, 560, 285)
+            qr = QRCodeGenerator()
+
+            qr_file = qr.generate_qr(invoice_id, invoice)
+
+            pdf.drawImage(qr_file, 430, 180, width=80, height=80)
 
             pdf.save()
 
