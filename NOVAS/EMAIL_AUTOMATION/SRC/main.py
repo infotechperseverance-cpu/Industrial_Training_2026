@@ -4,6 +4,8 @@ from send_email import process_emails
 from email_tracking import tracking_menu
 from spam_management import spam_menu
 from reports_logs import reports_logs_menu
+from template import template_menu
+from recipient import recipient_menu
 
 
 # ---------------- LOGIN ----------------
@@ -36,7 +38,9 @@ while True:
     print("3. Email Tracking")
     print("4. Spam Management")
     print("5. Reports & Logs")
-    print("6. Exit")
+    print("6. Templates")
+    print("7. recipient management")
+    print("8. Exit")
 
     choice = input("\nEnter Choice: ")
 
@@ -59,6 +63,12 @@ while True:
         reports_logs_menu()
 
     elif choice == "6":
+        template_menu()
+
+    elif choice == "7":
+        recipient_menu()    
+
+    elif choice == "8":
         print("\nThank You for using the Email Automation System.")
         break
 

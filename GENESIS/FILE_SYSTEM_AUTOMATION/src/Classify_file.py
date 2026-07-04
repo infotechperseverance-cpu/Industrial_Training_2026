@@ -1,6 +1,7 @@
 import os
 import json
 from pathlib import Path
+from file_history import add_history
 
 main_dir = "File_Manager"
 json_file = os.path.join(main_dir, "file_data.json")
@@ -123,6 +124,7 @@ def create_file(filename):
     })
 
     save_data(data)
+    add_history("Create", filename)
 
     print(f"The '{filename}' is created successfully.")
 
@@ -160,6 +162,7 @@ def rename_file(old_name, new_name):
             item["category"] = new_category
 
             save_data(data)
+            add_history("Rename", f"{old_name} -> {new_name}")
 
             print("File renamed successfully.")
             return
@@ -182,11 +185,13 @@ def delete_file(filename):
             path = os.path.join(main_dir, category, filename)
 
             if os.path.exists(path):
-                os.remove(path)
+                from recycle import movetobin
+                movetobin(path, filename)
 
             data.remove(item)
 
             save_data(data)
+            add_history("Delete", filename)
 
             print("File deleted successfully.")
             return

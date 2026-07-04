@@ -10,8 +10,9 @@ from backup import backup_menu
 from file_sorting import sorting_menu
 from file_history import show_history
 from file_sizee import analyze
-
-
+from Qrcode_gen import shareqr
+from dublication_file import duplicate_file_management
+from recycle import movetobin, restore_file,show_recycle_bin
 while True:
 
     print("\n===================================================")
@@ -25,7 +26,11 @@ while True:
     print("6. Sorting of files")
     print("7. File History")
     print("8. File size Analyser")
-    print("9. Exit")
+    print("9. Qrcode Generation for file sharing")
+    print("10.Duplicate file Management")
+    print("11.Show Recycle bin ")
+    print("12.Restore file ")
+    print("13. Exit")
     print("===================================================")
 
     try:
@@ -93,10 +98,27 @@ while True:
         case 8:
              analyze()
 
+        case 9:
+             shareqr()
+
+        case 10:
+             duplicate_file_management()
+
+        case 11:
+             show_recycle_bin()
+
+        case 12:
+              filename = input("Enter File Name : ")
+              restore_file(filename)
+
+
+        
+
+
 
         # ---------------- Exit ----------------
 
-        case 9:
+        case 13:
 
             print("\nThank You For Using File Management System.")
             break
