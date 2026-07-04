@@ -13,35 +13,42 @@ class InvoiceManager:
             print("Reading file:", os.path.abspath(self.customer_file))
             with open(   self.customer_file,   "r") as file:
                 customers = json.load(file)
-                customer_found = False
-
+            
             print("Invoice Customer ID:", customer_id)
 
-            for customer in customers:
+            customer = customers.get(str(customer_id))
+
+            if customer:
                 print("Customer JSON ID:", customer["customer_id"])
-            
-                if str(customer["customer_id"]) == str(customer_id):
-                    customer_found = True
-                    receiver = customer["email"]
-                    msg = EmailMessage()
-                    msg["Subject"] = "Invoice"
-                    msg["From"] = sender
-                    msg["To"] = receiver
-                    msg.set_content(  "Please find attached invoice.")
 
-                    with open(  pdf_file,    "rb") as file:
-                        data = file.read()
-                        msg.add_attachment( data,   maintype="application",   subtype="pdf",   filename=pdf_file )
-                        server = smtplib.SMTP(  "smtp.gmail.com",  587 )
-                        server.starttls()
-                        server.login(     sender,password   )
-                        server.send_message( msg )
-                        server.quit()
-                        print("Email Sent Successfully" )
-                        break
+                receiver = customer["email"]
 
-            if customer_found is False:
-                print(    "Customer Not Found" )
+                msg = EmailMessage()
+                msg["Subject"] = "Invoice"
+                msg["From"] = sender
+                msg["To"] = receiver
+                msg.set_content("Please find attached invoice.")
+
+                with open(pdf_file, "rb") as file:
+                    data = file.read()
+
+                msg.add_attachment(
+                    data,
+                    maintype="application",
+                    subtype="pdf",
+                    filename=pdf_file
+                )
+
+                server = smtplib.SMTP("smtp.gmail.com", 587)
+                server.starttls()
+                server.login(sender, password)
+                server.send_message(msg)
+                server.quit()
+
+                print("Email Sent Successfully")
+
+            else:
+                print("Customer Not Found")
 
         except FileNotFoundError:
             print( "Customer File Not Found" )
