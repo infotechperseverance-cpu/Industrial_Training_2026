@@ -2,8 +2,8 @@ import pathlib
 
 # Detects whether a file with the same name already exists in the target folder.
 # Returns True if duplicate exists; otherwise returns False.
+#if somethink mistake it written none
 
-# duplication check function
 def duplication_files_detection(folder_path, file_path):
     try:
 
@@ -51,21 +51,21 @@ def duplication_files_detection(folder_path, file_path):
 
     except KeyboardInterrupt:
         print("User keyboard interrupt")
-        return False
+        return ''
 
     except EOFError:
         print("EOF error")
-        return False
+        return ''
 
     except PermissionError:
         print("Permission denied")
-        return False
+        return ''
 
     except OSError:
         print("Operating system error")
-        return False
+        return ''
 
     except Exception:
         print("Something went wrong")
-        return False
+        return ''
 
