@@ -1,0 +1,12 @@
+[
+    {
+        "email_id": 1,
+        "name": "svwg",
+        "recipient_email": "mugdha@gmail.com",
+        "subject": "group study",
+        "message": "byeb bye",
+        "schedule_date": "23-12-2026",
+        "schedule_time": "12:09",
+        "status": "pending"
+    }
+]

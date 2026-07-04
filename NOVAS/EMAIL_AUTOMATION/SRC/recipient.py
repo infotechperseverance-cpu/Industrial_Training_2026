@@ -187,7 +187,8 @@ def delete_recipient():
     print("Recipient Not Found!")
 
 
-while True:
+def recipient_menu():
+   while True:
     print("\n1. Add Recipient")
     print("2. Add Multiple Recipients")
     print("3. Create Recipient Group")

@@ -82,30 +82,32 @@ def view_template():
         print("Updated At:", template["updated_at"])
 
 
-while True:
-    print("\n1. Create Template")
-    print("2. Update Template")
-    print("3. Delete Template")
-    print("4. View Template")
-    print("5. Exit")
 
-    choice = input("Enter Choice: ")
+def template_menu():
+    while True:
+      print("\n1. Create Template")
+      print("2. Update Template")
+      print("3. Delete Template")
+      print("4. View Template")
+      print("5. Exit")
 
-    if choice == "1":
+      choice = input("Enter Choice: ")
+
+      if choice == "1":
         create_template()
 
-    elif choice == "2":
+      elif choice == "2":
         update_template()
 
-    elif choice == "3":
+      elif choice == "3":
         delete_template()
 
-    elif choice == "4":
+      elif choice == "4":
         view_template()
 
-    elif choice == "5":
+      elif choice == "5":
         print("Thank You!")
         break
 
-    else:
+      else:
         print("Invalid Choice!")
