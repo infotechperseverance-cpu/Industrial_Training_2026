@@ -1,5 +1,6 @@
 import json
 import re
+from template import view_template, load_json, save_json,create_template, delete_template, update_template
 from voice import speak
 
 FILE_NAME = "email_records.json"

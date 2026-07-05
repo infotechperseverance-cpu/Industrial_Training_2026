@@ -5,5 +5,11 @@
         "message": "You are invited to a meeting.",
         "created_at": "2026-07-04 10:37 am",
         "updated_at": "2026-07-04 11:30 am"
+    },
+    {
+        "template_id": 2,
+        "template_name": "meet",
+        "message": "hii plz join meeting",
+        "created_at": "2026-07-05 12:30"
     }
 ]

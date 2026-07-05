@@ -84,7 +84,7 @@ def login():
                         row["login_password"] == login_password):
 
                     speak("\nLogin Successful." \
-                    " WELCOME ,Email Automation system")
+                    " WELCOME To Email Automation system")
 
                     return row["email"], row["smtp_password"]
 

@@ -1,12 +1,42 @@
 [
     {
-        "email_id": "2",
+        "email_id": "1",
         "recipient_email": "sapkebhoomi@gmail.com",
         "subject": "meeting reminder",
-        "template_name": "meeting_invitation",
-        "message": "Vaishnavi",
+        "template_name": "meeting",
+        "message": "hello everyone",
         "schedule_date": "2026-07-04",
         "schedule_time": "11:28 AM",
         "status": "completed"
+    },
+    {
+        "email_id": "2",
+        "recipient_email": "sapkebhoomi28@gmail.com",
+        "subject": "meeting reminder",
+        "template_name": "meeting_invitation",
+        "message": "",
+        "schedule_date": "2026-07-05",
+        "schedule_time": "11:28 AM",
+        "status": "completed"
+    },
+    {
+        "email_id": 3,
+        "recipient_email": "sapkebhoomi28@gmail.com",
+        "subject": "project",
+        "template_name": "project_update",
+        "message": "please join the meeting at 5:00 p.m.",
+        "schedule_date": "2026-07-05",
+        "schedule_time": "12:35 PM",
+        "status": "completed"
+    },
+    {
+        "email_id": 3,
+        "recipient_email": "sapkebhoomi28@gmail.com",
+        "subject": "offer",
+        "template_name": "",
+        "message": "please consider our offer.",
+        "schedule_date": "2026-07-05",
+        "schedule_time": "12:35 PM",
+        "status": "Spam"
     }
 ]

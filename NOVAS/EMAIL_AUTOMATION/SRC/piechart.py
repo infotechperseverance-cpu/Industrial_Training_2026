@@ -25,8 +25,8 @@ def generate_pie_chart():
         return
 
     completed = 0
-    failed = 0
-    scheduled = 0
+    pending = 0
+    spam = 0
 
     for email in emails:
 
@@ -34,10 +34,10 @@ def generate_pie_chart():
         
         if status == "completed":
             completed += 1
-        elif status == "failed":
-            failed += 1
-        elif status == "scheduled":
-            scheduled += 1
+        elif status == "pending":
+            pending += 1
+        elif status == "Spam":
+            spam += 1
 
     labels = []
     values = []
@@ -46,13 +46,13 @@ def generate_pie_chart():
         labels.append("Completed")
         values.append(completed)
 
-    if failed > 0:
-        labels.append("Failed")
-        values.append(failed)
+    if pending > 0:
+        labels.append("Pending")
+        values.append(pending)
 
-    if scheduled > 0:
-        labels.append("Scheduled")
-        values.append(scheduled)
+    if spam > 0:
+        labels.append("Spam")
+        values.append(spam)
 
 
     if not values:
