@@ -1,4 +1,5 @@
 import json
+from voice import speak
 
 FILE_NAME = "email_records.json"
 
@@ -116,8 +117,10 @@ def delete_spam_emails():
 # ---------------- Spam ----------------
 
 def spam_menu():
+    
+    speak("\n---- Spam Managment -----")
+
     while True:
-        print("\n----- SPAM MANAGEMENT -----")
         print("1. Mark as Spam")
         print("2. View Spam List")
         print("3. Delete Spam Email")

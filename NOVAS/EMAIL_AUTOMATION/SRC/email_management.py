@@ -1,5 +1,7 @@
 import json
 import re
+from template import view_template, load_json, save_json,create_template, delete_template, update_template
+from voice import speak
 
 FILE_NAME = "email_records.json"
 
@@ -97,8 +99,9 @@ def delete_email_record(email_id):
 # ---------------- Email Management ----------------
 
 def email_management_menu():
+    speak("----- EMAIL MANAGEMENT -----")
     while True:
-        print("\n----- EMAIL MANAGEMENT -----")
+        
         print("1. View Email Records")
         print("2. Update Email Status")
         print("3. Delete Email Record")

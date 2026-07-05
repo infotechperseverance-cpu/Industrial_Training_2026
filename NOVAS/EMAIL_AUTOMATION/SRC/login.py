@@ -1,5 +1,6 @@
 import csv
 import os
+from voice import speak    
 
 USER_FILE = "user_data.csv"
 
@@ -41,7 +42,7 @@ def signup():
 
             if row["email"] == email:
 
-                print("Account already exists.")
+                speak("Account already exists.")
 
                 return
 
@@ -53,7 +54,7 @@ def signup():
             [email, login_password, smtp_password]
         )
 
-    print("Account created successfully.")
+    speak("Account created successfully.")
 
 
 # ---------------- LOGIN ----------------
@@ -66,6 +67,7 @@ def login():
 
     while attempts > 0:
 
+        
         print("\n========== LOGIN ==========")
 
         email = input("Email : ")
@@ -81,7 +83,8 @@ def login():
                 if (row["email"] == email and
                         row["login_password"] == login_password):
 
-                    print("\nLogin Successful.")
+                    speak("\nLogin Successful." \
+                    " WELCOME To Email Automation system")
 
                     return row["email"], row["smtp_password"]
 
@@ -118,7 +121,7 @@ def login_menu():
         if choice == "1":
 
             email, smtp_password = login()
-
+        
             if email is not None:
 
                 return email, smtp_password

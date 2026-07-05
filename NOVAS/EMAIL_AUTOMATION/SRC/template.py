@@ -1,7 +1,7 @@
 import json
 import os
 from datetime import datetime
-
+from voice import speak
 
 def load_json():
     if not os.path.exists("templates.json"):
@@ -92,12 +92,24 @@ def view_template():
         print("Updated At:", template.get("updated_at", ""))
 
 def template_menu():
+<<<<<<< HEAD
  while True:
     print("\n1. Create Template")
     print("2. Update Template")
     print("3. Delete Template")
     print("4. View Template")
     print("5. Exit")
+=======
+
+    speak("\n----------- Templates -------------")
+
+    while True:
+      print("\n1. Create Template")
+      print("2. Update Template")
+      print("3. Delete Template")
+      print("4. View Template")
+      print("5. Exit")
+>>>>>>> fc73ecbf6f619b0e3d24852bc80ccf70027f2541
 
     choice = input("Enter Choice: ")
 

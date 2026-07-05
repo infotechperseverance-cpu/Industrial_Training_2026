@@ -1,0 +1,16 @@
+[
+    {
+        "id": "1",
+        "name": "Pen",
+        "category": "Stationary",
+        "price": 5.0,
+        "stock": 147
+    },
+    {
+        "id": "2",
+        "name": "Pencil",
+        "category": "Stationary",
+        "price": 5.0,
+        "stock": 96
+    }
+]

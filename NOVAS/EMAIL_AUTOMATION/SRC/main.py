@@ -1,22 +1,31 @@
 from login import login_menu
+from reply_ai_voice import  monitor_inbox
+import threading
 from email_management import email_management_menu
 from send_email import process_emails
 from email_tracking import tracking_menu
 from spam_management import spam_menu
 from reports_logs import reports_logs_menu
 from template import template_menu
+<<<<<<< HEAD
 from recipient import recipient_menu
 from piechart import generate_pie_chart
 
+=======
+from write_ai_voice import message
+from piechart import generate_pie_chart
+from voice import speak  
+>>>>>>> fc73ecbf6f619b0e3d24852bc80ccf70027f2541
 
 # ---------------- LOGIN ----------------
 
 sender_email, sender_password = login_menu()
 
+
 if sender_email is None:
+    speak("Thank you for using the Email Automation System. Application Closed.")
     print("\nApplication Closed.")
     exit()
-
 
 # ---------------- WELCOME MESSAGE ----------------
 
@@ -28,8 +37,18 @@ print("• Before sending emails, compose your email details in 'email_records.j
 print("• Only emails with status 'pending' will be sent.")
 print("==============================================")
 
+# ---------------- START BACKGROUND EMAIL MONITOR ----------------
+
+voice_thread = threading.Thread(
+    target=monitor_inbox,
+    args=(sender_email, sender_password),
+    daemon=True
+ )
+
+voice_thread.start()
 
 # ---------------- MAIN MENU ----------------
+
 
 while True:
 
@@ -40,8 +59,13 @@ while True:
     print("4. Spam Management")
     print("5. Reports & Logs")
     print("6. Templates")
+<<<<<<< HEAD
     print("7. recipient management")
     print("8. piechart generation")
+=======
+    print("7. Voice Message Writing")
+    print("8. Pie Chart")
+>>>>>>> fc73ecbf6f619b0e3d24852bc80ccf70027f2541
     print("9. Exit")
 
     choice = input("\nEnter Choice: ")
@@ -65,9 +89,10 @@ while True:
         reports_logs_menu()
 
     elif choice == "6":
-        template_menu()
+        template_menu()  
 
     elif choice == "7":
+<<<<<<< HEAD
         recipient_menu()
 
     elif choice == "8":
@@ -75,7 +100,17 @@ while True:
 
     elif choice == "9":
         print("\nThank You for using the Email Automation System.")
+=======
+        message() 
+
+    elif choice == "8":
+        generate_pie_chart()
+
+
+    elif choice == "9":
+        speak("\nThank You for using the Email Automation System.")
+>>>>>>> fc73ecbf6f619b0e3d24852bc80ccf70027f2541
         break
 
     else:
-        print("\nInvalid Choice! Please try again.")
+        speak("\nInvalid Choice! Please try again.")

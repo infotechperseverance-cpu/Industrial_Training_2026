@@ -1,0 +1,16 @@
+{
+    "1": {
+        "name": "ABC",
+        "customer_id": 1,
+        "email": "abc@gmail.com",
+        "city": "Jalgaon",
+        "phone": "1234567890"
+    },
+    "2": {
+        "name": "XYZ",
+        "customer_id": 2,
+        "email": "xyz@gmail.com",
+        "city": "Jalgaon",
+        "phone": "3456721987"
+    }
+}

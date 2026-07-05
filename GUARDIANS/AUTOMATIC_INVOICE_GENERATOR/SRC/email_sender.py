@@ -1,0 +1,63 @@
+import json
+import smtplib
+from email.message import EmailMessage
+import os
+
+class InvoiceManager:
+    def __init__(self,customer_file):
+        self.customer_file = customer_file
+    
+# email sending module
+    def email_sending(self,sender,  password,   customer_id,   pdf_file):
+        try:
+            print("Reading file:", os.path.abspath(self.customer_file))
+            with open(   self.customer_file,   "r") as file:
+                customers = json.load(file)
+            
+            print("Invoice Customer ID:", customer_id)
+
+            customer = customers.get(str(customer_id))
+
+            if customer:
+                print("Customer JSON ID:", customer["customer_id"])
+
+                receiver = customer["email"]
+
+                msg = EmailMessage()
+                msg["Subject"] = "Invoice"
+                msg["From"] = sender
+                msg["To"] = receiver
+                msg.set_content("Please find attached invoice.")
+
+                with open(pdf_file, "rb") as file:
+                    data = file.read()
+
+                msg.add_attachment(
+                    data,
+                    maintype="application",
+                    subtype="pdf",
+                    filename=pdf_file
+                )
+
+                server = smtplib.SMTP("smtp.gmail.com", 587)
+                server.starttls()
+                server.login(sender, password)
+                server.send_message(msg)
+                server.quit()
+
+                print("Email Sent Successfully")
+
+            else:
+                print("Customer Not Found")
+
+        except FileNotFoundError:
+            print( "Customer File Not Found" )
+
+        except smtplib.SMTPAuthenticationError:
+            print( "Invalid Email or Password" )
+
+        except smtplib.SMTPException as e:
+            print("SMTP Error:",     e  )
+
+        except Exception as e:
+            print(  "Error:",   e )

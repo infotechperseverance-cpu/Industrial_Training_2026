@@ -1,4 +1,5 @@
 import json
+from voice import speak
 
 FILE_NAME = "email_history.json"
 
@@ -139,8 +140,8 @@ def delete_email_history(email_id):
 # ---------------- Tracking ----------------
 
 def tracking_menu():
+    speak("----- EMAIL TRACKING -----")
     while True:
-        print("\n----- EMAIL TRACKING -----")
         print("1. Search by Recipient")
         print("2. Search by Subject")
         print("3. View Email Details")
