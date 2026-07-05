@@ -85,7 +85,7 @@ def view_template():
 
 def template_menu():
 
-    speak("\n========== Templates ==========")
+    speak("\n----------- Templates -------------")
 
     while True:
       print("\n1. Create Template")

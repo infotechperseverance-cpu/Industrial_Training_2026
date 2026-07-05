@@ -3,16 +3,7 @@ from email.utils import parseaddr
 import email            
 from email.header import decode_header
 import time             
-import pyttsx3        
-
-engine = pyttsx3.init()
-
-
-def speak(text):
-    print(text)
-    engine.say(text)
-    engine.runAndWait()
-
+from voice import speak
 
 def login_gmail(sender_email, sender_password):
 

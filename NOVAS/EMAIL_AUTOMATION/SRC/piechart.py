@@ -36,7 +36,7 @@ def generate_pie_chart():
             completed += 1
         elif status == "pending":
             pending += 1
-        elif status == "Spam":
+        elif status == "spam":
             spam += 1
 
     labels = []
@@ -51,12 +51,12 @@ def generate_pie_chart():
         values.append(pending)
 
     if spam > 0:
-        labels.append("Spam")
+        labels.append("spam")
         values.append(spam)
 
 
     if not values:
-        print("No valid email statuses (Completed/Failed/Scheduled) found to generate a chart.")
+        print("No valid email statuses (Completed/Pending/Spam) found to generate a chart.")
         return
 
     plt.figure(figsize=(6,6))

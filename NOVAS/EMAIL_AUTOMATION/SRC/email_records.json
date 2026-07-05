@@ -14,7 +14,7 @@
         "recipient_email": "sapkebhoomi28@gmail.com",
         "subject": "meeting reminder",
         "template_name": "meeting_invitation",
-        "message": "",
+        "message": "hello",
         "schedule_date": "2026-07-05",
         "schedule_time": "11:28 AM",
         "status": "completed"
@@ -37,6 +37,6 @@
         "message": "please consider our offer.",
         "schedule_date": "2026-07-05",
         "schedule_time": "12:35 PM",
-        "status": "Spam"
+        "status": "completed"
     }
 ]
