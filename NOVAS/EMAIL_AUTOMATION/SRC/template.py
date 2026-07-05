@@ -27,7 +27,7 @@ def create_template():
         "template_name": template_name,
         "message": message,
         "created_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
-        #"updated_at": ""
+        "updated_at": ""
     })
 
     save_json(templates)
@@ -79,7 +79,7 @@ def view_template():
         print("Template Name:", template["template_name"])
         print("Message:", template["message"])
         print("Created At:", template["created_at"])
-        print("Updated At:", template["updated_at"])
+        print("Updated At:", template.get("updated_at", "Not Updated"))
 
 def template_menu():
 

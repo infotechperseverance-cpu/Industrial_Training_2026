@@ -15,7 +15,7 @@ def store_msg(memail, u_msg):
 
         for record in file_contents:
            if (
-                  record["recipient_email"].lower() == memail.lower()
+                  record["email_id"] == memail
                   and record["status"].lower() == "pending"
               ):
                 record["message"] = u_msg
@@ -47,26 +47,23 @@ def email():
             return None
 
         while True:
-             memail = input("Enter Email To Write Message: ").strip()
+             memail = input("Enter Email ID To Write Message: ")
 
-             if not validate_email(memail):
-               speak("Please enter a valid email address.")
-               continue
-
-             email_found = False
+            
+             emailID_found = False
 
              for record in file_contents:
-                 if record["recipient_email"].lower() == memail.lower():
-                     email_found = True
+                 if record["email_id"] == memail:                   
+                   emailID_found = True
+                 
+                   if record.get("status", "").lower() == "pending":
+                       return memail
+                   else:
+                      speak("This email is not in pending status.")
+                      return
 
-                 if record.get("status", "").lower() == "pending":
-                     return memail
-
-                 speak("This email is not in pending status.")
-                 return
-
-             if not email_found:
-                speak("Email not found. Please try again.")
+             if not emailID_found:
+                speak("Email ID not found. Please try again.")
   
     except FileNotFoundError:
         speak("JSON file not found.")

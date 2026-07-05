@@ -71,5 +71,3 @@ def generate_pie_chart():
     plt.title("Email Status Analytics")
     plt.axis("equal")
     plt.show()
-
-
