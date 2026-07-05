@@ -1,7 +1,9 @@
+import pwinput
 import os
 import json
 from pathlib import Path
 from file_history import add_history
+
 
 main_dir = "File_Manager"
 json_file = os.path.join(main_dir, "file_data.json")
@@ -101,7 +103,7 @@ def classification_file(filename):
 
 # ---------------- Create File ----------------
 
-def create_file(filename):
+def create_file(filename,password):
 
     category = classification_file(filename)
 
@@ -117,10 +119,12 @@ def create_file(filename):
         file.write("hello, file is created")
 
     data = load_data()
-
+    
+    
     data.append({
         "filename": filename,
-        "category": category
+        "category": category,
+        "password": password
     })
 
     save_data(data)
@@ -133,20 +137,26 @@ def create_file(filename):
 def rename_file(old_name, new_name):
 
     data = load_data()
-
+    
     for item in data:
 
         if item["filename"] == old_name:
 
-            old_category = item["category"]
+            # Check extension
+            old_ext = os.path.splitext(old_name)[1].lower()
+            new_ext = os.path.splitext(new_name)[1].lower()
+           
+            if old_ext != new_ext:
+                print("Extension cannot be changed while renaming.")
+                return
 
+            old_category = item["category"]
             old_path = os.path.join(main_dir, old_category, old_name)
 
             new_category = classification_file(new_name)
-
             new_folder = os.path.join(main_dir, new_category)
-
             new_path = os.path.join(new_folder, new_name)
+            
 
             if not os.path.exists(old_path):
                 print("File not found.")
@@ -169,7 +179,6 @@ def rename_file(old_name, new_name):
 
     print("File not found.")
 
-
 # ---------------- Delete File ----------------
 
 def delete_file(filename):
@@ -177,21 +186,29 @@ def delete_file(filename):
     data = load_data()
 
     for item in data:
-
         if item["filename"] == filename:
 
+            # If the file is password protected
+            if item.get("password"):
+                entered_password = pwinput.pwinput("Enter Password: ")
+
+                if entered_password != item["password"]:
+                    print("Incorrect password. File cannot be deleted.")
+                    return
+
+            # Delete the physical file
+            
             category = item["category"]
+            folder_path = os.path.join(main_dir, category)
+            file_path = os.path.join(folder_path, filename)
 
-            path = os.path.join(main_dir, category, filename)
-
-            if os.path.exists(path):
-                from recycle import movetobin
-                movetobin(path, filename)
-
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            else:
+             print("Physical file not found.")
+            # Remove record from JSON
             data.remove(item)
-
             save_data(data)
-            add_history("Delete", filename)
 
             print("File deleted successfully.")
             return
@@ -219,7 +236,13 @@ def display_records():
         print("Record   :", count)
         print("Filename :", item["filename"])
         print("Category :", item["category"])
+        password = item.get("password", "")
 
+        if password:
+         print("Password : Protected")
+        else:
+         print("Password : Not Protected")
+    
         count += 1
 
     print("--------------------------------------")
