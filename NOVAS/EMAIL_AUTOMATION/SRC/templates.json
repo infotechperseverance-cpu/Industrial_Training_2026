@@ -1,39 +1,8 @@
 [
     {
         "template_id": 1,
-<<<<<<< HEAD
-        "template_name": "wqihfr",
-        "message": "kwqrhi",
-        "created_at": "2026-07-05 17:20"
-    },
-    {
-        "template_id": 2,
-        "template_name": "siefyki",
-        "message": "lawoqto",
-        "created_at": "2026-07-05 17:24"
-    },
-    {
-        "template_id": 3,
-        "template_name": "hello mail",
-        "message": "to send user a small message",
-        "created_at": "2026-07-05 17:25"
-=======
-        "template_name": "meeting_invitation",
-        "message": "You are invited to a meeting.",
-        "created_at": "2026-07-04 10:37 am",
-        "updated_at": "2026-07-04 11:30 am"
-    },
-    {
-        "template_id": 2,
-        "template_name": "meet",
-        "message": "hii plz join meeting",
-        "created_at": "2026-07-05 12:30"
-    },
-    {
-        "template_id": 3,
-        "template_name": "match",
-        "message": "",
-        "created_at": "2026-07-05 15:01"
->>>>>>> fc73ecbf6f619b0e3d24852bc80ccf70027f2541
+        "template_name": "warning",
+        "message": "please complete your verification",
+        "created_at": "2026-07-05 18:58"
     }
 ]

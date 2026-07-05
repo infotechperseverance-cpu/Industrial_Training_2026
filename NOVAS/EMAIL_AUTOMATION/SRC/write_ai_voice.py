@@ -63,7 +63,7 @@ def email():
                      return memail
 
                  speak("This email is not in pending status.")
-                 break
+                 return
 
              if not email_found:
                 speak("Email not found. Please try again.")

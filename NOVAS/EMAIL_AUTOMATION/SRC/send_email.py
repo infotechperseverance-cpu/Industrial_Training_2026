@@ -11,12 +11,24 @@ from datetime import datetime
 from email_tracking import load_email_history, save_email_history
 from email_management import load_email_records, save_email_records,validate_email,update_email_status
 from reports_logs import save_log
+from template import load_json
 from voice import speak
 
 # EMAIL_RECORDS_FILE = "email_records.json"
 # EMAIL_HISTORY_FILE = "email_history.json"
 USER_FILE = "user_data.csv"
 
+
+def load_templates():
+    if not os.path.exists("templates.json"):
+        return []
+
+    try:
+        with open("templates.json", "r") as f:
+            return json.load(f)
+    except:
+        return []
+    
 
 # ---------------- SEND EMAIL ----------------
 
@@ -105,21 +117,38 @@ def process_single_email(record, sender_email, sender_password, records):
 
     if not check_schedule(record):
         print_email_report(record, "PENDING ⏳", "Scheduled for later delivery")
+        return
 
     record["status"] = "sending"
     save_email_records(records)
+
+    # ---------------- Get message from template if message is empty ----------------
+
+    message = record["message"]
+
+    if message.strip() == "" and record["template_name"].strip() != "":
+
+        templates = load_json()
+
+        for template in templates:
+            if template["template_name"].strip().lower() == record["template_name"].strip().lower():
+                message = template["message"]
+                break
+
+    # ------------------------------------------------------------------------------
 
     success = send_email(
         sender_email,
         sender_password,
         record["recipient_email"],
         record["subject"],
-        record["message"],
+        message,
         record.get("attachment", "")
     )
 
     if success:
         record["status"] = "completed"
+        record["message"] = message          # Save the actual message used
         save_email_records(records)
         save_to_history(record)
         save_log(record["email_id"], "Email Sent")
@@ -131,7 +160,6 @@ def process_single_email(record, sender_email, sender_password, records):
         save_email_records(records)
 
         print_email_report(record, "FAILED ❌", "SMTP sending failed")
-
 
 def check_schedule(record):
 

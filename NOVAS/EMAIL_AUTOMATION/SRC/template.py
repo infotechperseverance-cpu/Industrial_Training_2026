@@ -1,22 +1,12 @@
 import json
-import os
 from datetime import datetime
 from voice import speak
 
 def load_json():
-    if not os.path.exists("templates.json"):
-        return []
-
     try:
         with open("templates.json", "r") as f:
-            data = json.load(f)
-
-            if isinstance(data, list):
-                return data
-            else:
-                return []
-
-    except (json.JSONDecodeError, FileNotFoundError):
+            return json.load(f)
+    except:
         return []
 
 
@@ -89,45 +79,36 @@ def view_template():
         print("Template Name:", template["template_name"])
         print("Message:", template["message"])
         print("Created At:", template["created_at"])
-        print("Updated At:", template.get("updated_at", ""))
+        print("Updated At:", template["updated_at"])
 
 def template_menu():
-<<<<<<< HEAD
- while True:
-    print("\n1. Create Template")
-    print("2. Update Template")
-    print("3. Delete Template")
-    print("4. View Template")
-    print("5. Exit")
-=======
-
-    speak("\n----------- Templates -------------")
 
     while True:
-      print("\n1. Create Template")
-      print("2. Update Template")
-      print("3. Delete Template")
-      print("4. View Template")
-      print("5. Exit")
->>>>>>> fc73ecbf6f619b0e3d24852bc80ccf70027f2541
+        speak("Template Management Menu")
+        print("Template Management Menu")
+        print("\n1. Create Template")
+        print("2. Update Template")
+        print("3. Delete Template")
+        print("4. View Template")
+        print("5. Exit")
 
-    choice = input("Enter Choice: ")
+        choice = input("Enter Choice: ")
 
-    if choice == "1":
-        create_template()
+        if choice == "1":
+            create_template()
 
-    elif choice == "2":
-        update_template()
+        elif choice == "2":
+            update_template()
 
-    elif choice == "3":
-        delete_template()
+        elif choice == "3":
+            delete_template()
 
-    elif choice == "4":
-        view_template()
+        elif choice == "4":
+            view_template()
 
-    elif choice == "5":
-        print("Thank You!")
-        break
+        elif choice == "5":
+            print("Thank You!")
+            break
 
-    else:
-        print("Invalid Choice!")
+        else:
+            print("Invalid Choice!")

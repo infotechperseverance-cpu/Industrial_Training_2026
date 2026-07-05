@@ -63,7 +63,7 @@ def mark_as_spam():
 
         if detect_spam(email):
 
-            email["status"] = "Spam"
+            email["status"] = "spam"
             found = True
 
     if found:

@@ -38,5 +38,15 @@
         "schedule_date": "2026-07-05",
         "schedule_time": "12:35 PM",
         "status": "completed"
+    },
+    {
+        "email_id": 3,
+        "recipient_email": "sapkebhoomi28@gmail.com",
+        "subject": "offer",
+        "template_name": "warning",
+        "message": "please complete your verification",
+        "schedule_date": "2026-07-05",
+        "schedule_time": "05:35 PM",
+        "status": "completed"
     }
 ]

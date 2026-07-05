@@ -178,5 +178,89 @@
         "status": "Completed",
         "sent_date": "2026-07-05",
         "sent_time": "15:10:40"
+    },
+    {
+        "email_id": 3,
+        "recipient_email": "sapkebhoomi28@gmail.com",
+        "subject": "offer",
+        "template_name": "warning",
+        "message": "",
+        "schedule_date": "2026-07-05",
+        "schedule_time": "05:35 PM",
+        "status": "Completed",
+        "sent_date": "2026-07-05",
+        "sent_time": "19:01:27"
+    },
+    {
+        "email_id": 3,
+        "recipient_email": "sapkebhoomi28@gmail.com",
+        "subject": "offer",
+        "template_name": "",
+        "message": "please consider our offer.",
+        "schedule_date": "2026-07-05",
+        "schedule_time": "12:35 PM",
+        "status": "Completed",
+        "sent_date": "2026-07-05",
+        "sent_time": "19:08:04"
+    },
+    {
+        "email_id": 3,
+        "recipient_email": "sapkebhoomi28@gmail.com",
+        "subject": "offer",
+        "template_name": "warning",
+        "message": "",
+        "schedule_date": "2026-07-05",
+        "schedule_time": "05:35 PM",
+        "status": "Completed",
+        "sent_date": "2026-07-05",
+        "sent_time": "19:08:09"
+    },
+    {
+        "email_id": 3,
+        "recipient_email": "sapkebhoomi28@gmail.com",
+        "subject": "offer",
+        "template_name": "warning",
+        "message": "",
+        "schedule_date": "2026-07-05",
+        "schedule_time": "05:35 PM",
+        "status": "Completed",
+        "sent_date": "2026-07-05",
+        "sent_time": "19:21:20"
+    },
+    {
+        "email_id": "2",
+        "recipient_email": "sapkebhoomi28@gmail.com",
+        "subject": "meeting reminder",
+        "template_name": "meeting_invitation",
+        "message": "hello",
+        "schedule_date": "2026-07-05",
+        "schedule_time": "11:28 AM",
+        "status": "Completed",
+        "sent_date": "2026-07-05",
+        "sent_time": "19:45:25"
+    },
+    {
+        "email_id": 3,
+        "recipient_email": "sapkebhoomi28@gmail.com",
+        "subject": "offer",
+        "template_name": "",
+        "message": "please consider our offer.",
+        "schedule_date": "2026-07-05",
+        "schedule_time": "12:35 PM",
+        "status": "Completed",
+        "sent_date": "2026-07-05",
+        "sent_time": "19:45:29"
+    },
+    {
+        "email_id": 3,
+        "recipient_email": "sapkebhoomi28@gmail.com",
+        "subject": "offer",
+        "template_name": "warning",
+        "message": "please complete your verification",
+        "schedule_date": "2026-07-05",
+        "schedule_time": "05:35 PM",
+        "status": "Completed",
+        "sent_date": "2026-07-05",
+        "sent_time": "19:45:34"
     }
 ]
