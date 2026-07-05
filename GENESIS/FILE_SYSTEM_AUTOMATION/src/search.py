@@ -395,7 +395,7 @@ def recent_backups():
 
 # ---------------- Smart Search Menu ----------------
 
-def smart_search_menu():
+def search_menu():
 
     while True:
 
