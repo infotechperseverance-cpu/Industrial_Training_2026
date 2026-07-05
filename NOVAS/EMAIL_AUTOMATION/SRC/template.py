@@ -1,12 +1,22 @@
 import json
+import os
 from datetime import datetime
 
 
 def load_json():
+    if not os.path.exists("templates.json"):
+        return []
+
     try:
         with open("templates.json", "r") as f:
-            return json.load(f)
-    except:
+            data = json.load(f)
+
+            if isinstance(data, list):
+                return data
+            else:
+                return []
+
+    except (json.JSONDecodeError, FileNotFoundError):
         return []
 
 
@@ -79,35 +89,33 @@ def view_template():
         print("Template Name:", template["template_name"])
         print("Message:", template["message"])
         print("Created At:", template["created_at"])
-        print("Updated At:", template["updated_at"])
-
-
+        print("Updated At:", template.get("updated_at", ""))
 
 def template_menu():
-    while True:
-      print("\n1. Create Template")
-      print("2. Update Template")
-      print("3. Delete Template")
-      print("4. View Template")
-      print("5. Exit")
+ while True:
+    print("\n1. Create Template")
+    print("2. Update Template")
+    print("3. Delete Template")
+    print("4. View Template")
+    print("5. Exit")
 
-      choice = input("Enter Choice: ")
+    choice = input("Enter Choice: ")
 
-      if choice == "1":
+    if choice == "1":
         create_template()
 
-      elif choice == "2":
+    elif choice == "2":
         update_template()
 
-      elif choice == "3":
+    elif choice == "3":
         delete_template()
 
-      elif choice == "4":
+    elif choice == "4":
         view_template()
 
-      elif choice == "5":
+    elif choice == "5":
         print("Thank You!")
         break
 
-      else:
+    else:
         print("Invalid Choice!")
