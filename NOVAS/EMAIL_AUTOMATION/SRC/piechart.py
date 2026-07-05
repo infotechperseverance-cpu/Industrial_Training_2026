@@ -25,8 +25,7 @@ def generate_pie_chart():
     scheduled = 0
 
     for email in emails:
-        # .lower() ya .strip() laga sakte hain taaki agar case-sensitivity 
-        # ya extra space ka issue ho toh woh bhi handle ho jaye
+
         status = email.get("status", "").lower().strip()
         
         if status == "completed":
@@ -51,8 +50,7 @@ def generate_pie_chart():
         labels.append("Scheduled")
         values.append(scheduled)
 
-    # ---> YAHAN SUDHAAR KIYA HAI <---
-    # Agar values list khali hai (yaani kisi ka status match nahi hua), toh error rokne ke liye:
+
     if not values:
         print("No valid email statuses (Completed/Failed/Scheduled) found to generate a chart.")
         return
