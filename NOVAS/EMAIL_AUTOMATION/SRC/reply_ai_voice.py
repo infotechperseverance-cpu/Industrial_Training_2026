@@ -4,7 +4,6 @@ import email
 from email.header import decode_header
 import time             
 from voice import speak
-
 import imaplib
 
 def login_gmail(sender_email, sender_password):
