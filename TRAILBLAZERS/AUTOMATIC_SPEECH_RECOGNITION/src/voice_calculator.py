@@ -1,12 +1,21 @@
+"""
+=========================================
+Voice Calculator Module
+Purpose:
+Perform mathematical calculations using voice commands.
+=========================================
+"""
 
-import csv
+import json
 import os
-import asyncio
-import edge_tts
-import pygame
-import uuid
+from datetime import datetime
 
-#---Store number words and their values
+from voice_engine import speak
+from speech_recognition_module import listen
+from commandHistory import save_command
+
+
+# ---------- Number Dictionary ----------
 numbermap = {
     "zero": 0,
     "one": 1,
@@ -19,213 +28,440 @@ numbermap = {
     "eight": 8,
     "nine": 9,
     "ten": 10,
-     
-    "eleven":11,
-    "twelve":12,
-    "thirteen":13,
-    "fourteen":14,
-    "fifteen":15,
-    "sixteen":16,
-    "seventeen":17,
-    "eighteen":18,
-    "nineteen":19,
 
-    "twenty":20,
-    "thirty":30,
-    "forty":40,
-    "fifty":50,
-    "sixty":60,
-    "seventy":70,
-    "eighty":80,
-    "ninety":90,
+    "eleven": 11,
+    "twelve": 12,
+    "thirteen": 13,
+    "fourteen": 14,
+    "fifteen": 15,
+    "sixteen": 16,
+    "seventeen": 17,
+    "eighteen": 18,
+    "nineteen": 19,
 
-    "hundred":100
+    "twenty": 20,
+    "thirty": 30,
+    "forty": 40,
+    "fifty": 50,
+    "sixty": 60,
+    "seventy": 70,
+    "eighty": 80,
+    "ninety": 90,
 
+    "hundred": 100,
+    "thousand": 1000
 }
-#---Store operator words and symbols
-opratormap= {
+
+
+# ---------- Operator Dictionary ----------
+operatormap = {
 
     "plus": "+",
+    "add": "+",
+
     "minus": "-",
+    "subtract": "-",
+
     "times": "*",
     "multiply": "*",
+    "multiplied": "*",
     "into": "*",
+    "x": "*",
+
+    "divide": "/",
     "divided": "/",
-    "divide": "/"
+    "over": "/",
+
+    "mod": "%",
+    "modulus": "%",
+
+    "power": "**"
 }
-#---Convert number words into digits
+
+
+# ---------- Convert Number Words ----------
 def words_to_number(words):
 
     total = 0
     current = 0
-    
-    for word in words:    # If the word is a valid number
 
-        if word in numbermap:
+    for word in words:
 
-            value = numbermap[word]
+        if word not in numbermap:
+            continue
 
-            if value == 100:      # Handle the word "hundred"
+        value = numbermap[word]
 
-                if current == 0:
-                    current = 1
+        if value == 100:
 
-                current = current * 100
+            if current == 0:
+                current = 1
 
-            else:
+            current *= 100
 
-                current = current + value
+        elif value == 1000:
 
-    total = total + current
+            if current == 0:
+                current = 1
+
+            total += current * 1000
+            current = 0
+
+        else:
+
+            current += value
+
+    total += current
 
     return str(total)
 
-#---Convert text into a mathematical expression
+
+# ---------- Convert Voice/Text into Expression ----------
 def convert_to_expression(text):
 
-    words = text.lower().split()
+    if text is None:
+        return None
+
+    text = text.lower().strip()
+
+    # Remove filler words
+    fillers = [
+        "calculate",
+        "what is",
+        "please",
+        "answer",
+        "equals",
+        "equal to",
+
+    ]
+
+    for item in fillers:
+        text = text.replace(item, "")
+
+    text = text.strip()
+
+    # If user already spoke an expression like:
+    # 5+6
+    # 100/25
+    # 12*9
+    try:
+        eval(text, {"__builtins__": None}, {})
+        return text
+
+    except Exception:
+        pass
+
+    words = text.split()
 
     expression = []
-
     number_words = []
 
     for word in words:
-        
+
         if word in numbermap:
 
             number_words.append(word)
-        
-        elif word in opratormap:
+
+        elif word in operatormap:
 
             if number_words:
 
-                number = words_to_number(number_words)
-
-                expression.append(number)
-
+                expression.append(words_to_number(number_words))
                 number_words.clear()
 
-            expression.append(opratormap[word])
-        
-        else:
-       
-            print("Invalid word :", word)
+            expression.append(operatormap[word])
 
+        else:
+
+            print("Invalid Word :", word)
             return None
-    #---Add remaining number
+
     if number_words:
 
-        number = words_to_number(number_words)
-
-        expression.append(number)
+        expression.append(words_to_number(number_words))
 
     return " ".join(expression)
-#---Check whether the expression is valid
+
+
+# ---------- Validate Expression ----------
 def validateExpression(expression):
 
-    try:
-        eval(expression)
-        return True
-
-    except:
+    if expression is None:
         return False
 
-#---Calculate the result
-def calculate_expression(expression):
-
-    result = eval(expression)
-
-    return result
-
-#---Speak the result
-async def speak_result(text):
-
-    file_name = str(uuid.uuid4()) + ".mp3"
-
-    communicate = edge_tts.Communicate(text, "en-US-AriaNeural")   # Convert text to speech
-
-    await communicate.save(file_name)
-
-    pygame.mixer.init()
-
-    pygame.mixer.music.load(file_name)
-
-    pygame.mixer.music.play()
-    # Wait speech is completed
-    while pygame.mixer.music.get_busy():
-        await asyncio.sleep(1)
-
-    pygame.mixer.music.unload()
-
-    os.remove(file_name)
-
-#----Save calculation history into CSV file
-def save_history(expression, result):
-
-    file = open("history.csv", "a", newline="")
-
-    writer = csv.writer(file)
-
-    writer.writerow([expression, result])
-
-    file.close()
-#--Display calculation history
-def show_history():
-                                                                                                                                                                                                   
     try:
 
-        file = open("history.csv", "r")
+        eval(expression, {"__builtins__": None}, {})
 
-        reader = csv.reader(file)
-
-
-        print("\n\n------ Calculation History ------\n\n")
-
-        for row in reader:
-            print(row[0], "=", row[1])
-
-        file.close()
+        return True
 
     except Exception:
 
-        print("No History Found.")    
+        return False
 
-#---Main function 
-def main():
-    print("\n\n======Voice_Calculater=======\n\n")
-    voice_text = input("Enter mathematical expression: ")
+
+# ---------- Calculate ----------
+def calculate_expression(expression):
+
+    return eval(expression, {"__builtins__": None}, {})
+
+
+# ---------- Speak Result ----------
+def speak_result(result):
+
+    speak(f"The answer is {result}")
+
+
+# ---------- Calculator History ----------
+HISTORY_FILE = "calculator_history.json"
+
+
+# ---------- Save History ----------
+def save_history(expression, result):
+
+    try:
+
+        if os.path.exists(HISTORY_FILE):
+
+            with open(HISTORY_FILE, "r") as file:
+
+                history = json.load(file)
+
+        else:
+
+            history = []
+
+    except Exception:
+
+        history = []
+
+    history.append({
+
+        "expression": expression,
+
+        "result": result,
+
+        "date": datetime.now().strftime("%d-%m-%Y"),
+
+        "time": datetime.now().strftime("%H:%M:%S")
+
+    })
+
+    try:
+
+        with open(HISTORY_FILE, "w") as file:
+
+            json.dump(history, file, indent=4)
+
+    except Exception as e:
+
+        print(e)
+
+
+# ---------- Show History ----------
+def show_history():
+
+    try:
+
+        with open(HISTORY_FILE, "r") as file:
+
+            history = json.load(file)
+
+        if len(history) == 0:
+
+            print("No History Found.")
+            speak("No calculation history found.")
+            return
+
+        print("\n========== Calculator History ==========\n")
+
+        for item in history:
+
+            print(
+                f"{item['expression']} = {item['result']} | "
+                f"{item['date']} {item['time']}"
+            )
+
+    except Exception:
+
+        print("No History Found.")
+        speak("No calculation history found.")
+
+
+# ---------- Clear History ----------
+def clear_history():
+
+    try:
+
+        with open(HISTORY_FILE, "w") as file:
+
+            json.dump([], file, indent=4)
+
+        print("Calculator history cleared.")
+
+        speak("Calculator history cleared.")
+
+    except Exception as e:
+
+        print(e)
+
+        speak("Unable to clear calculator history.")
+
+# ---------- Process Calculation ----------
+def process_calculation(voice_text):
+
+    if voice_text is None or voice_text.strip() == "":
+
+        print("Invalid mathematical expression.")
+        speak("Invalid mathematical expression.")
+        save_command("Voice Calculator", "Failed")
+        return None
 
     expression = convert_to_expression(voice_text)
 
     if expression is None:
-        print("Invalid Input")
-        return
 
-    print("Expression :", expression)
+        print("Invalid mathematical expression.")
+        speak("Invalid mathematical expression.")
+        save_command("Voice Calculator", "Failed")
+        return None
 
-    if validateExpression(expression):
+    if not validateExpression(expression):
 
-        print("Expression is Valid")
+        print("Invalid mathematical expression.")
+        speak("Invalid mathematical expression.")
+        save_command("Voice Calculator", "Failed")
+        return None
+
+    try:
 
         result = calculate_expression(expression)
 
-        print("Result :", result)
+        print("\n========== Voice Calculator ==========")
+        print("Expression :", expression)
+        print("Result     :", result)
+        print("======================================")
 
-        asyncio.run(speak_result("The answer is " + str(result)))
+        speak_result(result)
 
         save_history(expression, result)
 
-    else:
+        save_command("Voice Calculator", "Success")
 
-        print("Error : Invalid Mathematical Expression")
+        return result
 
-    choice = input("\nDo you want to see calculation history? (yes/no): ")
+    except ZeroDivisionError:
 
-    if choice.lower() == "yes":
-        show_history()
-    else:
-        print("Thank You!")    
+        print("Division by zero is not allowed.")
 
-#--Program starts from here
-if __name__ == "__main__":
-    main()    
+        speak("Division by zero is not allowed.")
+
+        save_command("Voice Calculator", "Failed")
+
+        return None
+
+    except Exception as e:
+
+        print(e)
+
+        speak("Calculation failed.")
+
+        save_command("Voice Calculator", "Failed")
+
+        return None
+
+
+# ---------- Start Voice Calculator ----------
+def start_voice_calculator():
+
+    print("\n===================================")
+    print("      VOICE CALCULATOR")
+    print("===================================\n")
+
+    speak("Voice calculator started.")
+    speak("Please speak your mathematical expression.")
+
+    while True:
+
+        voice_text = listen()
+
+        if voice_text is None:
+
+            speak("I did not understand. Please try again.")
+            continue
+
+        voice_text = voice_text.lower().strip()
+
+        # Exit Calculator
+        if voice_text in [
+            "exit",
+            "stop",
+            "close",
+            "close calculator",
+            "exit calculator"
+        ]:
+
+            speak("Closing voice calculator.")
+            return
+
+        # Show History
+        if voice_text in [
+            "history",
+            "show history",
+            "calculator history"
+        ]:
+
+            show_history()
+            continue
+
+        # Clear History
+        if voice_text in [
+            "clear history",
+            "delete history",
+            "remove history"
+        ]:
+
+            clear_history()
+            continue
+
+        process_calculation(voice_text)
+
+def is_math_command(text):
+
+    if text is None:
+        return False
+
+    text = text.lower()
+
+    math_words = [
+        "plus",
+        "minus",
+        "times",
+        "multiply",
+        "multiplied",
+        "divide",
+        "divided",
+        "over",
+        "mod",
+        "modulus",
+        "power",
+        "add",
+        "subtract",
+        "into"
+    ]
+
+    math_symbols = ["+", "-", "*", "/", "%", "**"]
+
+    if any(symbol in text for symbol in math_symbols):
+        return True
+
+    words = text.split()
+
+    for word in words:
+        if word in numbermap:
+            return True
+
+        if word in math_words:
+            return True
+
+    return False

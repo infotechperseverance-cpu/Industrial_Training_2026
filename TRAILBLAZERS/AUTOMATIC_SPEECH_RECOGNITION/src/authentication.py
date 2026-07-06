@@ -1,8 +1,11 @@
 import json
 import os
 import re
+from config import USERS_FILE
+from voice_engine import speak
 
-USERS_FILE = "users.json"
+
+
 # Create users.json if it does not exist
 def initialize_users_file():
     if not os.path.exists(USERS_FILE):
@@ -122,7 +125,7 @@ def create_user():
         print("Username already exists.")
         return
 
-    password = input("Enter Password: ")
+    password = input("Enter Password: ").strip()
 
     valid, message = validate_password(password)
 
@@ -130,7 +133,7 @@ def create_user():
         print(message)
         return
 
-    confirm_password = input("Confirm Password: ")
+    confirm_password = input("Confirm Password: ").strip()
 
     if password != confirm_password:
         print("Passwords do not match.")
@@ -145,40 +148,68 @@ def create_user():
     print("User created successfully.")
 
 # Login User
+# Login User
 def login_user():
 
     print("\n========== LOGIN ==========")
 
-    username = input("Enter Username: ").strip()
-    password = input("Enter Password: ")
+    max_attempts = 3
+    attempts = 0
 
-    if username == "" or password == "":
-        print("Username and Password cannot be empty.")
-        return None
+    while attempts < max_attempts:
 
-    if verify_credentials(username, password):
+        username = input("Enter Username: ").strip()
+        password = input("Enter Password: ").strip()
 
-        print("Login Successful.")
-        return username
+        if username == "" or password == "":
+            print("Username and Password cannot be empty.")
+            attempts += 1
+            print(f"Attempts Remaining: {max_attempts - attempts}")
+            continue
 
-    else:
+        if verify_credentials(username, password):
 
-        print("Invalid Username or Password.")
-        return None
+            global current_user
+            current_user = username
+
+            print("Login Successful.")
+            speak(f"Welcome {username}")
+
+            return username
+
+        else:
+
+            attempts += 1
+
+            print("Invalid Username or Password.")
+
+            if attempts < max_attempts:
+                print(f"Attempts Remaining: {max_attempts - attempts}")
+                speak("Invalid username or password. Please try again.")
+
+    print("\nMaximum login attempts exceeded.")
+    speak("Maximum login attempts exceeded.")
+    return None
 
 
 # Logout User
-def logout_user(current_user):
 
-    if current_user is not None:
 
+current_user = None
+
+def logout_user():
+
+    global current_user
+
+    if current_user:
         print(f"{current_user} logged out successfully.")
+        speak("You have been logged out successfully.")
+        current_user = None
+        return True
 
-    else:
-
-        print("No user is currently logged in.")
-
-    return None
+    print("No user is currently logged in.")
+    speak("No user is currently logged in.")
+    return False
 
 
 # Authentication Menu

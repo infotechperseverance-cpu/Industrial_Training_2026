@@ -1,34 +1,20 @@
 import speech_recognition as sr
-import pyttsx3
-import pyaudio
-import time
+
 import datetime
-
-
+from voice_engine import speak
+from config import (
+    VOICE_LOG_FILE,
+    LISTEN_TIMEOUT,
+    PHRASE_TIME_LIMIT,
+    AMBIENT_NOISE_DURATION,
+)
 recognizer = sr.Recognizer()
-
-engine = pyttsx3.init()
-
-
-def initialize_voice():
-    voices = engine.getProperty('voices')
-
-    for voice in voices:
-        if "female" in voice.name.lower() or "zira" in voice.name.lower():
-            engine.setProperty('voice', voice.id)
-            break
-
-    engine.setProperty('rate', 170)
-    engine.setProperty('volume', 1.0)
-
-
-def speak(text):
-    try:
-        engine.say(text)
-        engine.runAndWait()
-    except:
-        print("Voice output error")
-
+recognizer.energy_threshold = 120
+recognizer.dynamic_energy_threshold = False
+recognizer.pause_threshold = 0.8
+recognizer.phrase_threshold = 0.2
+recognizer.non_speaking_duration = 0.3
+recognizer.operation_timeout = None
 
 def check_microphone():
     try:
@@ -38,8 +24,10 @@ def check_microphone():
             speak("No microphone found")
             return False
         return True
-    except:
-        print("Microphone error")
+
+    except Exception as e:
+        print(e)
+        speak("Microphone error")
         return False
 
 
@@ -50,12 +38,17 @@ def listen():
     try:
         with sr.Microphone() as source:
             print("\nAdjusting for noise...")
-            recognizer.adjust_for_ambient_noise(source, duration=1)
+            recognizer.adjust_for_ambient_noise(source, duration=AMBIENT_NOISE_DURATION)
+            recognizer.dynamic_energy_threshold = True
+            recognizer.pause_threshold = 1.0
+            recognizer.phrase_threshold = 0.3
+            recognizer.non_speaking_duration = 0.5
+
 
             print("Listening... Speak now")
-            speak("I am listening")
 
-            audio = recognizer.listen(source, timeout=5, phrase_time_limit=8)
+
+            audio = recognizer.listen(source, timeout=LISTEN_TIMEOUT, phrase_time_limit=PHRASE_TIME_LIMIT,snowboy_configuration=None)
 
     except sr.WaitTimeoutError:
         print("No speech detected")
@@ -67,20 +60,38 @@ def listen():
         speak("Microphone error")
         return None
 
-
     try:
         print("Recognizing...")
-        text = recognizer.recognize_google(audio)
-        text = text.lower()
+
+        text = None
+
+        # Try Indian English first
+        try:
+            text = recognizer.recognize_google(audio, language="en-IN")
+        except sr.UnknownValueError:
+            pass
+
+        # If it failed, try US English
+        if text is None:
+            try:
+                text = recognizer.recognize_google(audio, language="en-US")
+            except sr.UnknownValueError:
+                pass
+
+        # If both failed
+        if text is None:
+            print("Could not understand audio")
+            speak("Sorry, I could not understand.")
+            return None
+
+        text = text.strip()  # Remove leading/trailing spaces
+        text = text.lower()  # Convert to lowercase
+
         save_log(text)
 
         print("\nYou said:", text)
-        return text
 
-    except sr.UnknownValueError:
-        print("Could not understand audio")
-        speak("Sorry, I could not understand")
-        return None
+        return text
 
     except sr.RequestError:
         print("Internet error")
@@ -96,37 +107,26 @@ def save_log(text):
 
     try:
 
-        time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        with open("voice_log.txt", "a") as file:
+        with open(VOICE_LOG_FILE, "a") as file:
 
-            file.write(f"{time} - {text}\n")
+            file.write(f"{current_time} - {text}\n")
 
     except Exception:
 
         print("Logging failed")
 
+# ---------------- Start Listening ----------------
 
-def main():
-    initialize_voice()
-
-    print("=" * 40)
-    print("VOICE INPUT MODULE STARTED")
-    print("=" * 40)
-
-    while True:
-        text = listen()
-
-        if text:
-            speak("You said " + text)
-
-        print("\nPress ENTER to speak again or type exit to stop")
-        choice = input().lower()
-
-        if choice == "exit":
-            speak("Goodbye")
-            break
+def start_listening():
+    speak("I'm listening. Please tell me your command.")
+    return True
 
 
-if __name__ == "__main__":
-    main()
+# ---------------- Stop Listening ----------------
+
+def stop_listening():
+    speak("Voice recognition has been stopped.")
+    return True
+
