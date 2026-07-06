@@ -11,7 +11,7 @@ from plyer import notification
 import speech_recognition as sr
 import asyncio
 import importlib
-
+#for commit 
 # Import edge_tts dynamically to avoid static analysis import errors in
 # environments where the package is not installed.
 try:
