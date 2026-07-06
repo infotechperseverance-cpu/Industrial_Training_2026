@@ -14,10 +14,7 @@ def store_msg(memail, u_msg):
         found = False
 
         for record in file_contents:
-           if (
-                  record["email_id"] == memail
-                  and record["status"].lower() == "pending"
-              ):
+            if ( record["email_id"] == memail and record["status"].lower() == "pending"):
                 record["message"] = u_msg
                 found = True
                 break
@@ -47,24 +44,28 @@ def email():
             return None
 
         while True:
-             memail = input("Enter Email ID To Write Message: ")
+            try:
+                email_id = int(input("Enter Email ID To Write Message: "))
+            except ValueError:
+                speak("Please enter a valid numeric Email ID.")
+                continue
 
-            
-             emailID_found = False
+            email_found = False
 
-             for record in file_contents:
-                 if record["email_id"] == memail:                   
-                   emailID_found = True
-                 
-                   if record.get("status", "").lower() == "pending":
-                       return memail
-                   else:
-                      speak("This email is not in pending status.")
-                      return
+            for record in file_contents:
 
-             if not emailID_found:
+                if record["email_id"] == email_id:
+                    email_found = True
+
+                    if record["status"].lower() == "pending":
+                        return email_id
+                    else:
+                        speak("This email is not in pending status.")
+                        return None
+
+            if not email_found:
                 speak("Email ID not found. Please try again.")
-  
+
     except FileNotFoundError:
         speak("JSON file not found.")
         return None
@@ -72,7 +73,7 @@ def email():
     except json.JSONDecodeError:
         speak("Invalid JSON format.")
         return None
-
+    
 
 def message():
     speak("----------- Voice Message Writing -----------")

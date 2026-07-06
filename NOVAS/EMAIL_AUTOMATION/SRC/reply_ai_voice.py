@@ -4,16 +4,22 @@ import email
 from email.header import decode_header
 import time             
 from voice import speak
+import imaplib
 
 def login_gmail(sender_email, sender_password):
+    try:
+        mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
+        mail.login(sender_email.strip(), sender_password.strip())
+        mail.select("INBOX")
+        return mail
 
-    mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
+    except imaplib.IMAP4.error:
+        print(" ERROR: Authentication failed. Please check your email ID or App Password.")
+        return None
 
-    mail.login(sender_email, sender_password)
-
-    mail.select("INBOX")
-
-    return mail
+    except Exception as e:
+        print(f" ERROR: Unable to connect to Gmail: {e}")
+        return None
 
 def check_new_email(mail):
 
@@ -125,6 +131,10 @@ def announce_email(sender, subject, message):
 def monitor_inbox(sender_email, sender_password):
 
     mail = login_gmail(sender_email, sender_password)
+
+    if mail is None:
+        print(" ERROR: Inbox monitoring stopped because login failed.")
+        return
 
   
     status, messages = mail.search(None, "ALL")

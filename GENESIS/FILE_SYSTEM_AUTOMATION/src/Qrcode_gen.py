@@ -9,6 +9,10 @@ def shareqr():
 
     files = load_data()
 
+    if not files:
+        print("No files available to share.")
+        return
+
     #Showing available files
 
     print("Available Files")
@@ -27,8 +31,15 @@ def shareqr():
     file_paths = []
 
     for num in numbers:
-        index = int(num) - 1
-        selected.append(files[index])
+        try:
+            index = int(num.strip()) - 1
+
+            if 0 <= index < len(files):
+                selected.append(files[index])
+            else:
+                print(f"Invalid file number: {num}")
+        except ValueError:
+            print(f"'{num}' is not a valid number.")
 
     #Accessing file paths
 
