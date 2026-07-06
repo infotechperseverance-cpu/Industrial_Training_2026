@@ -3,16 +3,11 @@ from datetime import datetime
 from Classify_file import load_data, main_dir
 
 
-
-
 def load_files(sort_by="name_az"):
-
     records = load_data()
-
     files = []
 
     for item in records:
-
         full_path = os.path.join(
             main_dir,
             item["category"],
@@ -20,18 +15,14 @@ def load_files(sort_by="name_az"):
         )
 
         if os.path.isfile(full_path):
-
             files.append({
-
                 "name": item["filename"],
                 "category": item["category"],
                 "type": os.path.splitext(item["filename"])[1].upper(),
                 "size": os.path.getsize(full_path),
                 "created": os.path.getctime(full_path),
                 "modified": os.path.getmtime(full_path)
-
             })
-        
 
     # Sorting Options
     if sort_by == "name_az":
@@ -60,8 +51,11 @@ def load_files(sort_by="name_az"):
 
     print("\n========== SORTED FILES ==========")
 
-    for f in files:
+    if not files:
+        print("No files found.")
+        return
 
+    for f in files:
         print("--------------------------------")
         print("Name      :", f["name"])
         print("Category  :", f["category"])
@@ -69,11 +63,10 @@ def load_files(sort_by="name_az"):
         print("Size      :", f["size"], "Bytes")
         print("Created   :", datetime.fromtimestamp(f["created"]).strftime("%d-%m-%Y %H:%M"))
         print("Modified  :", datetime.fromtimestamp(f["modified"]).strftime("%d-%m-%Y %H:%M"))
-
         print("--------------------------------")
 
-def sorting_menu():
 
+def sorting_menu():
     while True:
 
         print("\n========== SORT FILES ==========")
@@ -85,7 +78,11 @@ def sorting_menu():
         print("6. Oldest")
         print("7. Exit")
 
-        choice = int(input("Enter Choice: "))
+        try:
+            choice = int(input("Enter Choice: "))
+        except ValueError:
+            print("Invalid Input! Please enter a number between 1 and 7.")
+            continue
 
         if choice == 1:
             load_files("name_az")
@@ -106,10 +103,12 @@ def sorting_menu():
             load_files("oldest")
 
         elif choice == 7:
+            print("Returning to Main Menu...")
             break
 
         else:
-            print("Invalid Choice")
+            print("Invalid Choice! Please enter a number between 1 and 7.")
 
 
-
+if __name__ == "__main__":
+    sorting_menu()
