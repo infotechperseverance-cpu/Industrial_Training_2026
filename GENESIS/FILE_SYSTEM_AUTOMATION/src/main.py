@@ -52,17 +52,17 @@ while True:
 
             if validate_name(filename):
 
-                success, password = password_protection()
+              success, password = password_protection()
 
-                create_file(filename)
+              create_file(filename, password)
 
-                if success:
-                    print("Password Protection Enabled.")
-                else:
-                    print("Password Protection Skipped.")
-
+              if success:
+               print("Password Protection Enabled.")
+              else:
+               print("Password Protection Skipped.")
+               
         case 2:
-
+            print("DEBUG: New rename_file() is running")
             old_name = input("Enter Old File Name: ").strip()
             new_name = input("Enter New File Name: ").strip()
 

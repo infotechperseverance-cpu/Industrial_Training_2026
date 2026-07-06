@@ -379,9 +379,9 @@ def recent_backups():
 
         print("File Name :", item["file_name"])
 
-        print("Date      :", item["date"])
-
-        print("Time      :", item["time"])
+        print("Date      :", item["backup_date"])
+        
+        print("Time      :", item["backup_time"])
 
         print("Status    :", item["status"])
 

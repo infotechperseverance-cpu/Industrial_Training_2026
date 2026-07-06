@@ -1,0 +1,152 @@
+[
+    {
+        "Command Name": "Open Calculator",
+        "Date": "05-07-2026",
+        "Time": "11:09:06",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "open calculator",
+        "Date": "05-07-2026",
+        "Time": "11:09:09",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "open calculator",
+        "Date": "05-07-2026",
+        "Time": "11:09:13",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "mute volume",
+        "Date": "05-07-2026",
+        "Time": "11:13:49",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "mute volume",
+        "Date": "05-07-2026",
+        "Time": "11:13:54",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "take screenshot",
+        "Date": "05-07-2026",
+        "Time": "11:14:07",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "take screenshot",
+        "Date": "05-07-2026",
+        "Time": "11:14:12",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "play music believer",
+        "Date": "05-07-2026",
+        "Time": "11:14:59",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "Open Google",
+        "Date": "05-07-2026",
+        "Time": "14:30:25",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "open google",
+        "Date": "05-07-2026",
+        "Time": "14:30:27",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "open google",
+        "Date": "05-07-2026",
+        "Time": "14:30:30",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "Take Screenshot",
+        "Date": "05-07-2026",
+        "Time": "14:32:22",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "take screenshot",
+        "Date": "05-07-2026",
+        "Time": "14:32:25",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "take screenshot",
+        "Date": "05-07-2026",
+        "Time": "14:32:28",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "Open Calculator",
+        "Date": "05-07-2026",
+        "Time": "17:29:40",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "open calculator",
+        "Date": "05-07-2026",
+        "Time": "17:29:40",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "Voice Calculator",
+        "Date": "05-07-2026",
+        "Time": "17:30:12",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "Voice Calculator",
+        "Date": "05-07-2026",
+        "Time": "17:30:31",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "Voice Calculator",
+        "Date": "05-07-2026",
+        "Time": "17:30:50",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "Voice Calculator",
+        "Date": "05-07-2026",
+        "Time": "17:32:19",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "Open VS Code",
+        "Date": "05-07-2026",
+        "Time": "17:41:37",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "open vs code",
+        "Date": "05-07-2026",
+        "Time": "17:41:37",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "stop listening",
+        "Date": "05-07-2026",
+        "Time": "17:46:09",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "send email",
+        "Date": "05-07-2026",
+        "Time": "17:46:43",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "Voice Calculator",
+        "Date": "05-07-2026",
+        "Time": "18:13:19",
+        "Status": "Failed"
+    }
+]

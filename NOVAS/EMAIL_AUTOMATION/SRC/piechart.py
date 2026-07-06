@@ -1,10 +1,7 @@
 import os
 import json
 import matplotlib.pyplot as plt
-<<<<<<< HEAD
-=======
 from voice import speak
->>>>>>> fc73ecbf6f619b0e3d24852bc80ccf70027f2541
 
 EMAIL_FILE = "email_records.json"
 
@@ -18,12 +15,9 @@ def load_email_records():
     return []
 
 def generate_pie_chart():
-<<<<<<< HEAD
-=======
 
     speak("-----------Pie Chart---------")
     
->>>>>>> fc73ecbf6f619b0e3d24852bc80ccf70027f2541
     emails = load_email_records()
 
     if len(emails) == 0:
@@ -31,13 +25,8 @@ def generate_pie_chart():
         return
 
     completed = 0
-<<<<<<< HEAD
-    failed = 0
-    scheduled = 0
-=======
     pending = 0
     spam = 0
->>>>>>> fc73ecbf6f619b0e3d24852bc80ccf70027f2541
 
     for email in emails:
 
@@ -45,17 +34,10 @@ def generate_pie_chart():
         
         if status == "completed":
             completed += 1
-<<<<<<< HEAD
-        elif status == "failed":
-            failed += 1
-        elif status == "scheduled":
-            scheduled += 1
-=======
         elif status == "pending":
             pending += 1
         elif status == "spam":
             spam += 1
->>>>>>> fc73ecbf6f619b0e3d24852bc80ccf70027f2541
 
     labels = []
     values = []
@@ -64,31 +46,17 @@ def generate_pie_chart():
         labels.append("Completed")
         values.append(completed)
 
-<<<<<<< HEAD
-    if failed > 0:
-        labels.append("Failed")
-        values.append(failed)
-
-    if scheduled > 0:
-        labels.append("Scheduled")
-        values.append(scheduled)
-
-
-    if not values:
-        print("No valid email statuses (Completed/Failed/Scheduled) found to generate a chart.")
-=======
     if pending > 0:
         labels.append("Pending")
         values.append(pending)
 
     if spam > 0:
-        labels.append("spam")
+        labels.append("Spam")
         values.append(spam)
 
 
     if not values:
         print("No valid email statuses (Completed/Pending/Spam) found to generate a chart.")
->>>>>>> fc73ecbf6f619b0e3d24852bc80ccf70027f2541
         return
 
     plt.figure(figsize=(6,6))
@@ -103,4 +71,3 @@ def generate_pie_chart():
     plt.title("Email Status Analytics")
     plt.axis("equal")
     plt.show()
-
