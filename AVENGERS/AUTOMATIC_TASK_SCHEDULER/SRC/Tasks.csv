@@ -1,5 +1,11 @@
-Task, Date, Time, Status
-Develope task module, 03-07-2026, 13:40:00, Pending
-Scrum meeting, 03-07-2026, 10:00:00,Completed
-Generate test cases, 03-07-2026, 17:30:00, Pending
-Breakfast, 03-07-2026, 09:40:00, Failed
+Task_ID,Task_Name,Task_Date,Task_Time,Task_Recurring,Task_Status
+1,Cab,06/07/2026,11:47 AM,None,Failed
+1,caing,06/07/2026,12:25 AM,Daily,Pending
+2,Assignment,06/07/2026,12:35 AM,Daily,Pending
+3,watching,06/07/2026,12:43 AM,Daily,Pending
+5,Write Book,06/07/2026,02:14 AM,Daily,Pending
+6,ola booking,06/07/2026,02:19 PM,Daily,Failed
+6,Listening songs,06/07/2026,03:16 PM,Daily,Failed
+10,movie time,06/07/2026,4:30 PM,Weekly,Failed
+12,Train booking,06/07/2026,12:30 PM,Monthly,Completed
+15,cab book,06/07/2026,10:20 PM,Daily,Failed

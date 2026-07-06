@@ -1,8 +1,9 @@
 import csv
 import os
 from datetime import datetime
-
-File_name = "tasks.csv"
+import threading 
+from Notification import start_notification
+File_name = "Tasks.csv"
 deleted_task = None
 
 # Create CSV file
@@ -129,37 +130,44 @@ def view_task():
 
 # Main Menu
 
-while True:
-    print("\\n----- Task Management -----")
+def task_management():
+    while True:
+        print("\n----- Task Management -----")
 
-    print("1. Add Task")
-    print("2. Update Task")
-    print("3. Delete Task")
-    print("4. Undo Delete Task")
-    print("5. View Tasks")
-    print("6. Exit")
+        print("1. Add Task")
+        print("2. Update Task")
+        print("3. Delete Task")
+        print("4. Undo Delete Task")
+        print("5. View Tasks")
+        print("6. Exit")
 
-    print("*"*30)
+        print("*"*30)
 
-    try:
-        choice = int(input("Enter Your Choice: "))
-    except ValueError:
-        print("Invalid input! Please enter a number.")
-        continue
+        try:
+            choice = int(input("Enter Your Choice: "))
+        except ValueError:
+            print("Invalid input! Please enter a number.")
+            continue
 
-    match choice:
-        case 1:
-            add_task()
-        case 2:
-            update_task()
-        case 3:
-            delete_task()
-        case 4:
-            undo_delete()
-        case 5:
-            view_task()
-        case 6:
-            print("Thank You!")
-            break
-        case _:
-            print("Invalid Choice!")
+        match choice:
+            case 1:
+                add_task()
+            case 2:
+                update_task()
+            case 3:
+                delete_task()
+            case 4:
+                undo_delete()
+            case 5:
+                view_task()
+            case 6:
+                print("Thank You!")
+                break
+            case _:
+                print("Invalid Choice!")
+    
+    if __name__ == "__main__":
+        print("Starting Notification Scheduler...")
+
+        threading.Thread(target=start_notification, daemon=True).start()
+        task_management()
