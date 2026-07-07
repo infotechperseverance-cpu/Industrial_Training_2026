@@ -1,4 +1,3 @@
-from recycle import movetobin
 import pwinput
 import os
 import json
@@ -210,6 +209,7 @@ def delete_file(filename):
             print("Exists:", os.path.exists(file_path))
 
             if os.path.exists(file_path):
+               from recycle import movetobin
                movetobin(file_path,filename)
                print("Moved to Recycle Bin")
             else:
