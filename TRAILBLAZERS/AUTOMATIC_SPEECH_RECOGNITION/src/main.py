@@ -17,7 +17,7 @@ import time
 
 
 
-# ---------------- START SCHEDULER ----------------
+# ---------------- START SCHEDULER ----------rr7------
 def start_scheduler():
 
     thread = threading.Thread(target=auto_runner, daemon=True)

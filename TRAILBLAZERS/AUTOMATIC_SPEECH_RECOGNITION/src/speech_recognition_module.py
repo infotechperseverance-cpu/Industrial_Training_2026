@@ -51,7 +51,7 @@ def listen():
 
             print("Listening... Speak now")
             speak("Listening... Speak now")
-            time.sleep(0.4)
+            time.sleep(0.3)
             audio = recognizer.listen(source, timeout=LISTEN_TIMEOUT, phrase_time_limit=PHRASE_TIME_LIMIT,snowboy_configuration=None)
 
     except sr.WaitTimeoutError:
