@@ -35,5 +35,13 @@ class VoiceResponse:
         VoiceResponse.speak(
             "Thank you for using Smart Voice Assistant. Goodbye!"
         )
-
+#---main method
+def main():
+    VoiceResponse.greet()
+    VoiceResponse.success("google opened sussccefully")
+    VoiceResponse.failure("Invalid cammand")
+    VoiceResponse.goodbye()
+#---call main method
+if __name__=="__main__": 
+    main()   
 

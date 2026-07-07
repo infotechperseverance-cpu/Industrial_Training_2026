@@ -3,6 +3,7 @@
 from datetime import datetime
 import csv
 import socket
+import getpass
 
 #---Display total commands
 def totalCommands():
@@ -50,7 +51,7 @@ def dashboardHeading():
 #--User details
 def userInformation():
 
-    current_user = "Mamata"
+    current_user = getpass.getuser()
 
     current_date = datetime.now().strftime("%d-%m-%Y")
 
