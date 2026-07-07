@@ -11,6 +11,7 @@ from plyer import notification
 import speech_recognition as sr
 import asyncio
 import importlib
+import re
 #for commit changes
 #.................
 # Import edge_tts dynamically to avoid static analysis import errors in
@@ -78,13 +79,20 @@ if not os.path.exists(history_file):
 def voice_command():
     recognizer = sr.Recognizer()
 
-    with sr.Microphone() as source:
-        print("Listening...")
-        recognizer.adjust_for_ambient_noise(source)
-        audio = recognizer.listen(source)
-
     try:
-        text = recognizer.recognize_google(audio)
+        with sr.Microphone() as source:
+            recognizer.energy_threshold = 300
+            recognizer.pause_threshold = 1
+
+            print("Please speak...")
+            recognizer.adjust_for_ambient_noise(source, duration=1)
+
+            audio = recognizer.listen(source, timeout=20, phrase_time_limit=20)
+
+        print("Audio received")
+
+        text = recognizer.recognize_google(audio, language="en-IN")
+
         print("You said:", text)
         return text
 
@@ -92,9 +100,69 @@ def voice_command():
         print("Could not understand audio")
         return ""
 
-    except sr.RequestError:
-        print("Speech service unavailable")
+    except sr.RequestError as e:
+        print("Speech service unavailable:", e)
         return ""
+
+    except Exception as e:
+        print("Voice Error:", e)
+        return ""
+    
+def convert_voice_date(text):
+    try:
+        months = {
+            "january": "01",
+            "february": "02",
+            "march": "03",
+            "april": "04",
+            "may": "05",
+            "june": "06",
+            "july": "07",
+            "august": "08",
+            "september": "09",
+            "october": "10",
+            "november": "11",
+            "december": "12"
+        }
+
+        text = text.lower()
+
+        match = re.search(
+            r'(\d{1,2})\s+([a-z]+)\s+(\d{4})',
+            text
+        )
+
+        if match:
+            day = match.group(1).zfill(2)
+            month = months[match.group(2)]
+            year = match.group(3)
+
+            return f"{day}/{month}/{year}"
+
+    except:
+        pass
+
+    return text
+
+def convert_voice_time(text):
+    try:
+        text = text.upper()
+
+        text = text.replace(".", "")
+        text = text.replace("A M", "AM")
+        text = text.replace("P M", "PM")
+
+        text = text.replace("AM", " AM")
+        text = text.replace("PM", " PM")
+
+        text = " ".join(text.split())
+
+        dt = datetime.strptime(text, "%I:%M %p")
+
+        return dt.strftime("%I:%M %p")
+
+    except:
+        return text
 # Add Task
 
 def add_task():
@@ -114,27 +182,50 @@ def add_task():
     
     elif mode == "2":
         print("Speak Task ID")
-        Task_ID = voice_command() # type: ignore
+        Task_ID = voice_command()
+        if not Task_ID:
+            print("Task ID not captured")
+            return
 
         print("Speak Task Name")
         Task_Name = voice_command()
+        if not Task_Name:
+            print("Task Name not captured")
+            return
 
         print("Speak Task Date")
         Task_Date = voice_command()
 
+        if not Task_Date:
+             print("Could not recognize Task Date")
+             return
+
+        Task_Date = convert_voice_date(Task_Date)
+
+        print("Converted Date:", Task_Date)
+
         print("Speak Task Time")
         Task_Time = voice_command()
+
         if not Task_Time:
             print("Could not recognize Task Time")
             return
 
-        Task_Time = Task_Time.upper()
+        Task_Time = convert_voice_time(Task_Time)
+
+        print("Converted Time:", Task_Time)
 
         print("Speak Task Recurring")
-        Task_Recurring = voice_command()
+        Task_Recurring = voice_command()  
+        if not Task_Recurring:
+            print("Could not recognize Task Recurring")
+            return
 
         print("Speak Task Status")
         Task_Status = voice_command()
+        if not Task_Status:
+            print("Could not recognize Task Status")
+            return
 
     else:
         print("Invalid Choice")
