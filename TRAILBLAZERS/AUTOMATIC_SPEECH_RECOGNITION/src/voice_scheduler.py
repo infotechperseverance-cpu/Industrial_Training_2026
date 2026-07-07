@@ -60,7 +60,13 @@ def add_command():
     choice = input("Enter choice: ").strip()
 
     if choice == "1":
+        import assistant_state
+
+        assistant_state.assistant_busy = True
         cmd = listen()
+        assistant_state.assistant_busy = False
+
+
     elif choice == "2":
         cmd = input("Enter Command: ").strip()
     else:
@@ -72,7 +78,6 @@ def add_command():
         print("❌ Invalid command")
         speak("Invalid command")
         return
-
 
 
     time_input = input("Enter date & time (YYYY-MM-DD HH:MM): ").strip()
@@ -112,7 +117,6 @@ def add_command():
     write_log(f"Command added: {cmd} at {time_input}")
 
 
-
 # ------------------ VIEW COMMANDS ------------------
 def view_commands():
     if len(my_commands) == 0:
@@ -146,7 +150,11 @@ def edit_command():
             choice = input("Enter choice: ").strip()
 
             if choice == "1":
+                import assistant_state
+                assistant_state.assistant_busy = True
                 new_cmd = listen()
+                assistant_state.assistant_busy = False
+
             elif choice == "2":
                 new_cmd = input("Enter New Command: ").strip()
             else:
@@ -210,50 +218,91 @@ def delete_command():
 # ------------------ EXECUTE COMMAND ------------------
 
 def execute_command(cmd):
+    import assistant_state
+
+
+    assistant_state.assistant_busy = True
+
     try:
         from command_processing import process_command
 
+        # Assistant is busy
+
+
         print(f"\nExecuting: {cmd}")
 
-        speak(f"Executing {cmd}")
+        # -------- Block interactive scheduler commands --------
+        blocked = [
+            "add scheduled command",
+            "edit scheduled command",
+            "delete scheduled command"
+        ]
 
-        process_command(cmd)
+        if cmd.lower() in blocked:
+            print("Scheduler cannot execute scheduling commands.")
+            write_log(f"Blocked scheduled command: {cmd}")
+            return False
 
-        save_command(cmd, "Success")
+        # -------- Execute normal command --------
 
-        write_log(f"Executed command: {cmd}")
+        result = process_command(cmd,interactive=False)
 
-        return True
+
+        if result:
+            save_command(cmd, "Success")
+            write_log(f"Executed command: {cmd}")
+            return True
+        else:
+            save_command(cmd, "Failed")
+            write_log(f"Failed command: {cmd}")
+            return False
+
 
     except Exception as e:
         print(e)
 
-        speak("Command execution failed")
-
         save_command(cmd, "Failed")
-
-        write_log(f"Failed command: {cmd}")
-
+        write_log(f"Exception while executing '{cmd}': {e}")
         return False
+
+    finally:
+        # Assistant is free again
+        assistant_state.assistant_busy = False
 
 
 # ------------------ AUTO EXECUTOR ------------------
 def auto_runner():
-    # Load saved commands when module starts
     load_data()
+    import assistant_state
     while True:
+
+
+        if assistant_state.dashboard_open:
+            time.sleep(1)
+            continue
         now = datetime.now()
 
         for c in my_commands:
-            if c["status"] == "pending":
-                cmd_time = datetime.strptime(c["time"], "%Y-%m-%d %H:%M")
 
-                if now >= cmd_time:
-                    if execute_command(c["command"]):
-                        c["status"] = "done"
-                        save_data()
+            if c["status"] != "pending":
+                continue
 
-                        speak("Your scheduled command has been executed")
+            cmd_time = datetime.strptime(c["time"], "%Y-%m-%d %H:%M")
+
+            if now >= cmd_time:
+
+                # Prevent executing it again
+                c["status"] = "running"
+                save_data()
+
+                result = execute_command(c["command"])
+
+                if result:
+                    c["status"] = "done"
+                else:
+                    c["status"] = "failed"
+
+                save_data()
 
         time.sleep(1)
 

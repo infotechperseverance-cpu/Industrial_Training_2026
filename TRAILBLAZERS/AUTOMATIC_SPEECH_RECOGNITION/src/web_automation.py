@@ -30,19 +30,19 @@ def open_google():
 
     if not check_internet():
         speak("Internet connection is unavailable. Please check your network.")
-        save_command("Open Google", "Failed")
+
         return False
 
     try:
         webbrowser.open("https://www.google.com")
         speak("Opening Google.")
-        save_command("Open Google", "Success")
+
         return True
 
     except Exception as e:
         print(e)
         speak("Sorry, I couldn't open Google.")
-        save_command("Open Google", "Failed")
+
         return False
 
 
@@ -51,19 +51,19 @@ def open_youtube():
 
     if not check_internet():
         speak("Internet connection is unavailable. Please check your network.")
-        save_command("Open YouTube", "Failed")
+
         return False
 
     try:
         webbrowser.open("https://www.youtube.com")
         speak("Opening YouTube.")
-        save_command("Open YouTube", "Success")
+
         return True
 
     except Exception as e:
         print(e)
         speak("Sorry, I couldn't open YouTube.")
-        save_command("Open YouTube", "Failed")
+
         return False
 
 
@@ -72,7 +72,7 @@ def google_search(query):
 
     if not check_internet():
         speak("Internet connection is unavailable. Please check your network.")
-        save_command("Google Search", "Failed")
+
         return False
 
     try:
@@ -81,13 +81,13 @@ def google_search(query):
         webbrowser.open(search_url)
 
         speak(f"Searching Google for {query}.")
-        save_command("Google Search", "Success")
+
         return True
 
     except Exception as e:
         print(e)
         speak("Sorry, I couldn't complete your search.")
-        save_command("Google Search", "Failed")
+
         return False
 
 
@@ -96,18 +96,18 @@ def play_song(song_name):
 
     if not check_internet():
         speak("Internet connection is unavailable. Please check your network.")
-        save_command("Play Song", "Failed")
+
         return False
 
     try:
         pywhatkit.playonyt(song_name)
 
         speak(f"Playing {song_name} on YouTube.")
-        save_command("Play Song", "Success")
+
         return True
 
     except Exception as e:
         print(e)
         speak("Sorry, I couldn't play the song.")
-        save_command("Play Song", "Failed")
+
         return False

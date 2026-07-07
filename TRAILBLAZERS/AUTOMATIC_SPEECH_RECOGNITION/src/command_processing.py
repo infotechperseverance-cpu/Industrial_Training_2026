@@ -6,7 +6,7 @@ Compare voice commands with predefined
 commands and execute the required module.
 =========================================
 """
-from voice_calculator import process_calculation, is_math_command
+from voice_calculator import  is_math_command
 import json
 import importlib
 from voice_calculator import process_calculation
@@ -85,8 +85,8 @@ def find_command(user_command):
 
 # ---------------- GET RESPONSE ----------------
 def get_response(command):
-
     return command.get("response", "")
+
 # ---------------- EXECUTE ACTION ----------------
 def execute_action(command_data):
 
@@ -115,9 +115,6 @@ def execute_action(command_data):
         result = action()
 
         if result:
-
-
-
             save_command(command_data["command"], "Success")
 
             return True
@@ -158,21 +155,19 @@ def execute_action(command_data):
 
 
 # ---------------- UNKNOWN COMMAND ----------------
-def unknown_command():
+def unknown_command(show_prompt=True):
 
     speak("Sorry, I didn't understand that command.")
 
     print("\nUnknown Command.")
 
+    if not show_prompt:
+        return False
+
     choice = input("Show available commands? (yes/no): ").strip().lower()
 
     if choice == "yes":
-
         show_help()
-
-    else:
-
-        speak("Please try another command.")
 
     return False
 
@@ -211,7 +206,7 @@ def execute_dynamic(command_data, user_command):
         return module.play_song(song)
 
 
-    # -------- Voice Calculator --------
+
     # -------- Voice Calculator --------
     elif action == "start_voice_calculator":
 
@@ -235,10 +230,13 @@ def execute_dynamic(command_data, user_command):
 # ---------------- CONFIRMATION ----------------
 
 def get_confirmation():
+    import assistant_state
+
 
     speak("Please say Yes or No.")
-
+    assistant_state.assistant_busy = True
     confirmation = listen()
+    assistant_state.assistant_busy = False
 
     if confirmation is None:
 
@@ -298,7 +296,7 @@ def handle_restart(module):
 
 # ---------------- MAIN PROCESS COMMAND ----------------
 
-def process_command(user_command):
+def process_command(user_command,interactive=True):
 
     if user_command is None:
 
@@ -317,7 +315,7 @@ def process_command(user_command):
             if result is not None:
                 return True
 
-        return unknown_command()
+        return unknown_command(interactive)
 
     try:
 

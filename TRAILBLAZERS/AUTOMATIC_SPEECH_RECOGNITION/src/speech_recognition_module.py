@@ -1,5 +1,5 @@
 import speech_recognition as sr
-
+import time
 import datetime
 from voice_engine import speak
 from config import (
@@ -32,11 +32,15 @@ def check_microphone():
 
 
 def listen():
+
+
     if not check_microphone():
         return None
 
     try:
+
         with sr.Microphone() as source:
+
             print("\nAdjusting for noise...")
             recognizer.adjust_for_ambient_noise(source, duration=AMBIENT_NOISE_DURATION)
             recognizer.dynamic_energy_threshold = True
@@ -46,19 +50,22 @@ def listen():
 
 
             print("Listening... Speak now")
-
-
+            speak("Listening... Speak now")
+            time.sleep(0.4)
             audio = recognizer.listen(source, timeout=LISTEN_TIMEOUT, phrase_time_limit=PHRASE_TIME_LIMIT,snowboy_configuration=None)
 
     except sr.WaitTimeoutError:
         print("No speech detected")
         speak("No speech detected")
+
         return None
 
     except Exception as e:
         print("Microphone error:", e)
         speak("Microphone error")
+
         return None
+
 
     try:
         print("Recognizing...")

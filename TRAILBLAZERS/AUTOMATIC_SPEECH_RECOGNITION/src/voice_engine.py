@@ -6,34 +6,27 @@ Convert text to speech.
 =========================================
 """
 
+import threading
 import pyttsx3
-from config import VOICE_RATE, VOICE_VOLUME
 
-engine = pyttsx3.init()
+engine = pyttsx3.init("sapi5")
+engine_lock = threading.Lock()
 
+engine.setProperty("rate", 170)
+engine.setProperty("volume", 1.0)
 
-engine.setProperty("rate", VOICE_RATE)
-engine.setProperty("volume", VOICE_VOLUME)
-
-# Select Female Voice
 voices = engine.getProperty("voices")
 
-for voice in voices:
-    if "zira" in voice.name.lower():
-        engine.setProperty("voice", voice.id)
+# Force Zira
+engine.setProperty("voice", voices[1].id)
 
-        break
-else:
-    # If Zira is not found, use the second installed voice (usually female)
-    if len(voices) > 1:
-        engine.setProperty("voice", voices[1].id)
+print("Using voice:", voices[1].name)
 
 
 def speak(text):
-    try:
-        engine.stop()
-        if text:
-            engine.say(str(text))
-            engine.runAndWait()
-    except Exception as e:
-        print("Voice Error:", e)
+    if not text:
+        return
+
+    with engine_lock:
+        engine.say(str(text))
+        engine.runAndWait()

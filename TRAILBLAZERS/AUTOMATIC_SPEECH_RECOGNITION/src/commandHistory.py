@@ -6,6 +6,7 @@ Stores and displays executed command history.
 =========================================
 """
 
+import authentication
 import json
 import os
 from datetime import datetime
@@ -31,9 +32,15 @@ def save_command(command_name, status):
     except json.JSONDecodeError:
         history = []
 
+    username = authentication.current_user
+
+    if not username:
+        username = "Unknown"
+
     now = datetime.now()
 
     command = {
+        "Username": username,
         "Command Name": command_name,
         "Date": now.strftime("%d-%m-%Y"),
         "Time": now.strftime("%H:%M:%S"),
@@ -65,7 +72,7 @@ def view_history():
     print("\n========== COMMAND HISTORY ==========\n")
 
     for i, item in enumerate(history, start=1):
-
+        print(f"   Username     : {item['Username']}")
         print(f"{i}. Command Name : {item['Command Name']}")
         print(f"   Date         : {item['Date']}")
         print(f"   Time         : {item['Time']}")

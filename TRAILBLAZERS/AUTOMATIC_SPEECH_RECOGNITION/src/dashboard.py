@@ -6,12 +6,13 @@ Provide a centralized interface to monitor
 and manage the Smart Voice Assistant.
 =========================================
 """
-
+import assistant_state
 import json
 import socket
 from datetime import datetime
-
+import authentication
 from speech_recognition_module import check_microphone
+from voice_engine import speak
 
 
 # ---------------- Dashboard Heading ----------------
@@ -37,19 +38,13 @@ def load_json(file_name):
 
 
 # ---------------- Current User ----------------
+
 def show_current_user():
 
-    users = load_json("users.json")
+    current_user = authentication.current_user
 
-    current_user = "Unknown"
-
-    for user in users:
-
-        if user.get("status") == "Logged In":
-
-            current_user = user.get("username")
-
-            break
+    if not current_user:
+        current_user = "Unknown"
 
     print("\nCurrent User Information")
     print("-" * 75)
@@ -72,6 +67,11 @@ def show_last_command():
     print("\nLast Executed Command")
     print("-" * 75)
 
+    current_user = authentication.current_user
+
+    if not current_user:
+        current_user = "Unknown"
+
     if len(history) == 0:
 
         print("No command executed yet.")
@@ -80,6 +80,7 @@ def show_last_command():
 
     last = history[-1]
 
+    print(f"User    : {last.get('Username', 'Unknown')}")
     print(f"Command : {last['Command Name']}")
     print(f"Date    : {last['Date']}")
     print(f"Time    : {last['Time']}")
@@ -112,9 +113,9 @@ def show_command_history():
         return
 
     for index, command in enumerate(history, start=1):
-
         print(
             f"{index}. "
+            f"{command.get('Username', 'Unknown')} | "
             f"{command['Command Name']} | "
             f"{command['Date']} | "
             f"{command['Time']} | "
@@ -198,6 +199,28 @@ def show_notifications():
         print(f"✗ FAILED  : {last['Command Name']} execution failed.")
 
 
+# ---------------- Voice Calculator History ----------------
+def show_calculator_history():
+
+    history = load_json("calculator_history.json")
+
+    print("\nVoice Calculator History")
+    print("-" * 75)
+
+    if len(history) == 0:
+        print("No calculations performed.")
+        return
+
+    for index, item in enumerate(history, start=1):
+
+        print(
+            f"{index}. "
+            f"{item['expression']} = {item['result']} | "
+            f"{item['date']} | "
+            f"{item['time']}"
+        )
+
+
 # ---------------- Refresh Dashboard ----------------
 def refresh_dashboard():
     print("\nRefreshing dashboard...\n")
@@ -205,6 +228,8 @@ def refresh_dashboard():
 
 # ---------------- Display Dashboard ----------------
 def show_dashboard():
+
+    assistant_state.dashboard_open = True
 
     dashboard_heading()
 
@@ -216,12 +241,17 @@ def show_dashboard():
 
     show_command_history()
 
+    show_calculator_history()
+
     show_scheduled_commands()
 
     show_system_status()
 
     show_notifications()
-
+    speak("Dashboard Opened Successfully.")
     print("\n" + "=" * 75)
     print("Dashboard Updated Successfully")
     print("=" * 75)
+    return True
+
+

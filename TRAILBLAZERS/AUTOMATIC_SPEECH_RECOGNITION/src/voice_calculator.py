@@ -151,6 +151,7 @@ def convert_to_expression(text):
     except Exception:
         pass
 
+    print(repr(text))
     words = text.split()
 
     expression = []
@@ -158,14 +159,22 @@ def convert_to_expression(text):
 
     for word in words:
 
-        if word in numbermap:
+        # If the word is already a digit (5, 20, 100)
+        if word.isdigit():
+
+            if number_words:
+                expression.append(words_to_number(number_words))
+                number_words.clear()
+
+            expression.append(word)
+
+        elif word in numbermap:
 
             number_words.append(word)
 
         elif word in operatormap:
 
             if number_words:
-
                 expression.append(words_to_number(number_words))
                 number_words.clear()
 
@@ -318,6 +327,7 @@ def process_calculation(voice_text):
         return None
 
     expression = convert_to_expression(voice_text)
+    print("Voice Text:", voice_text)
 
     if expression is None:
 
@@ -373,7 +383,7 @@ def process_calculation(voice_text):
 
 # ---------- Start Voice Calculator ----------
 def start_voice_calculator():
-
+    import assistant_state
     print("\n===================================")
     print("      VOICE CALCULATOR")
     print("===================================\n")
@@ -383,7 +393,10 @@ def start_voice_calculator():
 
     while True:
 
+
+        assistant_state.assistant_busy = True
         voice_text = listen()
+        assistant_state.assistant_busy = False
 
         if voice_text is None:
 
@@ -433,35 +446,27 @@ def is_math_command(text):
 
     text = text.lower()
 
-    math_words = [
-        "plus",
-        "minus",
-        "times",
-        "multiply",
-        "multiplied",
-        "divide",
-        "divided",
-        "over",
-        "mod",
-        "modulus",
-        "power",
-        "add",
-        "subtract",
-        "into"
-    ]
+    math_words = {
+        "plus", "minus", "times", "multiply", "multiplied",
+        "divide", "divided", "over",
+        "mod", "modulus",
+        "power", "add", "subtract", "into"
+    }
 
     math_symbols = ["+", "-", "*", "/", "%", "**"]
 
     if any(symbol in text for symbol in math_symbols):
         return True
 
-    words = text.split()
+    has_number = False
+    has_operator = False
 
-    for word in words:
-        if word in numbermap:
-            return True
+    for word in text.split():
+
+        if word.isdigit() or word in numbermap:
+            has_number = True
 
         if word in math_words:
-            return True
+            has_operator = True
 
-    return False
+    return has_number and has_operator

@@ -5,7 +5,7 @@ Purpose:
 Start the Smart Voice Assistant.
 =========================================
 """
-
+import assistant_state
 import threading
 import sys
 from authentication import authentication_menu
@@ -13,6 +13,7 @@ from speech_recognition_module import listen
 from command_processing import process_command
 from voice_scheduler import auto_runner
 from voice_engine import speak
+import time
 
 
 
@@ -55,6 +56,9 @@ def main():
 
     while True:
         try:
+            if assistant_state.assistant_busy:
+                time.sleep(0.2)
+                continue
             voice_text = listen()
 
             if voice_text is None:

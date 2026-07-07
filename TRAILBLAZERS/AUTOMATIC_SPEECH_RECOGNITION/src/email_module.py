@@ -65,22 +65,22 @@ def send_email(receiver, subject, message, attachment_path=None):
 
     if not is_valid_email(sender):
         speak("Invalid sender email.")
-        save_command("Send Email", "Failed")
+
         return False
 
     if password.strip() == "":
         speak("Password cannot be empty.")
-        save_command("Send Email", "Failed")
+
         return False
 
     if not check_internet():
         speak("Internet connection is unavailable. Please check your network.")
-        save_command("Send Email", "Failed")
+
         return False
 
     if not is_valid_email(receiver):
         speak("Invalid email address")
-        save_command("Send Email", "Failed")
+
         return False
 
     msg = EmailMessage()
@@ -102,12 +102,12 @@ def send_email(receiver, subject, message, attachment_path=None):
 
         if not attachment_path.lower().endswith(allowed_extensions):
             speak("Only PDF, Word, Excel, PowerPoint and Image files are allowed.")
-            save_command("Send Email", "Failed")
+
             return False
 
         if not os.path.exists(attachment_path):
             speak("Attachment file not found.")
-            save_command("Send Email", "Failed")
+
             return False
 
         mime_type, _ = mimetypes.guess_type(attachment_path)
@@ -141,7 +141,7 @@ def send_email(receiver, subject, message, attachment_path=None):
 
         speak("Email sent successfully.")
 
-        save_command("Send Email", "Success")
+
 
         return True
 
@@ -151,7 +151,7 @@ def send_email(receiver, subject, message, attachment_path=None):
 
         speak("Failed to send email.")
 
-        save_command("Send Email", "Failed")
+
 
         return False
 
@@ -196,7 +196,11 @@ def process_email():
 
     if choice == "1":
         speak("Whom do you want to send the email to?")
+        import assistant_state
+        assistant_state.assistant_busy = True
         name = listen()
+        assistant_state.assistant_busy = False
+
 
     elif choice == "2":
         name = input("Enter Contact Name: ").strip().lower()
@@ -223,7 +227,11 @@ def process_email():
 
     if choice == "1":
         speak("Speak the subject.")
+        import assistant_state
+        assistant_state.assistant_busy = True
         subject = listen()
+        assistant_state.assistant_busy = False
+
 
     elif choice == "2":
         subject = input("Enter Subject: ").strip()
@@ -244,7 +252,11 @@ def process_email():
 
     if choice == "1":
         speak("Speak the message.")
+        import assistant_state
+        assistant_state.assistant_busy = True
         message = listen()
+        assistant_state.assistant_busy = False
+
 
     elif choice == "2":
         message = input("Enter Message: ").strip()
