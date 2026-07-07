@@ -37,7 +37,10 @@ for folder in Folders:
 
 # ---------------- JSON Functions ----------------
 
+
 def load_data():
+
+
     if os.path.exists(json_file):
         with open(json_file, "r") as file:
             return json.load(file)
@@ -201,11 +204,16 @@ def delete_file(filename):
             category = item["category"]
             folder_path = os.path.join(main_dir, category)
             file_path = os.path.join(folder_path, filename)
+            
+            print("File path:", file_path)
+            print("Exists:", os.path.exists(file_path))
 
             if os.path.exists(file_path):
-                os.remove(file_path)
+               from recycle import movetobin
+               movetobin(file_path,filename)
+               print("Moved to Recycle Bin")
             else:
-             print("Physical file not found.")
+               print("Physical file not found.")
             # Remove record from JSON
             data.remove(item)
             save_data(data)

@@ -1,20 +1,20 @@
+
 from login import login_menu
 from reply_ai_voice import  monitor_inbox
 import threading
 from email_management import email_management_menu
-from send_email import process_emails
 from email_tracking import tracking_menu
 from spam_management import spam_menu
 from reports_logs import reports_logs_menu
 from template import template_menu
 from write_ai_voice import message
 from piechart import generate_pie_chart
+from email_send_option import sending_menu
 from voice import speak  
 
 # ---------------- LOGIN ----------------
 
 sender_email, sender_password = login_menu()
-
 
 if sender_email is None:
     speak("Thank you for using the Email Automation System. Application Closed.")
@@ -48,7 +48,7 @@ while True:
 
     print("\n========== EMAIL AUTOMATION SYSTEM ==========")
     print("1. Email Management")
-    print("2. Send Pending Emails")
+    print("2. Email Sending Options")
     print("3. Email Tracking")
     print("4. Spam Management")
     print("5. Reports & Logs")
@@ -64,7 +64,7 @@ while True:
 
     elif choice == "2":
         try:
-            process_emails(sender_email, sender_password)
+            sending_menu(sender_email, sender_password)
         except Exception as e:
             print(f"Error occurred while sending emails: {e}")
 

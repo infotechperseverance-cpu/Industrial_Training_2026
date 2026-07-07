@@ -1,42 +1,28 @@
 [
     {
-        "email_id": 1,
         "recipient_email": "sapkebhoomi@gmail.com",
         "subject": "meeting reminder",
         "template_name": "meeting",
         "message": "hello everyone",
+        "attachments": [
+            "attachments/welcome.pdf"
+        ],
         "schedule_date": "2026-07-04",
         "schedule_time": "11:28 AM",
-        "status": "completed"
+        "status": "completed",
+        "email_id": "1"
     },
     {
-        "email_id": 2,
         "recipient_email": "sapkebhoomi28@gmail.com",
         "subject": "meeting reminder",
         "template_name": "meeting_invitation",
         "message": "hello",
+        "attachments": [
+            "attachments/EMAIL AUTOMATION-1.pptx.pdf"
+        ],
         "schedule_date": "2026-07-05",
         "schedule_time": "11:28 AM",
-        "status": "completed"
-    },
-    {
-        "email_id": 3,
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "project",
-        "template_name": "project_update",
-        "message": "please join the meeting at 5:00 p.m.",
-        "schedule_date": "2026-07-05",
-        "schedule_time": "12:35 PM",
-        "status": "completed"
-    },
-    {
-        "email_id": 4,
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "offer",
-        "template_name": "",
-        "message": "hello guys we have to meet today at the 7:00",
-        "schedule_date": "2026-07-06",
-        "schedule_time": "12:13 PM",
-        "status": "completed"
+        "status": "completed",
+        "email_id": "2"
     }
 ]

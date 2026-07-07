@@ -2,45 +2,11 @@ import json
 import re
 from template import view_template, load_json, save_json,create_template, delete_template, update_template
 from voice import speak
+from email_utils import load_email_records, save_email_records, assign_email_ids, fix_duplicate_email_ids
+from attachments import attachment_menu
 
 FILE_NAME = "email_records.json"
-
-
-# ---------------- Load Email Records ----------------
-
-def load_email_records():
-    try:
-        print("Opening:", FILE_NAME)
-
-        with open(FILE_NAME, "r") as file:
-            records = json.load(file)
-
-       # print("Records Loaded:", records)
-
-        return records
-
-    except FileNotFoundError:
-        print("File Not Found!")
-        return []
-
-    except json.JSONDecodeError:
-        print("Invalid JSON!")
-        return []
-
-
-# ---------------- Save Email Records ----------------
-
-def save_email_records(records):
-    with open(FILE_NAME, "w") as file:
-        json.dump(records, file, indent=4)
-
-
-# ---------------- Validate Email ----------------
-
-def validate_email(email):
-    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    return re.match(pattern, email) is not None
-
+      
 
 # ---------------- View Email Records ----------------
 
@@ -59,6 +25,7 @@ def view_email_records():
         print(f"Subject         : {email['subject']}")
         print(f"Template Name   : {email['template_name']}")
         print(f"Message         : {email['message']}")
+        print(f"Attachments     : {', '.join(email.get('attachments', [])) or 'None'}")
         print(f"Schedule Date   : {email['schedule_date']}")
         print(f"Schedule Time   : {email['schedule_time']}")
         print(f"Status          : {email['status']}")
@@ -99,13 +66,16 @@ def delete_email_record(email_id):
 # ---------------- Email Management ----------------
 
 def email_management_menu():
+    assign_email_ids()
+    fix_duplicate_email_ids()
     speak("----- EMAIL MANAGEMENT -----")
     while True:
         
         print("1. View Email Records")
         print("2. Update Email Status")
         print("3. Delete Email Record")
-        print("4. Back")
+        print("4. Attachment Management")
+        print("5. Back to Main Menu")
 
         ch = input("Enter Choice: ")
 
@@ -122,6 +92,9 @@ def email_management_menu():
             delete_email_record(email_id)
 
         elif ch == "4":
+            attachment_menu()
+
+        elif ch == "5":
             break
 
         else:
