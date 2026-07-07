@@ -9,11 +9,11 @@ from plyer import notification
 from email.message import EmailMessage
 from datetime import datetime
 from email_tracking import load_email_history, save_email_history
-from email_management import load_email_records, save_email_records,validate_email,update_email_status
+from email_utils import load_email_records, save_email_records,validate_email
 from reports_logs import save_log
 from template import load_json
 from voice import speak
-
+import mimetypes
 # EMAIL_RECORDS_FILE = "email_records.json"
 # EMAIL_HISTORY_FILE = "email_history.json"
 USER_FILE = "user_data.csv"
@@ -37,7 +37,7 @@ def send_email(sender_email,
                recipient_email,
                subject,
                message,
-               attachment):
+               attachments):
 
     try:
         
@@ -50,16 +50,30 @@ def send_email(sender_email,
 
         mail.set_content(message)
 
-        if attachment != "" and os.path.isfile(attachment):
+        if attachments:
 
-            with open(attachment, "rb") as file:
+            for attachment in attachments:
 
-                mail.add_attachment(
-                    file.read(),
-                    maintype="application",
-                    subtype="octet-stream",
-                    filename=os.path.basename(attachment)
-                )
+                if os.path.isfile(attachment):
+
+                    mime_type, _ = mimetypes.guess_type(attachment)
+
+                    if mime_type:
+                        maintype, subtype = mime_type.split("/")
+                    else:
+                        maintype, subtype = ("application", "octet-stream")
+
+                    with open(attachment, "rb") as file:
+
+                        mail.add_attachment(
+                            file.read(),
+                            maintype=maintype,
+                            subtype=subtype,
+                            filename=os.path.basename(attachment)
+                        )
+
+                else:
+                    print(f"Attachment not found : {attachment}")
         # print("Connecting to SMTP")
 
         smtp = smtplib.SMTP("smtp.gmail.com", 587)
@@ -87,6 +101,9 @@ def process_emails(sender_email, sender_password):
     speak("\n----- Pending Email Send -----")
 
     records = load_email_records()
+
+    if isinstance(records, dict):
+         records = [records]
 
     if sender_email is None:
         print("Login required.")
@@ -143,15 +160,20 @@ def process_single_email(record, sender_email, sender_password, records):
         record["recipient_email"],
         record["subject"],
         message,
-        record.get("attachment", "")
+        record.get("attachments", [])
     )
 
     if success:
         record["status"] = "completed"
         record["message"] = message          # Save the actual message used
         save_email_records(records)
+
         save_to_history(record)
-        save_log(record["email_id"], "Email Sent")
+
+        attachment_count = len(record.get("attachments", []))
+        action = f"Email Sent ({attachment_count} attachment(s))"
+        save_log(record["email_id"], action)
+
         print_email_report(record, "SENT SUCCESSFULLY ✅", "Email delivered and stored in history")
         show_success_notification()
 
@@ -185,6 +207,7 @@ def save_to_history(record):
         "subject": record["subject"],
         "template_name": record["template_name"],
         "message": record["message"],
+        "attachments": record.get("attachments", []),
         "schedule_date": record["schedule_date"],
         "schedule_time": record["schedule_time"],
         "status": "Completed",
@@ -200,11 +223,18 @@ def print_email_report(record, status, message):
     print(" EMAIL AUTOMATION SYSTEM REPORT")
     print("========================================")
 
-    print(f" Email ID      : {record['email_id']}")
-    print(f" Recipient     : {record['recipient_email']}")
+    print(f" Email ID        : {record['email_id']}")
+    print(f" Recipient       : {record['recipient_email']}")
     print(f" Subject         : {record['subject']}")
     print(f" Status          : {status}")
     print(f" Message         : {message}")
+    attachments = record.get("attachments", [])
+    if attachments:
+        print(" Attachments    :")
+        for file in attachments:
+            print(f"   - {file}")
+    else:
+        print(" Attachments    : None")
     print("========================================\n")
 
 def show_success_notification():

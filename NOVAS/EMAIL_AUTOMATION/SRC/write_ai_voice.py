@@ -1,6 +1,6 @@
 import json
 import speech_recognition as sr
-from email_management import validate_email
+from email_utils import validate_email
 from voice import speak
 
 FILE_NAME = "email_records.json"

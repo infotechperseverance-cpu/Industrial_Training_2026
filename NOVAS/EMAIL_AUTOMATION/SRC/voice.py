@@ -1,14 +1,26 @@
 from gtts import gTTS
 from playsound import playsound
 import os
+import uuid
+import threading
+
+voice_lock = threading.Lock()
 
 def speak(text):
     print(text)
 
-    tts = gTTS(text=text, lang="en")
-    filename = "voice.mp3"
+    with voice_lock:
 
-    tts.save(filename)
-    playsound(filename)
+        filename = f"voice_{uuid.uuid4().hex}.mp3"
 
-    os.remove(filename)
+        try:
+            tts = gTTS(text=text, lang="en")
+            tts.save(filename)
+            playsound(filename)
+
+        finally:
+            if os.path.exists(filename):
+                try:
+                    os.remove(filename)
+                except PermissionError:
+                    pass
