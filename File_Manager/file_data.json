@@ -1,0 +1,12 @@
+[
+    {
+        "filename": "test.txt",
+        "category": "Others",
+        "password": null
+    },
+    {
+        "filename": "abc.pdf",
+        "category": "Documents/PDF",
+        "password": null
+    }
+]

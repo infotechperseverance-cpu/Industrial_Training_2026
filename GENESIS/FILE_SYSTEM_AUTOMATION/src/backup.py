@@ -336,25 +336,31 @@ def search_backup_record():
 # ---------------- Delete Backup History ----------------
 
 def delete_backup_history():
-
     logs = load()
-
     if not logs["backups"]:
         print("Backup History Already Empty.")
         return
 
     choice = input("Delete Complete Backup History? (Y/N): ").upper()
-
     if choice == "Y":
+        with open(LOG_FILE, "w") as file:
+            json.dump({"backups": []}, file, indent=4)
 
-        logs["backups"] = []
+        project_folder = os.path.dirname(os.path.abspath(__file__))
 
-        save(logs)
+        backup_folder = os.path.join(project_folder, "backup")
+        
+        if os.path.exists(backup_folder):
+            for filename in os.listdir(backup_folder):
+                file_path = os.path.join(backup_folder, filename)
+                try:
+                    if os.path.isfile(file_path) or os.path.islink(file_path):
+                        os.unlink(file_path)
+                except Exception as e:
+                    print(f"Error deleting file {filename}: {e}")
 
-        print("Backup History Deleted Successfully.")
-
+        print("Backup History and Folder Deleted Successfully.")
     else:
-
         print("Operation Cancelled.")
 
 

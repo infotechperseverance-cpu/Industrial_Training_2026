@@ -1,0 +1,18 @@
+[
+    {
+        "action": "Create",
+        "file": "test.txt"
+    },
+    {
+        "action": "Rename",
+        "file": "test.txt -> retest.txt"
+    },
+    {
+        "action": "Create",
+        "file": "test.txt"
+    },
+    {
+        "action": "Create",
+        "file": "abc.pdf"
+    }
+]
