@@ -2,7 +2,7 @@ import pwinput
 import os
 import json
 from pathlib import Path
-from file_history import add_history
+from history import add_history
 
 
 main_dir = "File_Manager"
