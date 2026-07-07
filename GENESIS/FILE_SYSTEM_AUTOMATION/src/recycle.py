@@ -7,19 +7,22 @@ main_dir = "File_Manager"
 RECYCLE_FOLDER = os.path.join(main_dir, "Recycle_Bin")
 os.makedirs(RECYCLE_FOLDER, exist_ok=True)
 
-FILE = os.path.join(main_dir, "recycle_bin.json")
+recycle_bin_json = os.path.join(main_dir, "recycle_bin.json")
 
-if not os.path.exists(FILE):
-    with open(FILE, "w") as f:
+
+if not os.path.exists(recycle_bin_json):
+    with open(recycle_bin_json, "w") as f:
         json.dump({"recycle_bin": []}, f, indent=4)
 
-def load_data():
-    with open(FILE, "r") as f:
-        return json.load(f)
 
-def save_data(data):
-    with open(FILE, "w") as f:
-        json.dump(data, f, indent=4)
+def load_recycle_bin():
+    with open(recycle_bin_json, "r") as file:
+        return json.load(file)
+
+
+def save_recycle_bin(data):
+    with open(recycle_bin_json, "w") as file:
+        json.dump(data, file, indent=4)
 
 def movetobin(file_path, filename):
 
@@ -31,7 +34,7 @@ def movetobin(file_path, filename):
 
     shutil.move(file_path, destination)
 
-    data = load_data()
+    data = load_recycle_bin()
 
     data["recycle_bin"].append({
 
@@ -40,40 +43,59 @@ def movetobin(file_path, filename):
 
     })
 
-    save_data(data)
-
+    save_recycle_bin(data)
     print("File moved to Recycle Bin.")
 
 def restore_file(filename):
-
-    data = load_data()
-
+    from Classify_file import load_data, save_data
+    
+    data = load_recycle_bin()
     for item in data["recycle_bin"]:
 
         if item["filename"] == filename:
+           
+            source = os.path.join(RECYCLE_FOLDER, filename)
+            print("Source:", source)
+            print("Source exists:", os.path.exists(source))
+            destination = item["original_path"]
 
-            source = os.path.join(
-                RECYCLE_FOLDER,
-                filename
-            )
+            if not os.path.exists(source):
+                print("File not found in Recycle Bin.")
+                return
 
-            shutil.move(
-                source,
-                item["original_path"]
-            )
+            # Create the destination folder if it doesn't exist
+            os.makedirs(os.path.dirname(destination), exist_ok=True)
 
-            data["recycle_bin"].remove(item)
+            try:
+                shutil.move(source, destination)
+                active_data = load_data()
+                print(type(active_data))
+                print(active_data)
 
-            save_data(data)
+                active_data = load_data()
 
-            print("File restored successfully.")
+                active_data = load_data()
+
+                active_data.append({
+                "filename": filename,
+                "category": os.path.relpath(os.path.dirname(destination), main_dir),
+                "password": None
+                })
+
+                save_data(active_data)
+                data["recycle_bin"].remove(item)
+                save_recycle_bin(data)
+
+                print("File restored successfully.")
+            except Exception as e:
+                print("Error restoring file:", e)
 
             return
 
-    print("File not found.")
+    print("File not found in Recycle Bin.")
 
 def show_recycle_bin():
-    data = load_data()
+    data = load_recycle_bin()
     if not data["recycle_bin"]:
 
         print("\nRecycle Bin is Empty.")
