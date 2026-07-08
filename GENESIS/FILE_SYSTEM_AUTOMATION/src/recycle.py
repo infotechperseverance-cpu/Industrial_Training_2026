@@ -2,7 +2,8 @@ import os
 import json
 import shutil
 
-main_dir = "File_Manager"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+main_dir = os.path.join(BASE_DIR, "File_Manager")
 
 RECYCLE_FOLDER = os.path.join(main_dir, "Recycle_Bin")
 os.makedirs(RECYCLE_FOLDER, exist_ok=True)
@@ -16,8 +17,11 @@ if not os.path.exists(recycle_bin_json):
 
 
 def load_recycle_bin():
-    with open(recycle_bin_json, "r") as file:
-        return json.load(file)
+    try:
+        with open(recycle_bin_json, "r") as file:
+            return json.load(file)
+    except json.JSONDecodeError:
+        return {"recycle_bin": []}
 
 
 def save_recycle_bin(data):
@@ -37,10 +41,8 @@ def movetobin(file_path, filename):
     data = load_recycle_bin()
 
     data["recycle_bin"].append({
-
         "filename": filename,
         "original_path": file_path
-
     })
 
     save_recycle_bin(data)
@@ -72,14 +74,10 @@ def restore_file(filename):
                 print(type(active_data))
                 print(active_data)
 
-                active_data = load_data()
-
-                active_data = load_data()
-
                 active_data.append({
-                "filename": filename,
-                "category": os.path.relpath(os.path.dirname(destination), main_dir),
-                "password": None
+                    "filename": filename,
+                    "category": os.path.relpath(os.path.dirname(destination), main_dir).replace("\\", "/"),
+                    "password": ""
                 })
 
                 save_data(active_data)
@@ -97,17 +95,12 @@ def restore_file(filename):
 def show_recycle_bin():
     data = load_recycle_bin()
     if not data["recycle_bin"]:
-
         print("\nRecycle Bin is Empty.")
-
         return
 
     print("\n========== RECYCLE BIN ==========")
 
     for i, item in enumerate(data["recycle_bin"], start=1):
-
         print("--------------------------------")
         print("File :", item["filename"])
         print("Path :", item["original_path"])
-
- 
