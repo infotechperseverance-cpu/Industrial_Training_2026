@@ -84,8 +84,8 @@ def view_template():
 def template_menu():
 
     while True:
-        speak("Template Management Menu")
-        print("Template Management Menu")
+        speak("------------ Template Management ----------------")
+        
         print("\n1. Create Template")
         print("2. Update Template")
         print("3. Delete Template")

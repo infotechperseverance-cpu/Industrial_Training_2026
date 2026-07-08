@@ -183,10 +183,10 @@ def view_logs():
 
 def reports_logs_menu():
 
-    speak("\n---------- REPORTS & LOGS -----------")
-
     while True:
 
+        speak("\n---------- REPORTS & LOGS -----------")
+        print("\nREPORTS & LOGS")
         print("1. View Report Summary")
         print("2. Export Report to CSV")
         print("3. View Logs")

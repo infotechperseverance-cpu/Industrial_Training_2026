@@ -96,7 +96,7 @@ def attachment_menu():
 
     while True:
 
-        print("\n===== ATTACHMENT MANAGEMENT =====")
+        print("\n===== Attachment Management =====")
         print("1. View Attachments")
         print("2. Verify Attachments")
         print("3. Remove Missing Attachments")

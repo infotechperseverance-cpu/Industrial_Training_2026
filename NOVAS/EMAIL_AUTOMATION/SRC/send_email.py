@@ -99,6 +99,7 @@ def send_email(sender_email,
 def process_emails(sender_email, sender_password):
 
     speak("\n----- Pending Email Send -----")
+    print("\n----- Pending Email Send -----")
 
     records = load_email_records()
 

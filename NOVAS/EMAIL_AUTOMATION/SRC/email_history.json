@@ -1,379 +1,152 @@
 [
     {
-        "email_id": "2",
-        "recipient_email": "sapkebhoomi@gmail.com",
-        "subject": "meeting reminder",
-        "template_name": "meeting_invitation",
-        "message": "",
-        "schedule_date": "2026-07-04",
-        "schedule_time": "11:28 AM",
-        "status": "Completed",
-        "sent_date": "2026-07-04",
-        "sent_time": "16:14:53"
-    },
-    {
-        "email_id": "2",
-        "recipient_email": "sapkebhoomi@gmail.com",
-        "subject": "meeting reminder",
-        "template_name": "meeting_invitation",
-        "message": "Vaishnavi",
-        "schedule_date": "2026-07-04",
-        "schedule_time": "11:28 AM",
-        "status": "Completed",
-        "sent_date": "2026-07-05",
-        "sent_time": "12:21:35"
-    },
-    {
-        "email_id": "2",
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "meeting reminder",
-        "template_name": "meeting_invitation",
-        "message": "",
-        "schedule_date": "2026-07-05",
-        "schedule_time": "11:28 AM",
-        "status": "Completed",
-        "sent_date": "2026-07-05",
-        "sent_time": "12:25:16"
-    },
-    {
-        "email_id": "2",
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "meeting reminder",
-        "template_name": "meeting_invitation",
-        "message": "",
-        "schedule_date": "2026-07-05",
-        "schedule_time": "11:28 AM",
-        "status": "Completed",
-        "sent_date": "2026-07-05",
-        "sent_time": "12:27:15"
-    },
-    {
-        "email_id": "2",
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "meeting reminder",
-        "template_name": "meeting_invitation",
-        "message": "",
-        "schedule_date": "2026-07-05",
-        "schedule_time": "11:28 AM",
-        "status": "Completed",
-        "sent_date": "2026-07-05",
-        "sent_time": "12:39:33"
-    },
-    {
-        "email_id": "2",
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "meeting reminder",
-        "template_name": "meeting_invitation",
-        "message": "",
-        "schedule_date": "2026-07-05",
-        "schedule_time": "11:28 AM",
-        "status": "Completed",
-        "sent_date": "2026-07-05",
-        "sent_time": "12:53:16"
-    },
-    {
-        "email_id": 3,
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "project",
-        "template_name": "project_update",
-        "message": "hello submit your project",
-        "schedule_date": "2026-07-05",
-        "schedule_time": "12:35 PM",
-        "status": "Completed",
-        "sent_date": "2026-07-05",
-        "sent_time": "12:53:20"
-    },
-    {
-        "email_id": 3,
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "project",
-        "template_name": "project_update",
-        "message": "please join the meeting at 5:00 p.m.",
-        "schedule_date": "2026-07-05",
-        "schedule_time": "12:35 PM",
-        "status": "Completed",
-        "sent_date": "2026-07-05",
-        "sent_time": "13:12:46"
-    },
-    {
-        "email_id": 3,
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "offer",
-        "template_name": "",
-        "message": "please consider our offer.",
-        "schedule_date": "2026-07-05",
-        "schedule_time": "12:35 PM",
-        "status": "Completed",
-        "sent_date": "2026-07-05",
-        "sent_time": "13:12:51"
-    },
-    {
-        "email_id": 3,
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "offer",
-        "template_name": "",
-        "message": "please consider our offer.",
-        "schedule_date": "2026-07-05",
-        "schedule_time": "12:35 PM",
-        "status": "Completed",
-        "sent_date": "2026-07-05",
-        "sent_time": "13:18:40"
-    },
-    {
-        "email_id": "1",
-        "recipient_email": "sapkebhoomi@gmail.com",
-        "subject": "meeting reminder",
-        "template_name": "meeting",
-        "message": "hello everyone",
-        "schedule_date": "2026-07-04",
-        "schedule_time": "11:28 AM",
-        "status": "Completed",
-        "sent_date": "2026-07-05",
-        "sent_time": "15:03:12"
-    },
-    {
-        "email_id": "2",
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "meeting reminder",
-        "template_name": "meeting_invitation",
-        "message": "hello",
-        "schedule_date": "2026-07-05",
-        "schedule_time": "11:28 AM",
-        "status": "Completed",
-        "sent_date": "2026-07-05",
-        "sent_time": "15:03:18"
-    },
-    {
-        "email_id": 3,
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "offer",
-        "template_name": "",
-        "message": "please consider our offer.",
-        "schedule_date": "2026-07-05",
-        "schedule_time": "12:35 PM",
-        "status": "Completed",
-        "sent_date": "2026-07-05",
-        "sent_time": "15:03:23"
-    },
-    {
-        "email_id": "2",
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "meeting reminder",
-        "template_name": "meeting_invitation",
-        "message": "hello",
-        "schedule_date": "2026-07-05",
-        "schedule_time": "11:28 AM",
-        "status": "Completed",
-        "sent_date": "2026-07-05",
-        "sent_time": "15:10:35"
-    },
-    {
-        "email_id": 3,
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "project",
-        "template_name": "project_update",
-        "message": "please join the meeting at 5:00 p.m.",
-        "schedule_date": "2026-07-05",
-        "schedule_time": "12:35 PM",
-        "status": "Completed",
-        "sent_date": "2026-07-05",
-        "sent_time": "15:10:40"
-    },
-    {
-        "email_id": 3,
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "offer",
-        "template_name": "warning",
-        "message": "",
-        "schedule_date": "2026-07-05",
-        "schedule_time": "05:35 PM",
-        "status": "Completed",
-        "sent_date": "2026-07-05",
-        "sent_time": "19:01:27"
-    },
-    {
-        "email_id": 3,
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "offer",
-        "template_name": "",
-        "message": "please consider our offer.",
-        "schedule_date": "2026-07-05",
-        "schedule_time": "12:35 PM",
-        "status": "Completed",
-        "sent_date": "2026-07-05",
-        "sent_time": "19:08:04"
-    },
-    {
-        "email_id": 3,
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "offer",
-        "template_name": "warning",
-        "message": "",
-        "schedule_date": "2026-07-05",
-        "schedule_time": "05:35 PM",
-        "status": "Completed",
-        "sent_date": "2026-07-05",
-        "sent_time": "19:08:09"
-    },
-    {
-        "email_id": 3,
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "offer",
-        "template_name": "warning",
-        "message": "",
-        "schedule_date": "2026-07-05",
-        "schedule_time": "05:35 PM",
-        "status": "Completed",
-        "sent_date": "2026-07-05",
-        "sent_time": "19:21:20"
-    },
-    {
-        "email_id": "2",
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "meeting reminder",
-        "template_name": "meeting_invitation",
-        "message": "hello",
-        "schedule_date": "2026-07-05",
-        "schedule_time": "11:28 AM",
-        "status": "Completed",
-        "sent_date": "2026-07-05",
-        "sent_time": "19:45:25"
-    },
-    {
-        "email_id": 3,
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "offer",
-        "template_name": "",
-        "message": "please consider our offer.",
-        "schedule_date": "2026-07-05",
-        "schedule_time": "12:35 PM",
-        "status": "Completed",
-        "sent_date": "2026-07-05",
-        "sent_time": "19:45:29"
-    },
-    {
-        "email_id": 3,
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "offer",
-        "template_name": "warning",
-        "message": "please complete your verification",
-        "schedule_date": "2026-07-05",
-        "schedule_time": "05:35 PM",
-        "status": "Completed",
-        "sent_date": "2026-07-05",
-        "sent_time": "19:45:34"
-    },
-    {
-        "email_id": 5,
+        "email_id": "4",
         "recipient_email": "vaishnaviteli210@gmail.com",
-        "subject": "offer",
-        "template_name": "warning",
-        "message": "hello I have a offer for you on meesho",
-        "schedule_date": "2026-07-06",
-        "schedule_time": "09:35 AM",
+        "subject": "LOTTERY",
+        "template_name": "Lottery",
+        "message": "hello, read following pdf... you won the lottery ...",
+        "attachments": [
+            "attachments//Fake_Lottery_Email_Example.pdf"
+        ],
+        "schedule_date": "2026-07-08",
+        "schedule_time": "11:28 AM",
         "status": "Completed",
-        "sent_date": "2026-07-06",
-        "sent_time": "12:13:13"
+        "sent_date": "2026-07-08",
+        "sent_time": "19:57:56"
     },
     {
-        "email_id": 4,
+        "email_id": "4",
         "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "offer",
-        "template_name": "",
-        "message": "hello guys we have to meet today at the 7:00",
-        "schedule_date": "2026-07-06",
-        "schedule_time": "12:13 PM",
-        "status": "Completed",
-        "sent_date": "2026-07-06",
-        "sent_time": "12:14:48"
-    },
-    {
-        "email_id": "1",
-        "recipient_email": "sapkebhoomi@gmail.com",
-        "subject": "meeting reminder",
-        "template_name": "meeting",
-        "message": "hello everyone",
+        "subject": "LOTTERY",
+        "template_name": "Lottery",
+        "message": "hello, read following pdf... you won the lottery ...",
         "attachments": [
-            "welcome.pdf"
+            "attachments//Fake_Lottery_Email_Example.pdf"
         ],
-        "schedule_date": "2026-07-04",
+        "schedule_date": "2026-07-08",
         "schedule_time": "11:28 AM",
         "status": "Completed",
-        "sent_date": "2026-07-06",
-        "sent_time": "20:20:38"
+        "sent_date": "2026-07-08",
+        "sent_time": "20:09:11"
     },
     {
-        "email_id": "1",
-        "recipient_email": "sapkebhoomi@gmail.com",
-        "subject": "meeting reminder",
-        "template_name": "meeting",
-        "message": "hello everyone",
+        "email_id": "4",
+        "recipient_email": "sapkebhoomi28@gmail.com",
+        "subject": "LOTTERY",
+        "template_name": "Lottery",
+        "message": "hello, read following pdf... you won the lottery ...",
         "attachments": [
-            "attachments/welcome.pdf"
+            "attachments//Fake_Lottery_Email_Example.pdf"
         ],
-        "schedule_date": "2026-07-04",
+        "schedule_date": "2026-07-08",
         "schedule_time": "11:28 AM",
         "status": "Completed",
-        "sent_date": "2026-07-06",
-        "sent_time": "20:27:37"
+        "sent_date": "2026-07-08",
+        "sent_time": "21:33:44"
+    },
+    {
+        "email_id": "3",
+        "recipient_email": "vaishnaviteli210@gmail.com",
+        "subject": "Email Automation",
+        "template_name": "Program",
+        "message": "hello everyone, read following pdf",
+        "attachments": [
+            "attachments//EMAIL AUTOMATION-1.pptx.pdf"
+        ],
+        "schedule_date": "2026-07-08",
+        "schedule_time": "11:28 AM",
+        "status": "Completed",
+        "sent_date": "2026-07-08",
+        "sent_time": "22:36:35"
     },
     {
         "email_id": "2",
-        "recipient_email": "sapkebhoomi28@gmail.com",
+        "recipient_email": "vaishnaviteli210@gmail.com",
         "subject": "meeting reminder",
         "template_name": "meeting_invitation",
-        "message": "hello",
+        "message": "You are invited to a meeting.",
         "attachments": [
             "attachments/EMAIL AUTOMATION-1.pptx.pdf"
         ],
-        "schedule_date": "2026-07-05",
+        "schedule_date": "2026-07-08",
         "schedule_time": "11:28 AM",
         "status": "Completed",
-        "sent_date": "2026-07-07",
-        "sent_time": "11:23:46"
+        "sent_date": "2026-07-08",
+        "sent_time": "22:40:15"
     },
     {
-        "email_id": "Bulk-vaishnaviteli210@gmail.com",
+        "email_id": "2",
         "recipient_email": "vaishnaviteli210@gmail.com",
-        "subject": "hello",
-        "template_name": "",
-        "message": "testing",
-        "attachments": "",
+        "subject": "meeting reminder",
+        "template_name": "meeting_invitation",
+        "message": "You are invited to a meeting.",
+        "attachments": [
+            "attachments/EMAIL AUTOMATION-1.pptx.pdf"
+        ],
+        "schedule_date": "2026-07-08",
+        "schedule_time": "11:28 AM",
         "status": "Completed",
-        "sent_date": "2026-07-07",
-        "sent_time": "12:33:25"
+        "sent_date": "2026-07-08",
+        "sent_time": "22:41:35"
     },
     {
-        "email_id": "Bulk-sapkebhoomi28@gmail.com",
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "hello",
-        "template_name": "",
-        "message": "testing",
-        "attachments": "",
-        "status": "Completed",
-        "sent_date": "2026-07-07",
-        "sent_time": "12:33:29"
-    },
-    {
-        "email_id": "Bulk-vaishnaviteli210@gmail.com",
+        "email_id": "2",
         "recipient_email": "vaishnaviteli210@gmail.com",
-        "subject": "testing",
-        "template_name": "",
-        "message": "hii",
-        "attachments": "",
+        "subject": "meeting reminder",
+        "template_name": "meeting_invitation",
+        "message": "You are invited to a meeting.",
+        "attachments": [
+            "attachments/EMAIL AUTOMATION-1.pptx.pdf"
+        ],
+        "schedule_date": "2026-07-08",
+        "schedule_time": "11:28 AM",
         "status": "Completed",
-        "sent_date": "2026-07-07",
-        "sent_time": "12:39:46"
+        "sent_date": "2026-07-08",
+        "sent_time": "22:43:25"
     },
     {
-        "email_id": "Bulk-sapkebhoomi28@gmail.com",
-        "recipient_email": "sapkebhoomi28@gmail.com",
-        "subject": "testing",
-        "template_name": "",
-        "message": "hii",
-        "attachments": "",
+        "email_id": "2",
+        "recipient_email": "vaishnaviteli210@gmail.com",
+        "subject": "meeting reminder",
+        "template_name": "meeting_invitation",
+        "message": "You are invited to a meeting.",
+        "attachments": [
+            "attachments/EMAIL AUTOMATION-1.pptx.pdf"
+        ],
+        "schedule_date": "2026-07-08",
+        "schedule_time": "11:28 AM",
         "status": "Completed",
-        "sent_date": "2026-07-07",
-        "sent_time": "12:39:50"
+        "sent_date": "2026-07-08",
+        "sent_time": "22:47:52"
+    },
+    {
+        "email_id": "4",
+        "recipient_email": "vaishnaviteli210@gmail.com",
+        "subject": "LOTTERY",
+        "template_name": "Lottery",
+        "message": "hello, read following pdf... you won the lottery ...",
+        "attachments": [
+            "attachments//Fake_Lottery_Email_Example.pdf"
+        ],
+        "schedule_date": "2026-07-08",
+        "schedule_time": "11:28 AM",
+        "status": "Completed",
+        "sent_date": "2026-07-08",
+        "sent_time": "22:49:07"
+    },
+    {
+        "email_id": "4",
+        "recipient_email": "vaishnaviteli210@gmail.com",
+        "subject": "LOTTERY",
+        "template_name": "Lottery",
+        "message": "hi everyone\nplease join meeting at 4:00 p.m.",
+        "attachments": [
+            "attachments//Fake_Lottery_Email_Example.pdf"
+        ],
+        "schedule_date": "2026-07-08",
+        "schedule_time": "11:28 AM",
+        "status": "Completed",
+        "sent_date": "2026-07-08",
+        "sent_time": "23:49:29"
     }
 ]
