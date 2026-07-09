@@ -16,6 +16,7 @@ from voice import speak
 sender_email, sender_password = login_menu()
 
 if sender_email is None:
+    print("Thank you for using the Email Automation System. Application Closed.")
     speak("Thank you for using the Email Automation System. Application Closed.")
     print("\nApplication Closed.")
     exit()

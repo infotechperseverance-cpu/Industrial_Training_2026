@@ -7,7 +7,7 @@ import threading
 voice_lock = threading.Lock()
 
 def speak(text):
-    print(text)
+    
 
     with voice_lock:
 

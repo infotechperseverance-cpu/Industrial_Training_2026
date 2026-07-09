@@ -55,6 +55,7 @@ def assign_email_ids():
     if updated:
         save_email_records(records)
         speak("Email IDs were generated automatically.")
+        print("Email IDs were generated automatically.")
         
 
 #---------------- Fix Duplicate Email IDs ----------------
@@ -87,4 +88,5 @@ def fix_duplicate_email_ids():
     if updated:
         save_email_records(records)
         speak("Duplicate or missing Email IDs were fixed automatically.")
+        print("Duplicate or missing Email IDs were fixed automatically.")
       

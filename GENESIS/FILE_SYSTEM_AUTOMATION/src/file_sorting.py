@@ -7,9 +7,16 @@ def load_files(sort_by="name_az"):
     records = load_data()
     files = []
 
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
     for item in records:
+        if not os.path.isabs(main_dir):
+            current_main_dir = os.path.join(BASE_DIR, "File_Manager")
+        else:
+            current_main_dir = main_dir
+
         full_path = os.path.join(
-            main_dir,
+            current_main_dir,
             item["category"],
             item["filename"]
         )

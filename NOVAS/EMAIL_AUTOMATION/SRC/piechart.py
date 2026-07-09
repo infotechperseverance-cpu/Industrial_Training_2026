@@ -16,8 +16,9 @@ def load_email_records():
 
 def generate_pie_chart():
 
+    print("-----------Pie Chart---------") 
     speak("-----------Pie Chart---------")
-    
+
     emails = load_email_records()
 
     if len(emails) == 0:

@@ -133,10 +133,13 @@ def read_email(mail, email_id):
 
 def announce_email(sender, subject, message, attachments):
 
+    print("\nAttention! You have received a new email.")
+
     text = (
-        "Attention! You have received a new email. "
+        "\nAttention! You have received a new email. "
         "This is your Email Automation Assistant. "
     )
+
 
     if sender:
         text += f"The sender is {sender}. "
@@ -204,11 +207,19 @@ def monitor_inbox(sender_email, sender_password):
 
                 if detect_spam(email_data):
 
+<<<<<<< HEAD
                     speak("Warning! This email appears to be spam.")
                     announce_email(sender, subject, message, attachments)
 
                     print("\nSpam email detected.")
                     print("Email deleted automatically.")
+=======
+                    print("\nWarning! This email appears to be spam.")
+                    speak("Warning! This email appears to be spam.")
+                    announce_email(sender, subject, message, attachments)
+
+
+>>>>>>> 018ebaf610d08e0fbbc0aff136e7497522df6243
 
                     status, data = mail.copy(current_email_id, "[Gmail]/Trash")
 

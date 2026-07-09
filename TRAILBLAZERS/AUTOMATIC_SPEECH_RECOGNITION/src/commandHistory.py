@@ -62,6 +62,7 @@ def view_history():
         with open(HISTORY_FILE, "r") as file:
             history = json.load(file)
 
+        print(history)
     except json.JSONDecodeError:
         history = []
 
@@ -72,7 +73,7 @@ def view_history():
     print("\n========== COMMAND HISTORY ==========\n")
 
     for i, item in enumerate(history, start=1):
-        print(f"   Username     : {item['Username']}")
+        print(f"   Username     : {item.get('Username', 'Unknown')}")
         print(f"{i}. Command Name : {item['Command Name']}")
         print(f"   Date         : {item['Date']}")
         print(f"   Time         : {item['Time']}")

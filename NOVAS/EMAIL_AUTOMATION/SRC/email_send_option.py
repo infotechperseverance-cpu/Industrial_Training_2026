@@ -49,10 +49,18 @@ def single_email_send(sender_email, sender_password):
                 return
 
             else:
+<<<<<<< HEAD
+=======
+                print("This email is not in pending status.")
+>>>>>>> 018ebaf610d08e0fbbc0aff136e7497522df6243
                 speak("This email is not in pending status.")
                 return
 
       if not email_found:
+<<<<<<< HEAD
+=======
+        print("Invalid Email ID. Please try again.")
+>>>>>>> 018ebaf610d08e0fbbc0aff136e7497522df6243
         speak("Invalid Email ID. Please try again.")
         continue
 
@@ -64,6 +72,7 @@ def multiple_email_send(sender_email, sender_password):
    if sender_email is None:
         print("Login required.")
         return
+   print("Send All Email Its pending")
    speak("Send All Email Its pending")
    process_emails(sender_email, sender_password)
 
@@ -75,9 +84,11 @@ def Bulk_email_send(sender_email, sender_password):
         return
    
   if not os.path.exists(BULK_FILE):
+      print("File Does Not Exist")
       speak("File Does Not Exist")
       return
   if os.path.getsize(BULK_FILE) == 0:
+        print("File is empty")
         speak("File is empty")
         return
    
@@ -127,6 +138,7 @@ def Bulk_email_send(sender_email, sender_password):
         if success:
             save_bulk_email(email, subject, message, attachments)
   speak("All emails sent successfully.")
+  print("All emails sent successfully.")
 
 
 def cbulk_email_send(sender_email, sender_password):
@@ -136,9 +148,11 @@ def cbulk_email_send(sender_email, sender_password):
 
     if not os.path.exists(BULK_FILE):
         speak("File Does Not Exist")
+        print("File Does Not Exist")
         return
     if os.path.getsize(BULK_FILE) == 0:
         speak("File is empty")
+        print("File is empty")
         return
 
     subject = input("Enter Subject: ")
@@ -183,8 +197,9 @@ def cbulk_email_send(sender_email, sender_password):
             )
             if success:
                 save_bulk_email(email, subject, message, attachments)
-    speak("All emails sent successfully.")
-
+            speak("All Email Sent Successfully")
+            print("All Email Sent Successfully")
+   
 def save_bulk_email(email, subject, message, attachments):
 
     save_log(email, "Bulk Email Sent")
@@ -231,7 +246,8 @@ def sending_menu(sender_email, sender_password):
 
     while True:
 
-        speak("\n---------- Sending Option -----------")
+        print("\n---------- Sending Option -----------")
+        speak("Sending Option")
         print("1. Send Single Email")
         print("2. Send Multiple Email")
         print("3. Send Personalized Bulk Email")

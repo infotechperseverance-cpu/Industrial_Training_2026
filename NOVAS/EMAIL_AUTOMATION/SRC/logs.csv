@@ -33,6 +33,7 @@ Log ID,Email ID,Action,Date,Time
 32,sapkebhoomi28@gmail.com,Bulk Email Sent,2026-07-07,12:33:29 PM
 33,vaishnaviteli210@gmail.com,Bulk Email Sent,2026-07-07,12:39:46 PM
 34,sapkebhoomi28@gmail.com,Bulk Email Sent,2026-07-07,12:39:50 PM
+<<<<<<< HEAD
 35,,Email Sent (1 attachment(s)),2026-07-07,10:12:40 PM
 36,2,Email Sent (1 attachment(s)),2026-07-07,10:17:43 PM
 37,2,Email Sent (1 attachment(s)),2026-07-07,10:18:54 PM
@@ -49,3 +50,32 @@ Log ID,Email ID,Action,Date,Time
 48,3,Email Sent (2 attachment(s)),2026-07-08,08:41:03 PM
 49,2,Email Sent (2 attachment(s)),2026-07-08,09:50:32 PM
 50,2,Email Sent (2 attachment(s)),2026-07-08,09:52:01 PM
+=======
+35,2,Email Sent (1 attachment(s)),2026-07-07,11:00:11 PM
+36,1,Email Sent (1 attachment(s)),2026-07-07,11:21:18 PM
+37,2,Email Sent (1 attachment(s)),2026-07-07,11:21:23 PM
+38,2,Email Sent (1 attachment(s)),2026-07-08,11:40:04 AM
+39,3,Email Sent (1 attachment(s)),2026-07-08,11:40:53 AM
+40,4,Email Sent (1 attachment(s)),2026-07-08,11:40:58 AM
+41,5,Email Sent (1 attachment(s)),2026-07-08,11:41:08 AM
+42,vaishnaviteli210@gmail.com,Bulk Email Sent,2026-07-08,11:42:30 AM
+43,sapkebhoomi28@gmail.com,Bulk Email Sent,2026-07-08,11:42:56 AM
+44,krishnachaudhari8472@gmail.com,Bulk Email Sent,2026-07-08,11:43:08 AM
+45,vaishnaviteli210@gmail.com,Bulk Email Sent,2026-07-08,11:43:32 AM
+46,sapkebhoomi28@gmail.com,Bulk Email Sent,2026-07-08,11:43:36 AM
+47,krishnachaudhari8472@gmail.com,Bulk Email Sent,2026-07-08,11:43:40 AM
+48,2,Email Sent (1 attachment(s)),2026-07-08,06:48:44 PM
+49,3,Email Sent (1 attachment(s)),2026-07-08,06:48:54 PM
+50,4,Email Sent (1 attachment(s)),2026-07-08,06:48:59 PM
+51,5,Email Sent (1 attachment(s)),2026-07-08,06:49:09 PM
+52,4,Email Sent (1 attachment(s)),2026-07-08,07:57:56 PM
+53,4,Email Sent (1 attachment(s)),2026-07-08,08:09:11 PM
+54,4,Email Sent (1 attachment(s)),2026-07-08,09:33:44 PM
+55,3,Email Sent (1 attachment(s)),2026-07-08,10:36:35 PM
+56,2,Email Sent (1 attachment(s)),2026-07-08,10:40:15 PM
+57,2,Email Sent (1 attachment(s)),2026-07-08,10:41:35 PM
+58,2,Email Sent (1 attachment(s)),2026-07-08,10:43:25 PM
+59,2,Email Sent (1 attachment(s)),2026-07-08,10:47:52 PM
+60,4,Email Sent (1 attachment(s)),2026-07-08,10:49:07 PM
+61,4,Email Sent (1 attachment(s)),2026-07-08,11:49:29 PM
+>>>>>>> 018ebaf610d08e0fbbc0aff136e7497522df6243

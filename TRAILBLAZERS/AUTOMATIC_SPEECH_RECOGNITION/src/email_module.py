@@ -278,8 +278,7 @@ def process_email():
     if choice == "yes":
 
         attachment = input(
-            "Enter complete file path (PDF, Word, Excel or Image): "
-        ).strip()
+            "Enter complete file path (PDF, Word, Excel or Image): ").strip().strip('"')
 
     elif choice != "no":
 

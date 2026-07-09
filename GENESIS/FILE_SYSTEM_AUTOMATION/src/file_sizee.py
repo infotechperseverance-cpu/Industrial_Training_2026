@@ -13,29 +13,40 @@ def analyze():
         print("\nNo files found.")
         return
 
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
     for item in records:
+        if not os.path.isabs(main_dir):
+            current_main_dir = os.path.join(BASE_DIR, "File_Manager")
+        else:
+            current_main_dir = main_dir
 
         path = os.path.join(
-            main_dir,
+            current_main_dir,
             item["category"],
             item["filename"]
         )
 
-        if os.path.isfile(path):
+        try:
+            if os.path.isfile(path):
+                size = os.path.getsize(path)
+                print(f"{item['filename']} : {size} bytes")
 
-            size = os.path.getsize(path)
+                total += size
+                file_count += 1
 
-            print(f"{item['filename']} : {size} bytes")
-
-            total += size
-            file_count += 1
-
-            if size > largest[1]:
-                largest = (item["filename"], size)
+                if size > largest[1]:
+                    largest = (item["filename"], size)
+        except Exception as e:
+            print(f"Error scanning {item['filename']}: {e}")
 
     print("--------------------------------------")
     print("Total Files       :", file_count)
     print("Total Size        :", total, "Bytes")
-    print("Largest File      :", largest[0])
-    print("Largest File Size :", largest[1], "Bytes")
+    if file_count > 0:
+        print("Largest File      :", largest[0])
+        print("Largest File Size :", largest[1], "Bytes")
+    else:
+        print("Largest File      : None")
+        print("Largest File Size : 0 Bytes")
     print("--------------------------------------")

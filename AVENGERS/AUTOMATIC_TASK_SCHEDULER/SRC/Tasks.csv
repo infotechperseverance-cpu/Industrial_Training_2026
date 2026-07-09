@@ -9,3 +9,5 @@ Task_ID,Task_Name,Task_Date,Task_Time,Task_Recurring,Task_Status
 10,movie time,06/07/2026,4:30 PM,Weekly,Failed
 12,Train booking,06/07/2026,12:30 PM,Monthly,Completed
 15,cab book,06/07/2026,10:20 PM,Daily,Failed
+24,cab booking,07/07/2026,08:30 PM,pending,Delhi
+26,cab booking,07/07/2026,08:36 PM,Daily,Failed

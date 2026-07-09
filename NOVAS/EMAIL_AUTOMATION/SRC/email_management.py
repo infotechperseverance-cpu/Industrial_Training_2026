@@ -68,9 +68,10 @@ def delete_email_record(email_id):
 def email_management_menu():
     assign_email_ids()
     fix_duplicate_email_ids()
-    speak("----- EMAIL MANAGEMENT -----")
+    
     while True:
-        
+        print("----- EMAIL MANAGEMENT -----")
+        speak("EMAIL MANAGEMENT")
         print("1. View Email Records")
         print("2. Update Email Status")
         print("3. Delete Email Record")
