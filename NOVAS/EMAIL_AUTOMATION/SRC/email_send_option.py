@@ -22,11 +22,7 @@ def single_email_send(sender_email, sender_password):
           print("Login required.")
           return
       
-      memail = input("Enter Email : ").strip()
-
-      if not validate_email(memail):
-        speak("Please enter a valid email address.")
-        continue
+      email_id = input("Enter Email ID: ").strip()
       
       with open(FILE_NAME, "r", encoding="utf-8") as file:
         file_contents = json.load(file)
@@ -37,26 +33,28 @@ def single_email_send(sender_email, sender_password):
       email_found = False
 
       for record in file_contents:
-        
-        if record["recipient_email"].lower() == memail.lower():
+
+        if str(record.get("email_id", "")) == email_id:
+
             email_found = True
 
             if record.get("status", "").lower() == "pending":
-               process_single_email(
-                            record,
-                            sender_email,
-                            sender_password,
-                            file_contents
-                        )
-               return
 
-                
+                process_single_email(
+                    record,
+                    sender_email,
+                    sender_password,
+                    file_contents
+                )
+                return
 
-            speak("This email is not in pending status.")
-            break
+            else:
+                speak("This email is not in pending status.")
+                return
 
       if not email_found:
-        speak("Email not found. Please try again.")
+        speak("Invalid Email ID. Please try again.")
+        continue
 
       if sender_email is None:
         print("Login required.")

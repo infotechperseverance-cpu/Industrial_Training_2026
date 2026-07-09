@@ -4,7 +4,6 @@ from reply_ai_voice import  monitor_inbox
 import threading
 from email_management import email_management_menu
 from email_tracking import tracking_menu
-from spam_management import spam_menu
 from reports_logs import reports_logs_menu
 from template import template_menu
 from write_ai_voice import message
@@ -50,12 +49,11 @@ while True:
     print("1. Email Management")
     print("2. Email Sending Options")
     print("3. Email Tracking")
-    print("4. Spam Management")
-    print("5. Reports & Logs")
-    print("6. Templates")
-    print("7. Voice Message Writing")
-    print("8. Pie Chart")
-    print("9. Exit")
+    print("4. Reports & Logs")
+    print("5. Templates")
+    print("6. Voice Message Writing")
+    print("7. Pie Chart")
+    print("8. Exit")
 
     choice = input("\nEnter Choice: ")
 
@@ -72,22 +70,19 @@ while True:
         tracking_menu()
 
     elif choice == "4":
-        spam_menu()
-
-    elif choice == "5":
         reports_logs_menu()
 
-    elif choice == "6":
+    elif choice == "5":
         template_menu()  
 
-    elif choice == "7":
+    elif choice == "6":
         message() 
 
-    elif choice == "8":
+    elif choice == "7":
         generate_pie_chart()
 
 
-    elif choice == "9":
+    elif choice == "8":
         speak("\nThank You for using the Email Automation System.")
         break
 
