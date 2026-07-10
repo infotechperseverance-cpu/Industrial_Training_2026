@@ -6,6 +6,18 @@ FILE_NAME = "email_history.json"
 
 # ---------------- Load Email History ----------------
 
+'''
+
+@Function Name: load_email_history
+@Description  : This function loads email
+                history from the
+                email_history.json file.
+@InputParam   : None
+@OutputParam  : Email history
+@Author       : Bhoomi Sapke
+
+'''
+
 def load_email_history():
     try:
         with open(FILE_NAME, "r") as file:
@@ -22,12 +34,34 @@ def load_email_history():
 
 # ---------------- Save Email History ----------------
 
+'''
+
+@Function Name: save_email_history
+@Description  : This function saves email
+                history to the
+                email_history.json file.
+@InputParam   : records
+@OutputParam  : None
+
+'''
+
 def save_email_history(records):
     with open(FILE_NAME, "w") as file:
         json.dump(records, file, indent=4)
 
 
 # ---------------- Track Email Status ----------------
+
+'''
+
+@Function Name: track_email_status
+@Description  : This function checks and
+                displays the status of an
+                email using its email ID.
+@InputParam   : email_id
+@OutputParam  : Email status
+
+'''
 
 def track_email_status(email_id):
 
@@ -47,6 +81,17 @@ def track_email_status(email_id):
 
 
 # ---------------- Search by Recipient ----------------
+
+'''
+
+@Function Name: search_by_recipient
+@Description  : This function searches
+                the email history using
+                the recipient email.
+@InputParam   : recipient_email
+@OutputParam  : Email details
+
+'''
 
 def search_by_recipient(recipient_email):
 
@@ -71,6 +116,17 @@ def search_by_recipient(recipient_email):
 
 # ---------------- Search by Subject ----------------
 
+'''
+
+@Function Name: search_by_subject
+@Description  : This function searches
+                the email history using
+                the email subject.
+@InputParam   : subject
+@OutputParam  : Email details
+
+'''
+
 def search_by_subject(subject):
 
     records = load_email_history()
@@ -93,6 +149,17 @@ def search_by_subject(subject):
 
 
 # ---------------- View Email Details ----------------
+
+'''
+
+@Function Name: view_email_details
+@Description  : This function displays
+                the details of an email
+                using its email ID.
+@InputParam   : email_id
+@OutputParam  : Email details
+
+'''
 
 def view_email_details(email_id):
 
@@ -120,6 +187,17 @@ def view_email_details(email_id):
 
 # ---------------- Delete Email History ----------------
 
+'''
+
+@Function Name: delete_email_history
+@Description  : This function deletes
+                all email history from
+                the email_history.json
+                file.
+@InputParam   : None
+@OutputParam  : None
+
+'''
 
 def delete_email_history():
 

@@ -4,8 +4,15 @@ from voice import speak
 
 USER_FILE = "user_data.csv"
 
+'''
+@Function Name: create_user_file
+@Description  : This function create the file to store user 
+                email,app password, login password
+@inputParam   :  NONE
+@outParam     :  NONE
+@Author       :  Bhoomi Spake	
 
-# ---------------- CREATE USER FILE ----------------
+'''
 
 def create_user_file():
 
@@ -21,6 +28,15 @@ def create_user_file():
 
 
 # ---------------- SIGN UP ----------------
+'''
+@Function Name: signup
+@Description  : This function create the new user account with
+                the app password, login password, email
+@inputParam   :  NONE
+@outParam     :  NONE
+
+'''
+
 
 def signup():
 
@@ -61,6 +77,15 @@ def signup():
 
 
 # ---------------- LOGIN ----------------
+
+'''
+@Function Name: login
+@Description  : This function for user login if its correct then 
+                enter in main menu
+@inputParam   :  NONE
+@outParam     :  NONE
+
+'''
 
 def login():
 

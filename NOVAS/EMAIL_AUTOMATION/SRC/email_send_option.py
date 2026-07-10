@@ -15,6 +15,21 @@ import os
 FILE_NAME = "email_records.json"
 BULK_FILE = "bulk_email.csv"
 
+'''
+
+@Function Name: single_email_send
+@Description  : This function takes the
+                recipient email from the
+                user. If the email is
+                found in email_records.json,
+                it sends the email.
+@InputParam   : sender_email(user email)
+                sender_password(user login password)
+@OutputParam  : None
+@Author       : Vaishnavi Teli
+
+'''
+
 def single_email_send(sender_email, sender_password):
     while True:
       
@@ -49,24 +64,33 @@ def single_email_send(sender_email, sender_password):
                 return
 
             else:
-<<<<<<< HEAD
-=======
                 print("This email is not in pending status.")
->>>>>>> 018ebaf610d08e0fbbc0aff136e7497522df6243
                 speak("This email is not in pending status.")
                 return
 
       if not email_found:
-<<<<<<< HEAD
-=======
+
         print("Invalid Email ID. Please try again.")
->>>>>>> 018ebaf610d08e0fbbc0aff136e7497522df6243
         speak("Invalid Email ID. Please try again.")
         continue
 
       if sender_email is None:
         print("Login required.")
         return 
+
+'''
+
+@Function Name: mutiple_email_send
+@Description  : This function checks for
+                pending emails in
+                email_records.json and
+                sends them.
+@InputParam   : sender_email(user email)
+                sender_password(user login password)
+@OutputParam  : None
+
+'''
+
       
 def multiple_email_send(sender_email, sender_password):
    if sender_email is None:
@@ -76,6 +100,18 @@ def multiple_email_send(sender_email, sender_password):
    speak("Send All Email Its pending")
    process_emails(sender_email, sender_password)
 
+'''
+
+@Function Name: Bulk_email_send
+@Description  : This function checks a
+                email in a bulk_email.csv 
+                and send them with different 
+                message and subject for each email
+@InputParam   : sender_email(user email)
+                sender_password(user login password)
+@OutputParam  : None
+
+'''
 
 def Bulk_email_send(sender_email, sender_password):
 
@@ -140,6 +176,18 @@ def Bulk_email_send(sender_email, sender_password):
   speak("All emails sent successfully.")
   print("All emails sent successfully.")
 
+'''
+
+@Function Name: cbulk_email_send
+@Description  : This function checks a
+                email in a bulk_email.csv 
+                and send them with same
+                message and subject 
+@InputParam   : sender_email(user email)
+                sender_password(user login password)
+@OutputParam  : None
+
+'''
 
 def cbulk_email_send(sender_email, sender_password):
     if sender_email is None:
@@ -199,6 +247,20 @@ def cbulk_email_send(sender_email, sender_password):
                 save_bulk_email(email, subject, message, attachments)
             speak("All Email Sent Successfully")
             print("All Email Sent Successfully")
+
+'''
+
+@Function Name: save_Bulk_email
+@Description  : This function save
+                bulk email sending 
+                history in email_history
+@InputParam   : email
+                subject
+                message(email body)
+                attachments(files)
+@OutputParam  : None
+
+'''
    
 def save_bulk_email(email, subject, message, attachments):
 
@@ -219,7 +281,21 @@ def save_bulk_email(email, subject, message, attachments):
     })
 
     save_email_history(history)
+'''
 
+@Function Name: send_email
+@Description  : This function create
+                connection with bulk email 
+                and send it
+@InputParam   : sender_email(user email)
+                sender_password(user login password)
+                receiver_email
+                subject
+                message
+                attachments
+@OutputParam  : None
+
+'''
 
 def send_email(sender_email, sender_password, receiver_email, subject, message, attachments):
     try:
@@ -241,6 +317,7 @@ def send_email(sender_email, sender_password, receiver_email, subject, message, 
     except Exception as e:
         print("Error:", e)
         return False
+
 
 def sending_menu(sender_email, sender_password):
 
