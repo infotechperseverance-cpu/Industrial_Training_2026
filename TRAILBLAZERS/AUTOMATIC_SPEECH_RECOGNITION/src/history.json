@@ -1,0 +1,865 @@
+[
+    {
+        "Command Name": "Open Calculator",
+        "Date": "05-07-2026",
+        "Time": "11:09:06",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "open calculator",
+        "Date": "05-07-2026",
+        "Time": "11:09:09",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "open calculator",
+        "Date": "05-07-2026",
+        "Time": "11:09:13",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "mute volume",
+        "Date": "05-07-2026",
+        "Time": "11:13:49",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "mute volume",
+        "Date": "05-07-2026",
+        "Time": "11:13:54",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "take screenshot",
+        "Date": "05-07-2026",
+        "Time": "11:14:07",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "take screenshot",
+        "Date": "05-07-2026",
+        "Time": "11:14:12",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "play music believer",
+        "Date": "05-07-2026",
+        "Time": "11:14:59",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "Open Google",
+        "Date": "05-07-2026",
+        "Time": "14:30:25",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "open google",
+        "Date": "05-07-2026",
+        "Time": "14:30:27",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "open google",
+        "Date": "05-07-2026",
+        "Time": "14:30:30",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "Take Screenshot",
+        "Date": "05-07-2026",
+        "Time": "14:32:22",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "take screenshot",
+        "Date": "05-07-2026",
+        "Time": "14:32:25",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "take screenshot",
+        "Date": "05-07-2026",
+        "Time": "14:32:28",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "Open Calculator",
+        "Date": "05-07-2026",
+        "Time": "17:29:40",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "open calculator",
+        "Date": "05-07-2026",
+        "Time": "17:29:40",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "Voice Calculator",
+        "Date": "05-07-2026",
+        "Time": "17:30:12",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "Voice Calculator",
+        "Date": "05-07-2026",
+        "Time": "17:30:31",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "Voice Calculator",
+        "Date": "05-07-2026",
+        "Time": "17:30:50",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "Voice Calculator",
+        "Date": "05-07-2026",
+        "Time": "17:32:19",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "Open VS Code",
+        "Date": "05-07-2026",
+        "Time": "17:41:37",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "open vs code",
+        "Date": "05-07-2026",
+        "Time": "17:41:37",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "stop listening",
+        "Date": "05-07-2026",
+        "Time": "17:46:09",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "send email",
+        "Date": "05-07-2026",
+        "Time": "17:46:43",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "Voice Calculator",
+        "Date": "05-07-2026",
+        "Time": "18:13:19",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "Lock Computer",
+        "Date": "06-07-2026",
+        "Time": "15:39:15",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "lock computer",
+        "Date": "06-07-2026",
+        "Time": "15:39:15",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "Voice Calculator",
+        "Date": "06-07-2026",
+        "Time": "15:41:02",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "Voice Calculator",
+        "Date": "06-07-2026",
+        "Time": "15:41:11",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "Voice Calculator",
+        "Date": "06-07-2026",
+        "Time": "15:41:20",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "Voice Calculator",
+        "Date": "06-07-2026",
+        "Time": "15:41:34",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "Voice Calculator",
+        "Date": "06-07-2026",
+        "Time": "15:41:42",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "Voice Calculator",
+        "Date": "06-07-2026",
+        "Time": "15:42:48",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "Voice Calculator",
+        "Date": "06-07-2026",
+        "Time": "15:43:00",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "Voice Calculator",
+        "Date": "06-07-2026",
+        "Time": "15:43:29",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "Voice Calculator",
+        "Date": "06-07-2026",
+        "Time": "15:43:46",
+        "Status": "Success"
+    },
+    {
+        "Command Name": "Voice Calculator",
+        "Date": "06-07-2026",
+        "Time": "15:43:56",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "show dashboard",
+        "Date": "06-07-2026",
+        "Time": "15:45:01",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "show dashboard",
+        "Date": "06-07-2026",
+        "Time": "15:46:53",
+        "Status": "Failed"
+    },
+    {
+        "Command Name": "show dashboard",
+        "Date": "06-07-2026",
+        "Time": "15:48:16",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "Open Google",
+        "Date": "06-07-2026",
+        "Time": "15:51:09",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "open google",
+        "Date": "06-07-2026",
+        "Time": "15:51:09",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "show dashboard",
+        "Date": "06-07-2026",
+        "Time": "15:51:23",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "Open YouTube",
+        "Date": "06-07-2026",
+        "Time": "15:54:01",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "open youtube",
+        "Date": "06-07-2026",
+        "Time": "15:54:01",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "show dashboard",
+        "Date": "06-07-2026",
+        "Time": "15:54:19",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "Open YouTube",
+        "Date": "06-07-2026",
+        "Time": "15:58:23",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "open youtube",
+        "Date": "06-07-2026",
+        "Time": "15:58:23",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "show dashboard",
+        "Date": "06-07-2026",
+        "Time": "15:58:34",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "show dashboard",
+        "Date": "06-07-2026",
+        "Time": "15:59:34",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "show dashboard",
+        "Date": "06-07-2026",
+        "Time": "16:01:34",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "show dashboard",
+        "Date": "06-07-2026",
+        "Time": "16:06:22",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "open download",
+        "Date": "06-07-2026",
+        "Time": "16:15:45",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "increase volume",
+        "Date": "06-07-2026",
+        "Time": "16:20:37",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "decrease volume",
+        "Date": "06-07-2026",
+        "Time": "16:20:46",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "Voice Calculator",
+        "Date": "06-07-2026",
+        "Time": "16:33:43",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "Voice Calculator",
+        "Date": "06-07-2026",
+        "Time": "16:38:39",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "Voice Calculator",
+        "Date": "06-07-2026",
+        "Time": "16:41:53",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "Voice Calculator",
+        "Date": "06-07-2026",
+        "Time": "16:42:03",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "Voice Calculator",
+        "Date": "06-07-2026",
+        "Time": "16:42:11",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "Voice Calculator",
+        "Date": "06-07-2026",
+        "Time": "16:42:20",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "Hello Assistant",
+        "Date": "06-07-2026",
+        "Time": "16:45:58",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "hello assistant",
+        "Date": "06-07-2026",
+        "Time": "16:45:58",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "Voice Calculator",
+        "Date": "06-07-2026",
+        "Time": "17:08:09",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "Voice Calculator",
+        "Date": "06-07-2026",
+        "Time": "17:08:21",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "Voice Calculator",
+        "Date": "06-07-2026",
+        "Time": "17:08:33",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "show dashboard",
+        "Date": "06-07-2026",
+        "Time": "17:08:51",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "show dashboard",
+        "Date": "06-07-2026",
+        "Time": "17:12:31",
+        "Status": "Success"
+    },
+    {
+        "Username": "Demo",
+        "Command Name": "add scheduled command",
+        "Date": "06-07-2026",
+        "Time": "18:33:34",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Demo",
+        "Command Name": "open google",
+        "Date": "06-07-2026",
+        "Time": "18:33:51",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "add scheduled command",
+        "Date": "06-07-2026",
+        "Time": "18:52:14",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "open youtube",
+        "Date": "06-07-2026",
+        "Time": "18:54:03",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "open google",
+        "Date": "06-07-2026",
+        "Time": "19:13:15",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "add scheduled command",
+        "Date": "06-07-2026",
+        "Time": "19:13:51",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "show dashboard",
+        "Date": "06-07-2026",
+        "Time": "19:15:03",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "add scheduled command",
+        "Date": "06-07-2026",
+        "Time": "19:29:29",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "add scheduled command",
+        "Date": "06-07-2026",
+        "Time": "19:44:54",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "add scheduled command",
+        "Date": "06-07-2026",
+        "Time": "19:45:33",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "add scheduled command",
+        "Date": "06-07-2026",
+        "Time": "19:58:11",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "open youtube",
+        "Date": "06-07-2026",
+        "Time": "19:58:26",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "show dashboard",
+        "Date": "06-07-2026",
+        "Time": "20:02:06",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "add scheduled command",
+        "Date": "06-07-2026",
+        "Time": "20:08:29",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "add scheduled command",
+        "Date": "06-07-2026",
+        "Time": "20:11:49",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "open google",
+        "Date": "06-07-2026",
+        "Time": "20:13:04",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "open google",
+        "Date": "06-07-2026",
+        "Time": "20:13:04",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "add scheduled command",
+        "Date": "06-07-2026",
+        "Time": "21:47:03",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "add scheduled command",
+        "Date": "06-07-2026",
+        "Time": "21:50:38",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "open google",
+        "Date": "06-07-2026",
+        "Time": "21:50:50",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "open notepad",
+        "Date": "06-07-2026",
+        "Time": "21:51:00",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "open notepad",
+        "Date": "06-07-2026",
+        "Time": "21:51:00",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "open youtube",
+        "Date": "06-07-2026",
+        "Time": "21:51:01",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "open calculator",
+        "Date": "06-07-2026",
+        "Time": "21:51:27",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "hello assistant",
+        "Date": "06-07-2026",
+        "Time": "21:57:53",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "open google",
+        "Date": "06-07-2026",
+        "Time": "21:58:06",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "open youtube",
+        "Date": "06-07-2026",
+        "Time": "21:58:18",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "show dashboard",
+        "Date": "06-07-2026",
+        "Time": "22:05:24",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "show history",
+        "Date": "07-07-2026",
+        "Time": "09:47:25",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "send email",
+        "Date": "07-07-2026",
+        "Time": "09:56:39",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "send email",
+        "Date": "07-07-2026",
+        "Time": "09:57:14",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "send email",
+        "Date": "07-07-2026",
+        "Time": "09:59:31",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "show dashboard",
+        "Date": "07-07-2026",
+        "Time": "09:59:51",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "show dashboard",
+        "Date": "07-07-2026",
+        "Time": "10:04:01",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "open google",
+        "Date": "07-07-2026",
+        "Time": "16:30:44",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "open youtube",
+        "Date": "07-07-2026",
+        "Time": "16:30:57",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "open chrome",
+        "Date": "07-07-2026",
+        "Time": "16:31:09",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "open calculator",
+        "Date": "07-07-2026",
+        "Time": "16:31:43",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "hello assistant",
+        "Date": "07-07-2026",
+        "Time": "16:31:57",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "good morning",
+        "Date": "07-07-2026",
+        "Time": "16:32:11",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "what is your name",
+        "Date": "07-07-2026",
+        "Time": "16:32:25",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "start listening",
+        "Date": "07-07-2026",
+        "Time": "16:32:40",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "open visual studio code",
+        "Date": "07-07-2026",
+        "Time": "16:32:55",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "increase volume",
+        "Date": "07-07-2026",
+        "Time": "16:33:24",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "decrease volume",
+        "Date": "07-07-2026",
+        "Time": "16:33:36",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "mute volume",
+        "Date": "07-07-2026",
+        "Time": "16:33:48",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "unmute volume",
+        "Date": "07-07-2026",
+        "Time": "16:34:14",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "take screenshot",
+        "Date": "07-07-2026",
+        "Time": "16:34:29",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "lock computer",
+        "Date": "07-07-2026",
+        "Time": "16:34:43",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "Voice Calculator",
+        "Date": "07-07-2026",
+        "Time": "16:35:20",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "Voice Calculator",
+        "Date": "07-07-2026",
+        "Time": "16:35:34",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "Voice Calculator",
+        "Date": "07-07-2026",
+        "Time": "16:35:50",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "Voice Calculator",
+        "Date": "07-07-2026",
+        "Time": "16:36:10",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "send email",
+        "Date": "07-07-2026",
+        "Time": "16:39:05",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "show dashboard",
+        "Date": "07-07-2026",
+        "Time": "16:39:42",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "add scheduled command",
+        "Date": "07-07-2026",
+        "Time": "16:40:39",
+        "Status": "Failed"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "open google",
+        "Date": "07-07-2026",
+        "Time": "16:40:52",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "what is the time",
+        "Date": "07-07-2026",
+        "Time": "16:41:07",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "what is today's date",
+        "Date": "07-07-2026",
+        "Time": "16:41:21",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "what day is today",
+        "Date": "07-07-2026",
+        "Time": "16:41:34",
+        "Status": "Success"
+    },
+    {
+        "Username": "Komal",
+        "Command Name": "show history",
+        "Date": "07-07-2026",
+        "Time": "16:41:43",
+        "Status": "Failed"
+    }
+]
