@@ -1,6 +1,18 @@
 import os
 import mimetypes
 
+'''
+
+@Function Name: add_attachments_to_email
+@Description  : This function adds
+                attachments to the
+                email before sending.
+@InputParam   : email_message,
+                attachments
+@OutputParam  : None
+@Author       : Bhoomi Sapke
+
+'''
 def add_attachments_to_email(email_message, attachments):
 
     if not attachments:

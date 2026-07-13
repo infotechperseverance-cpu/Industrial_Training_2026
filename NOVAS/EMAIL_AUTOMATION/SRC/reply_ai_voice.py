@@ -6,6 +6,19 @@ import time
 from voice import speak
 from spam_management import detect_spam
 
+'''
+
+@Function Name: login_gmail
+@Description  : This function connects to the
+                Gmail account using the emai and
+                login Password.
+@InputParam   : sender_email (user email)
+                sender_password(user login password)
+@OutputParam  : Gmail connection object
+                or None
+@Author       : Vaishnvi Teli
+
+'''
 
 def login_gmail(sender_email, sender_password):
     try:
@@ -21,6 +34,16 @@ def login_gmail(sender_email, sender_password):
     except Exception as e:
         print(f" ERROR: Unable to connect to Gmail: {e}")
         return None
+    
+'''
+@Function Name: check_new_email
+@Description  : This function checks whether a
+                new unread email is received.
+@InputParam   : mail
+@OutputParam  : Email ID or None
+
+'''
+
 
 def check_new_email(mail):
 
@@ -33,6 +56,16 @@ def check_new_email(mail):
 
     return email_id[-1]
 
+'''
+@Function Name: read_email
+@Description  : This function reads the email
+                and gets the sender name,
+                subject, message, and
+                attachment names.
+@InputParam   : mail, email_id
+@OutputParam  : sender, subject, message,
+                attachments
+'''
 
 def read_email(mail, email_id):
 
@@ -131,6 +164,16 @@ def read_email(mail, email_id):
 
     return None, None, None, []
 
+'''
+@Function Name: announce_email
+@Description  : This function announces the
+                email details using voice.
+@InputParam   : sender, subject, message,
+                attachments
+@OutputParam  : None
+
+'''
+
 def announce_email(sender, subject, message, attachments):
 
     print("\nAttention! You have received a new email.")
@@ -161,6 +204,18 @@ def announce_email(sender, subject, message, attachments):
         text += f"Message: {preview}"
 
     speak(text)
+
+'''
+@Function Name: monitor_inbox
+@Description  : This function monitors the
+                Gmail inbox, checks for new
+                emails, detects spam, and
+                announces the email details.
+@InputParam   : sender_email,
+                sender_password
+@OutputParam  : None
+
+'''
     
 def monitor_inbox(sender_email, sender_password):
 

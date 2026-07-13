@@ -1,9 +1,19 @@
 import json
 import speech_recognition as sr
-from email_utils import validate_email
 from voice import speak
 
 FILE_NAME = "email_records.json"
+
+'''
+@Function Name: store_msg
+@Description  : This function store the message in
+                valid emil_id 
+@inputParam   : memail(email_id)
+                u-msg(update message)
+@outParam     : NONE
+@Author       : Vaishnvi Teli
+
+'''
 
 
 def store_msg(memail, u_msg):
@@ -33,6 +43,15 @@ def store_msg(memail, u_msg):
 
     except json.JSONDecodeError:
         print("Invalid JSON format.")
+
+'''
+@Function Name: email
+@Description  : This function check valid eamil and status 
+                should be pending
+@inputParam   : NONE
+@outParam     : NONE
+
+'''
 
 
 def email():
@@ -75,6 +94,17 @@ def email():
     except json.JSONDecodeError:
         print("Invalid JSON format.")
         return None
+    
+'''
+
+@Function Name: message
+@Description  : This function is take messge through a voice 
+@inputParam   : memail(email_id)
+                u-msg(update message)
+@outParam     : NONE
+@Author       : Vaishnvi Teli
+
+'''
     
 def message():
     print("----------- Voice Message Writing -----------")

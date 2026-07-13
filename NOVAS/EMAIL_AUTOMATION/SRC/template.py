@@ -2,18 +2,48 @@ import json
 from datetime import datetime
 from voice import speak
 
+'''
+
+@Function Name: load_json
+@Description  : This function store templates in templates.json
+@inputParam   : NONE
+@outParam     : NONE
+@Author       : Unnati Thakur
+
+'''
+
 def load_json():
     try:
         with open("templates.json", "r") as f:
             return json.load(f)
     except:
         return []
+    
+'''
+
+@Function Name: save_json
+@Description  : This function save user templates in templates.json
+@inputParam   : templates
+@outParam     : NONE
+
+'''
 
 
 def save_json(templates):
     with open("templates.json", "w") as f:
         json.dump(templates, f, indent=4)
 
+'''
+
+@Function Name: create_template
+@Description  : This function create templates with name , message 
+                and automatic create template_id,created time and
+                save it
+@inputParam   : NONE
+@outParam     : NONE
+@Author       : Unnati Thakur
+
+'''
 
 def create_template():
     templates = load_json()
@@ -33,6 +63,18 @@ def create_template():
     save_json(templates)
     print("Template Created Successfully!")
 
+'''
+
+@Function Name: update_template
+@Description  : This function update templates by there name with 
+                message and automatic create update date
+                save it
+@inputParam   : NONE
+@outParam     : NONE
+@Author       : Unnati Thakur
+
+'''
+
 
 def update_template():
     templates = load_json()
@@ -51,6 +93,15 @@ def update_template():
 
     print("Template Not Found!")
 
+'''
+
+@Function Name: delete_template
+@Description  : This function delete templates by the name
+@inputParam   : NONE
+@outParam     : NONE
+@Author       : Unnati Thakur
+
+'''
 
 def delete_template():
     templates = load_json()
@@ -66,6 +117,17 @@ def delete_template():
 
     print("Template Not Found!")
 
+
+'''
+
+@Function Name: view_template
+@Description  : This function view all templates in 
+                templates.json
+@inputParam   : NONE
+@outParam     : NONE
+@Author       : Unnati Thakur
+
+'''
 
 def view_template():
     templates = load_json()
@@ -84,8 +146,8 @@ def view_template():
 def template_menu():
 
     while True:
-        speak("------------ Template Management ----------------")
-        
+        print("------------ Template Management ----------------")
+        speak("Template Management")
         print("\n1. Create Template")
         print("2. Update Template")
         print("3. Delete Template")
