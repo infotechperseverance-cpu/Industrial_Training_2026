@@ -274,7 +274,6 @@ def monitor_inbox(sender_email, sender_password):
                     announce_email(sender, subject, message, attachments)
 
 
->>>>>>> 018ebaf610d08e0fbbc0aff136e7497522df6243
 
                     status, data = mail.copy(current_email_id, "[Gmail]/Trash")
 
