@@ -1,6 +1,7 @@
 import winreg
 import subprocess
 from website import open_website
+from voice import speak
 
 
 '''
@@ -93,26 +94,27 @@ class RegistryLauncher:
 
     def launch(self, command):
 
+
         command = command.lower()
 
         if command.startswith("open "):
             app = command.replace("open ", "").strip()
-
+         
             exe = self.applications.get(app)
-
+    
             if exe:
 
                 path = self.get_application_path(exe)
-
+              
                 if path:
 
+                    speak(f"Opening {app}...")
                     print(f"Opening {app}...")
-                    subprocess.Popen(path)
 
                 else:
 
                     print("Application not found.")
-                    print("Opening Google Search...")
+                    speak("Opening Google Search...")
 
                     open_website(app)
             else:
