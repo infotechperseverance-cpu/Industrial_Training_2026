@@ -7,38 +7,27 @@ users = {
     "counter5": "admin123",
     "counter6": "admin123"
 }
-
-
 '''
 @Function Name : dashboard
-
 @Description   : This function displays the dashboard after
                  successful login and welcomes the user.
-
 @Input Param   : username (String)
-
 @Output Param  : NONE
-
 @Author        : Prashik Dabhade
 '''
 def dashboard(username):
     print("\n===== DASHBOARD =====")
     print("Welcome,", username)
     print("Access Granted")
-
-
+    
 '''
 @Function Name : login
-
 @Description   : This function accepts username and password
                  from the user and validates the credentials.
                  If the credentials are correct, the dashboard
                  is displayed; otherwise an error message is shown.
-
 @Input Param   : NONE
-
 @Output Param  : NONE
-
 @Author        : Prashik Dabhade
 '''
 def login():
@@ -53,7 +42,6 @@ def login():
         dashboard(username)
     else:
         print("\nError: Invalid Username or Password!")
-
-
+        
 # Main Program
 login()
