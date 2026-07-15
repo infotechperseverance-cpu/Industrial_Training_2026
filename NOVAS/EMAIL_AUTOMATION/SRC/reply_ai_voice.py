@@ -262,13 +262,11 @@ def monitor_inbox(sender_email, sender_password):
 
                 if detect_spam(email_data):
 
-<<<<<<< HEAD
                     speak("Warning! This email appears to be spam.")
                     announce_email(sender, subject, message, attachments)
 
                     print("\nSpam email detected.")
                     print("Email deleted automatically.")
-=======
                     print("\nWarning! This email appears to be spam.")
                     speak("Warning! This email appears to be spam.")
                     announce_email(sender, subject, message, attachments)

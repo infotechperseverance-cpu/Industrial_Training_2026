@@ -12,6 +12,8 @@ output parameters :none
 
 def send_invoice(email,file_path):
     try:
+        if email or file_path is none:
+           return False
         customer_email = email #customer email
     
         pdf_file = file_path #pdf path
