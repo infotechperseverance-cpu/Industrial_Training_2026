@@ -21,19 +21,19 @@ def graph():
         cursor.execute("SELECT COUNT(customer_id) FROM CUSTOMERS;")
         total_customers = cursor.fetchone()[0]
 
-        # 2. Total Catalog Products Count
+        
         cursor.execute("SELECT COUNT(product_id) FROM PRODUCTS;")
         total_products = cursor.fetchone()[0]
 
-        # 3. Total Invoices Generated Count
+    
         cursor.execute("SELECT COUNT(invoice_id) FROM INVOICES;")
         total_invoices = cursor.fetchone()[0]
 
-        # 4. Total Sales Revenue Accumulation
+        
         cursor.execute("SELECT SUM(total_amount) FROM INVOICES;")
         total_sales = cursor.fetchone()[0] or 0.0  # Fallback to 0 if no entries exist
 
-        # 5. Low Stock Products Snapshot
+        
         cursor.execute("""
             SELECT product_name, stock_quantity FROM PRODUCTS 
             ORDER BY stock_quantity ASC LIMIT 5; """)
@@ -44,7 +44,7 @@ def graph():
         low_stock_items = [row[0] for row in stock_results]
         stock_levels = [row[1] for row in stock_results]
 
-        # 3. DRAW THE SNAPSHOT DASHBOARD
+    
         fig = plt.figure(figsize=(12, 10))
 
         # Graph 1: Total Customers
@@ -53,7 +53,7 @@ def graph():
         ax1.set_title('1. no of customers')
         ax1.set_ylabel('Total Count')
 
-        # Graph 2: Total Productsb
+        # Graph 2: Total Products
         ax2 = plt.subplot2grid((3, 2), (0, 1))
         ax2.bar(['Total products'], [total_products], color='yellow', edgecolor='black', width=0.4)
         ax2.set_title('2. no of products')
@@ -88,8 +88,6 @@ def graph():
         print("something went wrong")
         return None
 
-
-
 def generate_simple_report():
     try:
         connection = cm.connection()
@@ -111,7 +109,7 @@ def generate_simple_report():
         cursor.execute("SELECT SUM(total_amount) FROM INVOICES;")
         total_sales = cursor.fetchone()[0]
     
-        # If there are no sales yet, set the value to 0
+      
         if total_sales is None:
             total_sales = 0.0
     
