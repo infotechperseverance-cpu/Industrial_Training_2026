@@ -36,93 +36,132 @@ def create_table():
 '''
 
 def add_customer():
-    name = input("Enter Customer Name: ")
-    mobile = input("Enter Mobile Number: ")
-    email = input("Enter Email: ")
+    
+    while True:
+        name = input("Enter Customer Name: ").strip()
+
+        if name == "":
+            print("Name cannot be empty.")
+        elif not name.replace(" ", "").isalpha():
+            print("Name should contain only alphabets.")
+        else:
+            break
+
+    while True:
+        mobile = input("Enter Mobile Number: ").strip()
+
+        if len(mobile) != 10:
+            print("Mobile number must be 10 digits.")
+        elif not mobile.isdigit():
+            print("Mobile number should contain only digits.")
+        else:
+            break
+
+    while True:
+        email = input("Enter Email: ").strip()
+
+        if "@" not in email or "." not in email:
+            print("Invalid Email.")
+        else:
+            break
 
     cur.execute(
         "INSERT INTO customer(name,mobile,email) VALUES(?,?,?)",
         (name, mobile, email)
-        )
+    )
+
     conn.commit()
+
     print("Customer Added Successfully!")
+    print("Customer ID :", cur.lastrowid)
     
 
 '''
 @Function Name : search_customer
-@Description   : This function asks the user to search a customer by
+@Description   : This function asks the user to search a customer by customer id,
                  name or mobile number. If the customer is found,
                  it displays the customer details.
 @Input Param   : NONE (User Input)
                  Search Choice
-                 Name or Mobile Number
+                 Customer id or Name or Mobile Number
 @Output Param  : NONE
 @Author        : Prashik Dabhade
 '''
 def search_customer():
 
-    choice = input("Search by (1-Name / 2-Mobile): ")
+    print("Search By")
+    print("1. Customer ID")
+    print("2. Name")
+    print("3. Mobile")
+
+    choice = input("Enter Choice : ")
 
     if choice == "1":
-        name = input("Enter Customer Name: ")
+        cid = input("Enter Customer ID : ")
+        cur.execute(
+            "SELECT * FROM customer WHERE id=?",
+            (cid,)
+        )
+
+    elif choice == "2":
+        name = input("Enter Customer Name : ")
         cur.execute(
             "SELECT * FROM customer WHERE name=?",
-                (name,)
-                )
-        
-    elif choice == "2":
-        mobile = input("Enter Mobile Number: ")
+            (name,)
+        )
+
+    elif choice == "3":
+        mobile = input("Enter Mobile Number : ")
         cur.execute(
             "SELECT * FROM customer WHERE mobile=?",
             (mobile,)
-            )
-        
+        )
+
     else:
-        print("Invalid Choice!")
+        print("Invalid Choice")
         return
 
     customer = cur.fetchall()
 
     if customer:
         for data in customer:
-        
             print("\nCustomer Found")
             print("ID:", data[0])
             print("Name:", data[1])
             print("Mobile:", data[2])
             print("Email:", data[3])
-            
+
     else:
         print("Customer Not Found!")
         
 
 '''
 @Function Name : update_customer
-@Description   : This function finds a customer using the mobile number.
+@Description   : This function finds a customer using name.
                  If the customer exists, it updates the customer's
                  name and email address.
 @Input Param   : NONE (User Input)
-                 Mobile Number
-                 New Name
+                 Name
+                 New Mobile_no
                  New Email
 @Output Param  : NONE
 @Author        : Prashik Dabhade
 '''
 def update_customer():
-    mobile = input("Enter Mobile Number of Customer: ")
+    name = input("Enter Name of customer: ")
 
     cur.execute(
-            "SELECT * FROM customer WHERE mobile=?",
-            (mobile,)
+            "SELECT * FROM customer WHERE name=?",
+            (name,)
         )
 
     if cur.fetchone():
-        name = input("Enter New Name: ")
+        mobile = input("Enter New mobie number: ")
         email = input("Enter New Email: ")
 
         cur.execute(
-            "UPDATE customer SET name=?, email=? WHERE mobile=?",
-            (name, email, mobile)
+            "UPDATE customer SET mobile=?, email=? WHERE name=?",
+            (mobile, email, name)
         )
         conn.commit()
 
