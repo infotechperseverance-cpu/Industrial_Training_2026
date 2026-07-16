@@ -16,8 +16,8 @@ def insert_task(task_data):
     cursor.execute(insert_query, task_data)
     conn.commit()
     print("Task inserted successfully.")
-def show_tasks():
- cursor.execute("SELECT * FROM tasks ORDER BY deadline ASC")
+def show_tasks(user_id):
+ cursor.execute("SELECT * FROM tasks WHERE user_id=%s ORDER BY deadline ASC",(user_id,))
  tasks = cursor.fetchall()
  for task in tasks:
         print(task)
@@ -35,16 +35,19 @@ def update_task(task_data):
     cursor.execute(update_query, task_data)
     conn.commit()
     print("Task updated successfully.")
-def delete_task(task_id):
-    copy_data="INSERT INTO recycle_bin SELECT * FROM tasks WHERE task_id = %s"
-    cursor.execute(copy_data, (task_id,))
-    delete_query = "DELETE FROM tasks WHERE task_id = %s"
-    cursor.execute(delete_query, (task_id,))
+def delete_task(id,user_id):
+    copy_data="INSERT INTO recycle_bin SELECT * FROM tasks WHERE id = %s AND user_id=%s"
+    cursor.execute(copy_data, (id, user_id))
+    delete_query = "DELETE FROM tasks WHERE id = %s AND user_id=%s"
+    cursor.execute(delete_query, (id, user_id))
     conn.commit()
     print("Task deleted successfully.")
-def restore_task(task_id):
-    restore_query = "INSERT INTO tasks SELECT * FROM recycle_bin WHERE task_id = %s"
-    cursor.execute(restore_query, (task_id,))
+def restore_task(id,user_id):
+    restore_query = "INSERT INTO tasks SELECT * FROM recycle_bin WHERE id = %s AND user_id=%s"
+    cursor.execute(restore_query, (id,user_id))
+    conn.commit()
+    delete_query = "DELETE FROM recycle_bin WHERE id = %s AND user_id=%s"
+    cursor.execute(delete_query, (id, user_id))
     conn.commit()
     print("Task restored successfully.")
 
