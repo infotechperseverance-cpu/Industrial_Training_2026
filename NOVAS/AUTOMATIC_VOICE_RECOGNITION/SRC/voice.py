@@ -1,26 +1,35 @@
-from gtts import gTTS
+"""
+
+@Module Name : voice.py
+@Description : Convert text to speech using the 
+               selected Edge-TTS voice.
+@Author      : Vaishani Teli
+
+"""
+
+import edge_tts
 from playsound import playsound
 import os
-import uuid
-import threading
+from voice_setting import get_settings
 
-voice_lock = threading.Lock()
 
-def speak(text):
-    
+async def speak(text, voice=None):
 
-    with voice_lock:
+    settings = get_settings()
 
-        filename = f"voice_{uuid.uuid4().hex}.mp3"
+    if voice is None:
+        voice = settings["voice"]
 
-        try:
-            tts = gTTS(text=text, lang="en")
-            tts.save(filename)
-            playsound(filename)
+    communicate = edge_tts.Communicate(
+        text=text,
+        voice=voice
+    )
 
-        finally:
-            if os.path.exists(filename):
-                try:
-                    os.remove(filename)
-                except PermissionError:
-                    pass
+    filename = "voice.mp3"
+
+    await communicate.save(filename)
+
+    playsound(filename)
+
+    if os.path.exists(filename):
+        os.remove(filename)

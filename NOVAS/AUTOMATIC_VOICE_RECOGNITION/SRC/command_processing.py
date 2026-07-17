@@ -1,9 +1,12 @@
 from assistant_state import check_assistant_state
 from voice_recognition import speech
 from Regsitry import RegistryLauncher
-from voice import speak
 import os
 import assistant_state
+from settings import open_settings
+import asyncio
+from voice import speak
+from file_folder_management import process
 
 launcher = RegistryLauncher()
 
@@ -20,22 +23,35 @@ launcher = RegistryLauncher()
 
 def detect_intent(command):
 
-    command = command.lower()
+    command = command.lower().strip()
 
-    if command.startswith("open"):
+
+    # Open settings
+    if "setting" in command:
+        open_settings()
+
+
+    # Open files/folders/process
+    elif "file" in command or "folder" in command:
+        process(command)
+
+    elif "remainder" in command:
+        pass
+
+    elif "view logs" in command or "log" in command:
+        pass
+
+    # Open applications
+    elif command.startswith("open"):
         launcher.launch(command)
 
-    elif "file" in command or "folder" in command:
-       pass
-
-    elif "email" in command:
-        pass
-
-    elif "system" in command:
-        pass
 
     else:
-        speak("Command not recognized.")
+        asyncio.run(
+            speak("Command not recognized.")
+        )
+
+        
 
 '''
 
@@ -67,12 +83,12 @@ def process_command():
 
             if result:
 
-                print(f"You said : {wake_command}")
+                print(f"{username} : {wake_command}")
 
                 username = os.getlogin()
 
                 print(f"Hello {username}! How can I help you?")
-                speak(f"Hello {username}! How can I help you?")
+                asyncio.run(speak(f"Hello {username}! How can I help you?"))
 
         # Assistant is active
         while assistant_state.assistant_active:
@@ -82,11 +98,11 @@ def process_command():
             if not command:
                 continue
 
-            print(f"You said : {command}")
+            print(f"{username}: {command}")
 
             # Exit
             if command.lower() == "exit":
-                speak("Closing NOVA.")
+                asyncio.run(speak("Closing NOVA."))
                 return
 
             # Sleep
