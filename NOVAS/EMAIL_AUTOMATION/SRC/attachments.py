@@ -4,6 +4,18 @@ from email_utils import load_email_records, save_email_records
 
 # ---------------- View Attachments ----------------
 
+'''
+@Function Name: view_attachments
+@Description  : This function displays
+                the attachments of all
+                emails stored in
+                email_records.json.
+@InputParam   : None
+@OutputParam  : Attachment details
+@Author       : Vaishnavi Teli
+
+'''
+
 def view_attachments():
 
     records = load_email_records()
@@ -30,6 +42,17 @@ def view_attachments():
 
 
 # ---------------- Verify Attachments ----------------
+
+'''
+
+@Function Name: verify_attachments
+@Description  : This function checks
+                whether the attachment
+                files are available.
+@InputParam   : None
+@OutputParam  : Attachment status
+
+'''
 
 def verify_attachments():
 
@@ -59,6 +82,17 @@ def verify_attachments():
 
 
 # ---------------- Remove Missing Attachments ----------------
+
+'''
+
+@Function Name: remove_missing_attachments
+@Description  : This function removes
+                missing attachment files
+                from email_records.json.
+@InputParam   : None
+@OutputParam  : None
+
+'''
 
 def remove_missing_attachments():
 
@@ -96,7 +130,7 @@ def attachment_menu():
 
     while True:
 
-        print("\n===== ATTACHMENT MANAGEMENT =====")
+        print("\n===== Attachment Management =====")
         print("1. View Attachments")
         print("2. Verify Attachments")
         print("3. Remove Missing Attachments")

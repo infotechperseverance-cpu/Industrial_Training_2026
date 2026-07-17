@@ -1,5 +1,4 @@
 import json
-from voice import speak
 
 FILE_NAME = "email_records.json"
 
@@ -16,28 +15,15 @@ SPAM_KEYWORDS = [
     "limited time"
 ]
 
+'''
+@Function Name: detect_spam
+@Description  : This function checks the subject and 
+                message for spam keywords. 
+@InputParam   : email(email received)
+@OutputParam  : Spam status
+@Author       : Bhoomi Patil
 
-# ---------------- Load Email Records ----------------
-
-def load_email_records():
-
-    try:
-        with open(FILE_NAME, "r") as file:
-            return json.load(file)
-
-    except (FileNotFoundError, json.JSONDecodeError):
-        return []
-
-
-# ---------------- Save Email Records ----------------
-
-def save_email_records(records):
-
-    with open(FILE_NAME, "w") as file:
-        json.dump(records, file, indent=4)
-
-
-# ---------------- Detect Spam ----------------
+'''
 
 def detect_spam(email):
 
@@ -50,95 +36,71 @@ def detect_spam(email):
 
     return False
 
+'''
+@Function Name: auto_detect_spam
+@Description  : This function defect_sapam it returns
+                True and marks the email as spam..
+@InputParam   : records(email_records,json file)
+@OutputParam  : Spam status
 
-# ---------------- Mark Email as Spam ----------------
+'''
 
-def mark_as_spam():
-
-    records = load_email_records()
-
-    found = False
+def auto_detect_spam(records):
 
     for email in records:
 
         if detect_spam(email):
-
             email["status"] = "spam"
-            found = True
 
-    if found:
+    return records
+
+# ---------------- Load Email Records ----------------
+
+'''
+
+@Function Name: load_email_records
+@Description  : This function loads email
+                records from the JSON file,
+                checks for spam emails, and
+                returns the updated records.
+@InputParam   : None
+@OutputParam  : Email records
+
+'''
+
+def load_email_records():
+
+    try:
+        with open(FILE_NAME, "r") as file:
+            records = json.load(file)
+
+        records = auto_detect_spam(records)
         save_email_records(records)
-        print("Spam emails marked successfully.")
-    else:
-        print("No spam emails found.")
+
+        return records
+
+    except (FileNotFoundError, json.JSONDecodeError):
+        return []
+
+# ---------------- Save Email Records ----------------
+
+'''
+s
+@Function Name: save_email_records
+@Description  : This function saves the
+                email records to the JSON
+                file.
+@InputParam   : records
+@OutputParam  : None
+
+'''
+
+def save_email_records(records):
+
+    with open(FILE_NAME, "w") as file:
+        json.dump(records, file, indent=4)
 
 
-# ---------------- View Spam List ----------------
-
-def view_spam_list():
-
-    records = load_email_records()
-
-    found = False
-
-    for email in records:
-
-        if email["status"] == "Spam":
-
-            print("-" * 40)
-            print("Email ID :", email["email_id"])
-            print("Recipient:", email["recipient_email"])
-            print("Subject  :", email["subject"])
-            print("Status   :", email["status"])
-
-            found = True
-
-    if not found:
-        print("No spam emails found.")
 
 
-# ---------------- Delete Spam Emails ----------------
 
-def delete_spam_emails():
-
-    records = load_email_records()
-
-    new_records = []
-
-    for email in records:
-
-        if email["status"] != "Spam":
-            new_records.append(email)
-
-    save_email_records(new_records)
-
-    print("All spam emails deleted successfully.")
-
-# ---------------- Spam ----------------
-
-def spam_menu():
-    
-    speak("\n---- Spam Managment -----")
-
-    while True:
-        print("1. Mark as Spam")
-        print("2. View Spam List")
-        print("3. Delete Spam Email")
-        print("4. Back")
-
-        ch = input("Enter Choice: ")
-
-        if ch == "1":
-            mark_as_spam()
-
-        elif ch == "2":
-            view_spam_list()
-
-        elif ch == "3":
-            delete_spam_emails()
-
-        elif ch == "4":
-            break
-
-        else:
-            print("Invalid Choice!")

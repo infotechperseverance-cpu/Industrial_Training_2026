@@ -2,10 +2,10 @@ import pwinput
 import os
 import json
 from pathlib import Path
-from file_history import add_history
+from history import add_history
 
-
-main_dir = "File_Manager"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+main_dir = os.path.join(BASE_DIR, "File_Manager")
 json_file = os.path.join(main_dir, "file_data.json")
 
 os.makedirs(main_dir, exist_ok=True)
@@ -37,13 +37,13 @@ for folder in Folders:
 
 # ---------------- JSON Functions ----------------
 
-
 def load_data():
-
-
     if os.path.exists(json_file):
-        with open(json_file, "r") as file:
-            return json.load(file)
+        try:
+            with open(json_file, "r") as file:
+                return json.load(file)
+        except json.JSONDecodeError:
+            return []
     return []
 
 
@@ -55,63 +55,45 @@ def save_data(data):
 # ---------------- File Classification ----------------
 
 def classification_file(filename):
-
     extension = Path(filename).suffix.lower()
 
     if extension == ".pdf":
         return "Documents/PDF"
-
     elif extension in [".doc", ".docx"]:
         return "Documents/Word"
-
     elif extension in [".xls", ".xlsx"]:
         return "Documents/Excel"
-
     elif extension in [".ppt", ".pptx"]:
         return "Documents/PowerPoint"
-
     elif extension in [".jpg", ".jpeg", ".png", ".gif"]:
         return "Media/Pictures"
-
     elif extension in [".mp4", ".mkv"]:
         return "Media/Videos"
-
     elif extension in [".mp3", ".wav"]:
         return "Media/Audio"
-
     elif extension == ".c":
         return "Programming/C"
-
     elif extension in [".cpp", ".cc", ".cxx"]:
         return "Programming/C++"
-
     elif extension == ".py":
         return "Programming/Python"
-
     elif extension == ".java":
         return "Programming/Java"
-
     elif extension == ".html":
         return "Programming/HTML"
-
     elif extension == ".css":
         return "Programming/CSS"
-
     elif extension == ".js":
         return "Programming/JavaScript"
-
     else:
         return "Others"
 
 
 # ---------------- Create File ----------------
 
-def create_file(filename,password):
-
+def create_file(filename, password):
     category = classification_file(filename)
-
     folder_path = os.path.join(main_dir, category)
-
     path = os.path.join(folder_path, filename)
 
     if os.path.exists(path):
@@ -122,7 +104,6 @@ def create_file(filename,password):
         file.write("hello, file is created")
 
     data = load_data()
-    
     
     data.append({
         "filename": filename,
@@ -135,16 +116,14 @@ def create_file(filename,password):
 
     print(f"The '{filename}' is created successfully.")
 
+
 # ---------------- Rename File ----------------
 
 def rename_file(old_name, new_name):
-
     data = load_data()
     
     for item in data:
-
         if item["filename"] == old_name:
-
             # Check extension
             old_ext = os.path.splitext(old_name)[1].lower()
             new_ext = os.path.splitext(new_name)[1].lower()
@@ -160,7 +139,6 @@ def rename_file(old_name, new_name):
             new_folder = os.path.join(main_dir, new_category)
             new_path = os.path.join(new_folder, new_name)
             
-
             if not os.path.exists(old_path):
                 print("File not found.")
                 return
@@ -182,15 +160,14 @@ def rename_file(old_name, new_name):
 
     print("File not found.")
 
+
 # ---------------- Delete File ----------------
 
 def delete_file(filename):
-
     data = load_data()
 
     for item in data:
         if item["filename"] == filename:
-
             # If the file is password protected
             if item.get("password"):
                 entered_password = pwinput.pwinput("Enter Password: ")
@@ -200,7 +177,6 @@ def delete_file(filename):
                     return
 
             # Delete the physical file
-            
             category = item["category"]
             folder_path = os.path.join(main_dir, category)
             file_path = os.path.join(folder_path, filename)
@@ -210,10 +186,11 @@ def delete_file(filename):
 
             if os.path.exists(file_path):
                from recycle import movetobin
-               movetobin(file_path,filename)
+               movetobin(file_path, filename)
                print("Moved to Recycle Bin")
             else:
                print("Physical file not found.")
+               
             # Remove record from JSON
             data.remove(item)
             save_data(data)
@@ -227,7 +204,6 @@ def delete_file(filename):
 # ---------------- Display Records ----------------
 
 def display_records():
-
     data = load_data()
 
     if not data:
@@ -235,11 +211,9 @@ def display_records():
         return
 
     print("\n========== STORED FILE RECORDS ==========")
-
     count = 1
 
     for item in data:
-
         print("--------------------------------------")
         print("Record   :", count)
         print("Filename :", item["filename"])

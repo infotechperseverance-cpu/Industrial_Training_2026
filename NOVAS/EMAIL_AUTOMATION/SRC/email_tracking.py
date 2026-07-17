@@ -6,6 +6,18 @@ FILE_NAME = "email_history.json"
 
 # ---------------- Load Email History ----------------
 
+'''
+
+@Function Name: load_email_history
+@Description  : This function loads email
+                history from the
+                email_history.json file.
+@InputParam   : None
+@OutputParam  : Email history
+@Author       : Bhoomi Sapke
+
+'''
+
 def load_email_history():
     try:
         with open(FILE_NAME, "r") as file:
@@ -22,12 +34,34 @@ def load_email_history():
 
 # ---------------- Save Email History ----------------
 
+'''
+
+@Function Name: save_email_history
+@Description  : This function saves email
+                history to the
+                email_history.json file.
+@InputParam   : records
+@OutputParam  : None
+
+'''
+
 def save_email_history(records):
     with open(FILE_NAME, "w") as file:
         json.dump(records, file, indent=4)
 
 
 # ---------------- Track Email Status ----------------
+
+'''
+
+@Function Name: track_email_status
+@Description  : This function checks and
+                displays the status of an
+                email using its email ID.
+@InputParam   : email_id
+@OutputParam  : Email status
+
+'''
 
 def track_email_status(email_id):
 
@@ -39,7 +73,7 @@ def track_email_status(email_id):
     
     for email in records:
 
-        if email["email_id"] == email_id:
+        if email.get("email_id") == email_id:
             print(f"Email Status : {email['status']}")
             return
 
@@ -47,6 +81,17 @@ def track_email_status(email_id):
 
 
 # ---------------- Search by Recipient ----------------
+
+'''
+
+@Function Name: search_by_recipient
+@Description  : This function searches
+                the email history using
+                the recipient email.
+@InputParam   : recipient_email
+@OutputParam  : Email details
+
+'''
 
 def search_by_recipient(recipient_email):
 
@@ -60,7 +105,7 @@ def search_by_recipient(recipient_email):
 
     for email in records:
 
-        if email["recipient_email"].lower() == recipient_email.lower():
+        if email.get("recipient_email", "").lower() == recipient_email.lower():
 
             view_email_details(email["email_id"])
             found = True
@@ -70,6 +115,17 @@ def search_by_recipient(recipient_email):
 
 
 # ---------------- Search by Subject ----------------
+
+'''
+
+@Function Name: search_by_subject
+@Description  : This function searches
+                the email history using
+                the email subject.
+@InputParam   : subject
+@OutputParam  : Email details
+
+'''
 
 def search_by_subject(subject):
 
@@ -83,7 +139,7 @@ def search_by_subject(subject):
 
     for email in records:
 
-        if subject.lower() in email["subject"].lower():
+        if subject.strip().lower() in email.get("subject", "").strip().lower():
 
             view_email_details(email["email_id"])
             found = True
@@ -94,25 +150,36 @@ def search_by_subject(subject):
 
 # ---------------- View Email Details ----------------
 
+'''
+
+@Function Name: view_email_details
+@Description  : This function displays
+                the details of an email
+                using its email ID.
+@InputParam   : email_id
+@OutputParam  : Email details
+
+'''
+
 def view_email_details(email_id):
 
     records = load_email_history()
 
     for email in records:
 
-        if email["email_id"] == email_id:
+        if email.get("email_id") == email_id:
 
             print("--------------------------------------")
-            print(f"Email ID        : {email['email_id']}")
-            print(f"Recipient Email : {email['recipient_email']}")
-            print(f"Subject         : {email['subject']}")
-            print(f"Template Name   : {email['template_name']}")
-            print(f"Message         : {email['message']}")
-            print(f"Schedule Date   : {email['schedule_date']}")
-            print(f"Schedule Time   : {email['schedule_time']}")
-            print(f"Status          : {email['status']}")
-            print(f"Sent Date       : {email['sent_date']}")
-            print(f"Sent Time       : {email['sent_time']}")
+            print(f"Email ID        : {email.get('email_id', 'N/A')}")
+            print(f"Recipient Email : {email.get('recipient_email', 'N/A')}")
+            print(f"Subject         : {email.get('subject', 'N/A')}")
+            print(f"Template Name   : {email.get('template_name', 'N/A')}")
+            print(f"Message         : {email.get('message', 'N/A')}")
+            print(f"Schedule Date   : {email.get('schedule_date', 'N/A')}")
+            print(f"Schedule Time   : {email.get('schedule_time', 'N/A')}")
+            print(f"Status          : {email.get('status', 'N/A')}")
+            print(f"Sent Date       : {email.get('sent_date', 'N/A')}")
+            print(f"Sent Time       : {email.get('sent_time', 'N/A')}")
             return
 
     print("Email record not found.")
@@ -120,32 +187,45 @@ def view_email_details(email_id):
 
 # ---------------- Delete Email History ----------------
 
-def delete_email_history(email_id):
+'''
+
+@Function Name: delete_email_history
+@Description  : This function deletes
+                all email history from
+                the email_history.json
+                file.
+@InputParam   : None
+@OutputParam  : None
+
+'''
+
+def delete_email_history():
 
     records = load_email_history()
 
-    for email in records:
+    if not records:
+        print("No email history found.")
+        speak("No email history found.")
+        return
 
-        if email["email_id"] == email_id:
+    save_email_history([])
 
-            records.remove(email)
-
-            save_email_history(records)
-
-            print("Email history deleted successfully.")
-            return
-
-    print("Email record not found.")
+    speak("All email history deleted successfully.")
+    print("All email history deleted successfully.")
 
 # ---------------- Tracking ----------------
 
 def tracking_menu():
-    speak("----- EMAIL TRACKING -----")
+    
     while True:
+        
+        print("----- EMAIL TRACKING -----")
+        speak("EMAIL TRACKING")
         print("1. Search by Recipient")
         print("2. Search by Subject")
         print("3. View Email Details")
-        print("4. Back")
+        print("4. Reset Email History")
+        print("5. Back")
 
         ch = input("Enter Choice: ")
 
@@ -154,14 +234,17 @@ def tracking_menu():
             search_by_recipient(recipient)
 
         elif ch == "2":
-            subject = input("Enter Subject: ")
+            subject = input("Enter Subject: ").strip()
             search_by_subject(subject)
 
         elif ch == "3":
-            email_id = input("Enter Email ID: ")
+            email_id = int(input("Enter Email ID: "))
             view_email_details(email_id)
 
         elif ch == "4":
+            delete_email_history()
+
+        elif ch == "5":
             break
 
         else:

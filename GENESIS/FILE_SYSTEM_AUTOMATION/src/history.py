@@ -1,7 +1,8 @@
 import json
 import os
 
-FILE = "file_data.json" 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FILE = os.path.join(BASE_DIR, "file_history.json") 
 
 if not os.path.exists(FILE):
     with open(FILE, "w") as f:

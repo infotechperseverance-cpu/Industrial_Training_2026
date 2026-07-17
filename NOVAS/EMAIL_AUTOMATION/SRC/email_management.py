@@ -10,6 +10,18 @@ FILE_NAME = "email_records.json"
 
 # ---------------- View Email Records ----------------
 
+'''
+
+@Function Name: view_email_records
+@Description  : This function user can 
+                view all email store in
+                email_records,json
+@InputParam   : NONE
+@OutputParam  : None
+@Author       : Vaishnavi Teli
+
+'''
+
 def view_email_records():
 
     records = load_email_records()
@@ -32,6 +44,18 @@ def view_email_records():
 
 
 # ---------------- Update Email Record ----------------
+'''
+
+@Function Name: update_email_status
+@Description  : This function user can 
+                update there email_id and status
+@InputParam   : email_id(user enter)
+                status
+@outPram      : save records in email_records.json
+                file
+
+'''
+
 def update_email_status(email_id, status):
 
     records = load_email_records()
@@ -44,6 +68,16 @@ def update_email_status(email_id, status):
     save_email_records(records)
 
 # ---------------- Delete Email Record ----------------
+
+'''
+
+@Function Name: delete_email_send
+@Description  : This function user can delete 
+                the email by email_id user enter 
+@InputParam   : email_id
+@OutputParam  : None
+
+'''
 
 def delete_email_record(email_id):
 
@@ -68,9 +102,10 @@ def delete_email_record(email_id):
 def email_management_menu():
     assign_email_ids()
     fix_duplicate_email_ids()
-    speak("----- EMAIL MANAGEMENT -----")
+    
     while True:
-        
+        print("----- EMAIL MANAGEMENT -----")
+        speak("EMAIL MANAGEMENT")
         print("1. View Email Records")
         print("2. Update Email Status")
         print("3. Delete Email Record")

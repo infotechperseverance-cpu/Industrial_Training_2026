@@ -1,11 +1,18 @@
 import csv
 import os
-from voice import speak    
+from voice import speak
 
 USER_FILE = "user_data.csv"
 
+'''
+@Function Name: create_user_file
+@Description  : This function create the file to store user 
+                email,app password, login password
+@inputParam   :  NONE
+@outParam     :  NONE
+@Author       :  Bhoomi Spake	
 
-# ---------------- CREATE USER FILE ----------------
+'''
 
 def create_user_file():
 
@@ -21,6 +28,15 @@ def create_user_file():
 
 
 # ---------------- SIGN UP ----------------
+'''
+@Function Name: signup
+@Description  : This function create the new user account with
+                the app password, login password, email
+@inputParam   :  NONE
+@outParam     :  NONE
+
+'''
+
 
 def signup():
 
@@ -42,7 +58,9 @@ def signup():
 
             if row["email"] == email:
 
+                print("Account already exists.")
                 speak("Account already exists.")
+
 
                 return
 
@@ -54,10 +72,20 @@ def signup():
             [email, login_password, smtp_password]
         )
 
+    print("Account created successfully.")
     speak("Account created successfully.")
 
 
 # ---------------- LOGIN ----------------
+
+'''
+@Function Name: login
+@Description  : This function for user login if its correct then 
+                enter in main menu
+@inputParam   :  NONE
+@outParam     :  NONE
+
+'''
 
 def login():
 
@@ -74,6 +102,11 @@ def login():
 
         login_password = input("Password : ")
 
+        stop = input("Do You Want To Stop(stop):").lower()
+
+        if stop == "stop":
+            return
+
         with open(USER_FILE, "r") as file:
 
             reader = csv.DictReader(file)
@@ -83,6 +116,8 @@ def login():
                 if (row["email"] == email and
                         row["login_password"] == login_password):
 
+                    print("\nLogin Successful." \
+                    " WELCOME To Email Automation system")
                     speak("\nLogin Successful." \
                     " WELCOME To Email Automation system")
 
@@ -109,6 +144,7 @@ def login_menu():
 
     while True:
 
+        speak(" EMAIL AUTOMATION LOGIN ")
         print("\n===================================")
         print(" EMAIL AUTOMATION LOGIN ")
         print("===================================")
@@ -136,4 +172,5 @@ def login_menu():
 
         else:
 
+            speak("Invalid Choice.")
             print("Invalid Choice.")

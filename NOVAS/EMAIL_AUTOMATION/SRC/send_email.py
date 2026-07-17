@@ -32,6 +32,21 @@ def load_templates():
 
 # ---------------- SEND EMAIL ----------------
 
+'''
+@Function Name: send_email
+@Description  : This function sends an email
+                with the subject, message,
+                and attachments.
+@InputParam   : sender_email,
+                sender_password,
+                recipient_email,
+                subject,
+                message,
+                attachments
+@OutputParam  : True or False
+
+'''
+
 def send_email(sender_email,
                sender_password,
                recipient_email,
@@ -96,9 +111,21 @@ def send_email(sender_email,
 
         return False
     
+'''
+@Function Name: process_emails
+@Description  : This function processes all
+                pending emails and sends
+                them one by one.
+@InputParam   : sender_email,
+                sender_password
+@OutputParam  : None
+
+'''
+    
 def process_emails(sender_email, sender_password):
 
     speak("\n----- Pending Email Send -----")
+    print("\n----- Pending Email Send -----")
 
     records = load_email_records()
 
@@ -117,7 +144,21 @@ def process_emails(sender_email, sender_password):
         process_single_email(record, sender_email, sender_password, records)
 
     save_email_records(records)
-    
+
+
+'''
+@Function Name: process_single_email
+@Description  : This function processes and
+                sends a single email after
+                checking validation and
+                schedule.
+@InputParam   : record,
+                sender_email,
+                sender_password,
+                records
+@OutputParam  : None
+
+'''
     
 
 def process_single_email(record, sender_email, sender_password, records):
@@ -183,6 +224,17 @@ def process_single_email(record, sender_email, sender_password, records):
 
         print_email_report(record, "FAILED ❌", "SMTP sending failed")
 
+'''
+@Function Name: check_schedule
+@Description  : This function checks whether
+                the email is ready to be
+                sent according to the
+                scheduled date and time.
+@InputParam   : record
+@OutputParam  : True or False
+
+'''
+
 def check_schedule(record):
 
     schedule_str = record["schedule_date"] + " " + record["schedule_time"]
@@ -195,6 +247,16 @@ def check_schedule(record):
         return False   # IMPORTANT: do NOT sleep
 
     return True
+
+'''
+@Function Name: save_to_history
+@Description  : This function saves the sent
+                email details to the email
+                history file.
+@InputParam   : record
+@OutputParam  : None
+
+'''
 
 def save_to_history(record):
 
@@ -218,6 +280,17 @@ def save_to_history(record):
 
     save_email_history(history)
 
+'''
+@Function Name: print_email_report
+@Description  : This function displays the
+                email sending report.
+@InputParam   : record,
+                status,
+                message
+@OutputParam  : None
+
+'''
+
 def print_email_report(record, status, message):
     print("\n========================================")
     print(" EMAIL AUTOMATION SYSTEM REPORT")
@@ -236,6 +309,16 @@ def print_email_report(record, status, message):
     else:
         print(" Attachments    : None")
     print("========================================\n")
+
+'''
+@Function Name: show_success_notification
+@Description  : This function shows a
+                notification when the email
+                is sent successfully.
+@InputParam   : None
+@OutputParam  : None
+
+'''
 
 def show_success_notification():
 

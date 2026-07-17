@@ -8,7 +8,7 @@ from Classify_file import (
 from Password import password_protection
 from backup import backup_menu
 from file_sorting import sorting_menu
-from file_history import show_history
+from history import show_history
 from file_sizee import analyze
 from Qrcode_gen import shareqr
 from dublication_file import duplicate_file_management

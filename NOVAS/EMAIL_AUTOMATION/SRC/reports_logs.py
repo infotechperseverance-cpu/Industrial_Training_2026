@@ -20,6 +20,19 @@ def load_email_records():
 
 # ---------------- Generate Report ----------------
 
+'''
+
+@Function Name: generate_reports
+@Description  : This function checks the total, 
+                completed, pending, and failed 
+                emails from email_records.json 
+                and stores the report in 
+                email_reports.json.
+@InputParam   : None
+@OutputParam  : report
+
+'''
+
 def generate_report():
 
     records = load_email_records()
@@ -63,6 +76,17 @@ def generate_report():
 
 # ---------------- View Report ----------------
 
+'''
+
+@Function Name: view_report_summary
+@Description  : This function for view reports from
+                email_reports.json.
+@InputParam   : NONE
+@OutputParam  : NONE
+
+'''
+
+
 def view_report_summary():
 
     report = generate_report()
@@ -83,6 +107,17 @@ def view_report_summary():
 
 
 # ---------------- Export Report ----------------
+
+'''
+
+@Function Name: export_report_to_csv
+@Description  : This function store report summary
+                in email_report.json
+@InputParam   : None
+@OutputParam  : report
+
+'''
+
 
 def export_report_to_csv():
 
@@ -108,6 +143,16 @@ def export_report_to_csv():
 
 
 # ---------------- Save Log ----------------
+
+'''
+
+@Function Name: save_log
+@Description  : This function save logs in logs.csv
+@InputParam   : None
+@OutputParam  : report
+
+'''
+
 
 def save_log(email_id, action):
 
@@ -148,6 +193,16 @@ def save_log(email_id, action):
 
 # ---------------- View Logs ----------------
 
+'''
+
+@Function Name: view_logs
+@Description  : This function view logs from logs.csv
+@InputParam   : None
+@OutputParam  : report
+
+'''
+
+
 def view_logs():
 
     try:
@@ -183,10 +238,10 @@ def view_logs():
 
 def reports_logs_menu():
 
-    speak("\n---------- REPORTS & LOGS -----------")
-
     while True:
 
+        speak("\n---------- REPORTS & LOGS -----------")
+        print("\nREPORTS & LOGS")
         print("1. View Report Summary")
         print("2. Export Report to CSV")
         print("3. View Logs")

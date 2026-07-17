@@ -4,7 +4,21 @@ import email
 from email.header import decode_header
 import time             
 from voice import speak
-import imaplib
+from spam_management import detect_spam
+
+'''
+
+@Function Name: login_gmail
+@Description  : This function connects to the
+                Gmail account using the emai and
+                login Password.
+@InputParam   : sender_email (user email)
+                sender_password(user login password)
+@OutputParam  : Gmail connection object
+                or None
+@Author       : Vaishnvi Teli
+
+'''
 
 def login_gmail(sender_email, sender_password):
     try:
@@ -20,6 +34,16 @@ def login_gmail(sender_email, sender_password):
     except Exception as e:
         print(f" ERROR: Unable to connect to Gmail: {e}")
         return None
+    
+'''
+@Function Name: check_new_email
+@Description  : This function checks whether a
+                new unread email is received.
+@InputParam   : mail
+@OutputParam  : Email ID or None
+
+'''
+
 
 def check_new_email(mail):
 
@@ -32,6 +56,16 @@ def check_new_email(mail):
 
     return email_id[-1]
 
+'''
+@Function Name: read_email
+@Description  : This function reads the email
+                and gets the sender name,
+                subject, message, and
+                attachment names.
+@InputParam   : mail, email_id
+@OutputParam  : sender, subject, message,
+                attachments
+'''
 
 def read_email(mail, email_id):
 
@@ -120,16 +154,35 @@ def read_email(mail, email_id):
 
             message = "\n".join(clean_message).strip()
 
+            # Speak only a short preview
+            message = message.replace("\r", " ").replace("\n", " ")
+
+            if len(message) > 150:
+                message = message[:150] + "..."
+
             return sender, subject, message, attachments
 
     return None, None, None, []
 
+'''
+@Function Name: announce_email
+@Description  : This function announces the
+                email details using voice.
+@InputParam   : sender, subject, message,
+                attachments
+@OutputParam  : None
+
+'''
+
 def announce_email(sender, subject, message, attachments):
 
+    print("\nAttention! You have received a new email.")
+
     text = (
-        "Attention! You have received a new email. "
+        "\nAttention! You have received a new email. "
         "This is your Email Automation Assistant. "
     )
+
 
     if sender:
         text += f"The sender is {sender}. "
@@ -147,9 +200,22 @@ def announce_email(sender, subject, message, attachments):
         text += "This email has no attachments. "
 
     if message:
-        text += f"Message: {message}"
+        preview = message[:100]
+        text += f"Message: {preview}"
 
     speak(text)
+
+'''
+@Function Name: monitor_inbox
+@Description  : This function monitors the
+                Gmail inbox, checks for new
+                emails, detects spam, and
+                announces the email details.
+@InputParam   : sender_email,
+                sender_password
+@OutputParam  : None
+
+'''
     
 def monitor_inbox(sender_email, sender_password):
 
@@ -158,17 +224,16 @@ def monitor_inbox(sender_email, sender_password):
     if mail is None:
         print(" ERROR: Inbox monitoring stopped because login failed.")
         return
+    
+    # Ignore all emails that already exist in the inbox
 
-  
     status, messages = mail.search(None, "ALL")
-    email_ids = messages[0].split()
+    existing_emails = messages[0].split()
 
-    if email_ids:
-        last_email_id = email_ids[-1]
+    if existing_emails:
+        last_email_id = existing_emails[-1]
     else:
         last_email_id = None
-
-  
 
     while True:
 
@@ -181,14 +246,44 @@ def monitor_inbox(sender_email, sender_password):
 
             current_email_id = email_ids[-1]
 
-            # Only if a NEW email has arrived
+            # Read only if a NEW email arrives after the program starts
             if current_email_id != last_email_id:
 
                 last_email_id = current_email_id
 
                 sender, subject, message, attachments = read_email(mail, current_email_id)
 
-            
-                announce_email(sender, subject, message, attachments)
+                mail.store(current_email_id, '+FLAGS', '\\Seen')
+
+                email_data = {
+                    "subject": subject,
+                    "message": message
+                }
+
+                if detect_spam(email_data):
+
+                    speak("Warning! This email appears to be spam.")
+                    announce_email(sender, subject, message, attachments)
+
+                    print("\nSpam email detected.")
+                    print("Email deleted automatically.")
+                    print("\nWarning! This email appears to be spam.")
+                    speak("Warning! This email appears to be spam.")
+                    announce_email(sender, subject, message, attachments)
+
+
+
+                    status, data = mail.copy(current_email_id, "[Gmail]/Trash")
+
+                    if status == "OK":
+                        mail.store(current_email_id, '+FLAGS', '\\Deleted')
+                        mail.expunge()
+                        print("Spam email moved to Trash.")
+                        speak("Spam email deleted successfully.")
+                    else:
+                        print("Failed to move spam email to Trash.")
+
+                else:
+                    announce_email(sender, subject, message, attachments)
 
         time.sleep(5)

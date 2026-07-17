@@ -5,6 +5,20 @@ from voice import speak
 
 EMAIL_FILE = "email_records.json"
 
+'''
+
+@Function Name: generate_reports
+@Description  : This function checks the total, 
+                completed, pending, and failed 
+                emails from email_records.json 
+                and stores the report in 
+                email_reports.json.
+@InputParam   : None
+@OutputParam  : report
+
+'''
+
+
 def load_email_records():
     if os.path.exists(EMAIL_FILE):
         with open(EMAIL_FILE, "r") as file:
@@ -14,10 +28,26 @@ def load_email_records():
                 return []
     return []
 
+'''
+
+@Function Name: generate_pie_chart
+@Description  : This function checks the
+                email status from
+                email_records.json and
+                generates a pie chart for
+                completed, pending, and
+                spam emails.
+@InputParam   : None
+@OutputParam  : Pie chart
+@Author       : Unnati Thakur
+
+'''
+
 def generate_pie_chart():
 
+    print("-----------Pie Chart---------") 
     speak("-----------Pie Chart---------")
-    
+
     emails = load_email_records()
 
     if len(emails) == 0:
