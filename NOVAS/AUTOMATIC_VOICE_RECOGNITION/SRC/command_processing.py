@@ -82,10 +82,10 @@ def process_command():
                 return
 
             if result:
-
+                username = os.getlogin()
                 print(f"{username} : {wake_command}")
 
-                username = os.getlogin()
+            
 
                 print(f"Hello {username}! How can I help you?")
                 asyncio.run(speak(f"Hello {username}! How can I help you?"))

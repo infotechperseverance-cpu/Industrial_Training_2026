@@ -20,7 +20,7 @@ from config import (
 
 from voice_setting import get_settings
 from voice import speak
-from logs import add_log
+# from logs import add_log
 
 
 # Create recognizer object
@@ -72,18 +72,18 @@ def speech(language=None):
                 commands.append(text)
 
 
-                # Save success log
-                try:
+                # # Save success log
+                # try:
 
-                    add_log(
-                        module="Voice Recognition",
-                        command=text,
-                        status="SUCCESS"
-                    )
+                #     add_log(
+                #         module="Voice Recognition",
+                #         command=text,
+                #         status="SUCCESS"
+                #     )
 
-                except Exception as e:
+                # except Exception as e:
 
-                    print("Log Error:", e)
+                #     print("Log Error:", e)
 
 
                 return text
@@ -92,21 +92,21 @@ def speech(language=None):
 
             except sr.UnknownValueError:
 
-                asyncio.run(
-                   speak(  "❌ Google could not understand speech")
-                 )
+                # asyncio.run(
+                #    speak(  "❌ Google could not understand speech")
+                #  )
 
 
-                try:
+                # try:
 
-                    add_log(
-                        module="Voice Recognition",
-                        command="Unknown Speech",
-                        status="FAILED"
-                    )
+                #     add_log(
+                #         module="Voice Recognition",
+                #         command="Unknown Speech",
+                #         status="FAILED"
+                #     )
 
-                except Exception as e:
-                    return None
+                # except Exception as e:
+                #     return None
 
                 return None
 

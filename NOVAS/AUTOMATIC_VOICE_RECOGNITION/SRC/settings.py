@@ -1,17 +1,3 @@
-
-'''
-
-@Module Name : settings
-@Description : This module provides the settings menu of the assistant. It
-               allows the user to change the language and voice, control the
-               screen brightness, shut down the laptop, or return to the
-               previous menu using voice commands.
-@InputParam  : None
-@OutputParam : None
-@Author      : Vaishnavi Teli, Unnati
-
-'''
-
 import asyncio
 import os
 import screen_brightness_control as sbc
@@ -21,6 +7,7 @@ from voice_customization import select_voice
 
 
 def open_settings():
+  while True:
 
     asyncio.run(
         speak("Opening settings.")
@@ -54,7 +41,7 @@ def open_settings():
     if "language" in command or "voice" in command:
 
         select_voice()
-        return
+        continue
 
     # ---------- Brightness ----------
 
@@ -129,7 +116,7 @@ def open_settings():
                 speak("Brightness control is not supported on this device.")
             )
 
-        return
+        continue
 
     # ---------- Shutdown ----------
 
@@ -146,7 +133,6 @@ def open_settings():
     # ---------- Back ----------
 
     elif "back" in command:
-
         return
 
     # ---------- Invalid ----------
