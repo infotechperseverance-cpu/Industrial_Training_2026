@@ -1,5 +1,6 @@
-from config import WAKE_RESPONSE,SLEEP_COMMAND,SLEEP_RESPONSE,ASSISTANT_NAME,EXIT_COMMAND
+from config import *
 from voice import speak
+import asyncio
 
 WAKE_WORDS = [
     "hi nova",
@@ -21,16 +22,16 @@ def check_assistant_state(command):
 
     if any(word in command for word in WAKE_WORDS):
         assistant_active = True
-        speak(WAKE_RESPONSE)
+        asyncio.run(speak(WAKE_RESPONSE))
         return True
 
     elif SLEEP_COMMAND.lower() in command:
         assistant_active = False
-        speak(SLEEP_RESPONSE)
+        asyncio.run(speak(SLEEP_RESPONSE))
         return True
 
     elif EXIT_COMMAND.lower() in command:
-        speak(f"Closing {ASSISTANT_NAME}.")
+        asyncio.run(speak(f"Closing {ASSISTANT_NAME}."))
         return "EXIT"
 
     return False
