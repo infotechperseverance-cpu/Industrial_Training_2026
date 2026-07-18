@@ -5,8 +5,8 @@ import sys
 def login_sub_menu():
     while True:
         print("\n--- LOGIN & REGISTRATION OPTIONS ---")
-        print("1. Sign Up (Register New Account)")
-        print("2. Sign In (Login to Existing Account)")
+        print("1. Sign Up ")
+        print("2. Sign In ")
         print("3. Back to Main Menu")
         print("------------------------------------")
         
@@ -29,7 +29,7 @@ def login_sub_menu():
             return None, None
             
         else:
-            print("\n[Error] Invalid selection! Please enter 1, 2, or 3.")
+            print("\nError: Invalid selection! Please enter 1, 2, or 3.")
 
 # 2. Main menu function of entire application flow
 def main_menu():
@@ -46,7 +46,7 @@ def main_menu():
             print(f"Logged in as: {authenticated_user}")
         print("-----------------------------------------")
         print("1. User Login") 
-        print("2. Exit System")
+        print("2. Exit ")
         print("=========================================")
         
         choice = input("Select an option (1-2): ").strip()
@@ -61,11 +61,11 @@ def main_menu():
                 
         # Handling the second menu option to close the system safely
         elif choice == '2':
-            print("\nExiting system safely. Goodbye!")
+            print("\nExiting system. Goodbye!")
             sys.exit()
             
         else:
-            print("\n[Error] Invalid selection! Please enter 1 or 2.")
+            print("\nError: Invalid selection! Please enter 1 or 2.")
 
 if __name__ == "__main__":
     main_menu()
