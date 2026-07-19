@@ -1,15 +1,15 @@
 
-import pymysql
+import mysql.connector
 
 
 def get_connection():
 
-    connection = pymysql.connect(
+    connection = mysql.connector.connect(
         host="localhost",
         port=3306,
         user="root",
-        password="your_password",  
-        database="file_system_automation"
+        password="12345",
+        database="File_System_Automation"
     )
 
     return connection

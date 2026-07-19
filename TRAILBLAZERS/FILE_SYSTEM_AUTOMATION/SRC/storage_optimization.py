@@ -1,543 +1,887 @@
 import os
+import hashlib
 import shutil
 from datetime import datetime
 from db_connection import get_connection
 
-'''
-@Function Name : delete_file
-@Description   : This function deletes a file from its original location,
-                 saves a backup copy, moves the file to the Recycle Folder,
-                 and stores file details in the database.
-@Input Param   : File Path
-@Output Param  : None
-@Author        : Mamata Chaudhari
-'''
-def delete_file():
-
-    file_path = input("Enter File Path : ").strip()
-
-    if not os.path.exists(file_path):
-        print("File Not Found.")
-        return
 
-    file_name = os.path.basename(file_path)
-
-    #--Create Backup Folder
-    backup_folder = "Backup_Folder"
-
-    if not os.path.exists(backup_folder):
-        os.makedirs(backup_folder)
-
-    backup_path = os.path.join(backup_folder,file_name)
-
-    #--Save backup copy
-    shutil.copy2(file_path,backup_path)
-
-    #--Create Recycle Folder
-    recycle_folder = "Recycle_Folder"
-
-    if not os.path.exists(recycle_folder):
-
-        os.makedirs(recycle_folder)
-
-    recycle_path = os.path.join(recycle_folder,file_name)
-
-    #--Move file to recycle folder
-    shutil.move(file_path,recycle_path)
-
-    connection = get_connection()
-    cursor = connection.cursor()
-
-    query = """
-    INSERT INTO Recycle_Bin
-    (
-        file_id,
-        file_name,
-        deleted_date,
-        recovery_status,
-        deleted_by
-    )
-    VALUES (%s,%s,%s,%s,%s)
-    """
-
-    values = (
-        None,
-        file_name,
-        datetime.now().date(),
-        "Deleted",
-        os.getlogin()
-    )
-
-    cursor.execute(query,values)
-
-    connection.commit()
-    connection.close()
-
-    print("File Moved To Recycle Bin Successfully.")
-
-'''
-@Function Name : show_deleted_files
-@Description   : This function displays all deleted files stored
-                 in the Recycle Bin table.
-@Input Param   : None
-@Output Param  : List of Deleted Files
-@Author        : Mamata Chaudhari
-'''    
-def show_deleted_files():
-
-    connection = get_connection()
-    cursor = connection.cursor()
-      #--Get deleted file details from database
-    query = """
-    SELECT
-    recovery_id,
-    file_name,
-    deleted_date,
-    recovery_status
-    FROM Recycle_Bin
-    """
-
-    cursor.execute(query)
-    records = cursor.fetchall()
-    
-    if len(records) == 0:
-        print("No Deleted Files Found.")
-
-    else:
-        print("\n===== DELETED FILES =====\n")
-        for record in records:
+class StorageOptimization:
 
-            print("Recovery ID :",record[0])
+    LARGE_FILE_SIZE = 100 * 1024 * 1024
+    UNUSED_DAYS = 30
+    TEMP_EXTENSIONS = (".tmp", ".temp", ".log", ".bak", ".cache", ".old")
 
-            print("File Name   :",record[1])
+    '''
+    @Function Name : __init__
+
+    @Description   : Initializes database connection, variables
+                     and creates required database tables.
 
-            print("Deleted Date:",record[2])
-
-            print("Status      :",record[3])
-
-            print("-" * 30)
-
-    connection.close()
-
-'''
-@Function Name : preview_file
-@Description   : This function displays complete details of a
-                 selected deleted file using Recovery ID.
-@Input Param   : Recovery ID
-@Output Param  : File Details
-@Author        : Mamata Chaudhari
-'''
-def preview_file():
-
-    recovery_id = input("Enter Recovery ID : ")
-
-    connection = get_connection()
-    cursor = connection.cursor()
-     #--Get file details using Recovery ID
-    query = """
-    SELECT *
-    FROM Recycle_Bin
-    WHERE recovery_id = %s
-    """
-
-    cursor.execute(query,(recovery_id,))
-    record = cursor.fetchone()
-
-    if record is None:
-        print("File Not Found.")
-
-    else:
-        print("\n===== FILE PREVIEW =====\n")
-        print("Recovery ID    :",record[0])
-        print("File ID        :",record[1])
-        print("File Name      :",record[2])
-        print("Deleted Date   :",record[3])
-        print("Recovered Date :",record[4])
-        print("Recovery Status:",record[5])
-        print("Deleted By     :",record[6])
-
-    connection.close()
-
-'''
-@Function Name : recover_file
-@Description   : This function recovers a deleted file from the
-                 Recycle Folder and updates the recovery status.
-@Input Param   : Recovery ID
-@Output Param  : None
-@Author        : Mamata Chaudhari
-'''
-def recover_file():
-
-    recovery_id = input("Enter Recovery ID : ")
-
-    connection = get_connection()
-    cursor = connection.cursor()
-    #--Get deleted file name using Recovery ID
-    query = """
-    SELECT
-    file_name
-    FROM Recycle_Bin
-    WHERE recovery_id = %s
-    AND recovery_status = 'Deleted'
-    """
-
-    cursor.execute(query,(recovery_id,))
-    record = cursor.fetchone()
-
-    if record is None:
-
-        print("File Not Found.")
-        connection.close()
-        return
-
-    file_name = record[0]
-
-    recycle_path = os.path.join("Recycle_Folder",file_name)
-
-    recovery_folder = "Recovered_Files"
-     #--Create recovery folder if it does not exist
-    if not os.path.exists(recovery_folder):
-
-        os.makedirs(recovery_folder)
-
-    recovered_path = os.path.join(recovery_folder,file_name)
-
-    if not os.path.exists(recycle_path):
-
-        print(file_name,"Not Found In Recycle Folder.")
-
-        connection.close()
-        return
-    #--Move file to Recovered Files folder
-    shutil.move(recycle_path,recovered_path)
-    #--Update recovery details in database
-    update_query = """
-    UPDATE Recycle_Bin
-    SET recovered_date = %s,
-        recovery_status = %s
-    WHERE recovery_id = %s
-    """
-
-    cursor.execute(
-        update_query,
-        (
-            datetime.now().date(),
-            "Recovered",
-            recovery_id
-        )
-    )
-
-    connection.commit()
-    connection.close()
-
-    print("File Recovered Successfully.")
-
-'''
-@Function Name : recover_multiple_files
-@Description   : This function recovers multiple deleted files
-                 using Recovery IDs entered by the user.
-@Input Param   : Recovery IDs
-@Output Param  : None
-@Author        : Mamata Chaudhari
-'''
-def recover_multiple_files():
-
-    recovery_ids = input("Enter Recovery IDs (Comma Separated) : ")
-
-    recovery_ids = recovery_ids.split(",")
-
-    connection = get_connection()
-    cursor = connection.cursor()
-
-    recovered_count = 0
-    #--Process each Recovery ID
-    for recovery_id in recovery_ids:
-
-        recovery_id = recovery_id.strip()
-         #--Get file name using Recovery ID
-        query = """
-        SELECT file_name
-        FROM Recycle_Bin
-        WHERE recovery_id = %s
-        AND recovery_status = 'Deleted'
-        """
-
-        cursor.execute(query,(recovery_id,))
-
-        record = cursor.fetchone()
-
-        if record is None:
-
-            print("Recovery ID",recovery_id,"Not Found.")
-            continue
-
-        file_name = record[0]
-
-        recycle_path = os.path.join("Recycle_Folder",file_name)
-
-        recovery_folder = "Recovered_Files"
-
-        if not os.path.exists(recovery_folder):
-
-            os.makedirs(recovery_folder)
-
-        recovered_path = os.path.join(recovery_folder,file_name)
-
-        if not os.path.exists(recycle_path):
-
-            print(file_name,"Not Found In Recycle Folder.")
-            continue
-
-        shutil.move(recycle_path,recovered_path)
-
-        update_query = """
-        UPDATE Recycle_Bin
-        SET recovered_date = %s,
-            recovery_status = %s
-        WHERE recovery_id = %s
-        """
-
-        cursor.execute(
-            update_query,
-            (
-                datetime.now().date(),
-                "Recovered",
-                recovery_id
+    @InputParam    : NONE
+
+    @OutParam      : NONE
+
+    @Author        : Srushti Subhash Mahajan
+    '''
+
+    def __init__(self):
+        self.connection = get_connection()
+        self.cursor = self.connection.cursor()
+        self.selected_folder = ""
+        self.files = []
+        self.folder_scanned = False
+        self.create_tables()
+
+    '''
+    @Function Name : create_tables
+
+    @Description   : Creates required database tables if they do
+                     not already exist.
+
+    @InputParam    : NONE
+
+    @OutParam      : NONE
+
+    @Author        : Srushti Subhash Mahajan
+    '''
+
+    def create_tables(self):
+
+        try:
+
+            self.cursor.execute("""
+                CREATE TABLE IF NOT EXISTS File_Operations(
+                    operation_id INT AUTO_INCREMENT PRIMARY KEY,
+                    module_name VARCHAR(100),
+                    operation_type VARCHAR(100),
+                    file_name VARCHAR(255),
+                    file_path TEXT,
+                    file_size BIGINT,
+                    operation_time DATETIME,
+                    status VARCHAR(30),
+                    remarks TEXT
+                )
+            """)
+
+            self.cursor.execute("""
+                CREATE TABLE IF NOT EXISTS Generated_Reports(
+                    report_id INT AUTO_INCREMENT PRIMARY KEY,
+                    report_name VARCHAR(150),
+                    report_type VARCHAR(50),
+                    generated_by VARCHAR(100),
+                    generated_date DATETIME,
+                    report_status VARCHAR(30)
+                )
+            """)
+
+            self.connection.commit()
+
+        except Exception as error:
+            print(f"\nDatabase Error : {error}")
+
+    '''
+    @Function Name : log_operation
+
+    @Description   : Stores operation details into database.
+
+    @InputParam    : operation_type
+                     file_name
+                     file_path
+                     file_size
+                     status
+                     remarks
+
+    @OutParam      : NONE
+
+    @Author        : Srushti Subhash Mahajan
+    '''
+
+    def log_operation(self, operation_type, file_name="", file_path="", file_size=0, status="Success", remarks=""):
+
+        try:
+
+            query = """
+                INSERT INTO File_Operations(
+                    module_name,
+                    operation_type,
+                    file_name,
+                    file_path,
+                    file_size,
+                    operation_time,
+                    status,
+                    remarks
+                )
+                VALUES(%s,%s,%s,%s,%s,%s,%s,%s)
+            """
+
+            values = (
+                "Storage Optimization",
+                operation_type,
+                file_name,
+                file_path,
+                file_size,
+                datetime.now(),
+                status,
+                remarks
             )
-        )
 
-        recovered_count += 1
+            self.cursor.execute(query, values)
+            self.connection.commit()
 
-    connection.commit()
-    connection.close()
+        except Exception as error:
+            print(f"\nLogging Error : {error}")
 
-    print(recovered_count,"Files Recovered Successfully.")
+    '''
+    @Function Name : select_folder
 
-'''
-@Function Name : restore_backup
-@Description   : This function restores a file from the
-                 Backup Folder to the Recovered Files Folder.
-@Input Param   : File Name
-@Output Param  : None
-@Author        : Mamata Chaudhari
-'''    
-def restore_backup():
+    @Description   : Selects folder for storage optimization.
 
-    file_name = input("Enter File Name : ").strip()
+    @InputParam    : NONE
 
-    backup_folder = "Backup_Folder"
+    @OutParam      : True / False
 
-    backup_file = os.path.join(backup_folder,file_name)
+    @Author        : Srushti Subhash Mahajan
+    '''
 
-    if not os.path.exists(backup_file):
-        print("Backup File Not Found.")
-        return
+    def select_folder(self):
 
-    restore_folder = ("Recovered_Files")
+        folder = input("\nEnter Folder Path : ").strip()
 
-    if not os.path.exists(restore_folder):
-        os.makedirs(restore_folder)
+        if folder == "":
+            folder = os.getcwd()
+            print("\nNo folder entered.")
+            print(f"Using Current Directory : {folder}")
 
-    restore_path = os.path.join(restore_folder,file_name)
-    #--Copy file from Backup Folder to Recovered Files
-    shutil.copy2(backup_file,restore_path)
+        if not os.path.exists(folder):
+            print("\nFolder does not exist.")
+            return False
 
-    connection = get_connection()
-    cursor = connection.cursor()
+        if not os.path.isdir(folder):
+            print("\nEntered path is not a folder.")
+            return False
 
-    query = """
-    UPDATE Recycle_Bin
-    SET recovered_date = %s,
-        recovery_status = %s
-    WHERE file_name = %s
-    """
+        self.selected_folder = folder
+        self.folder_scanned = False
+        self.log_operation(operation_type="Folder Selected", file_path=folder)
 
-    cursor.execute(
-        query,
-        (
-            datetime.now().date(),
-            "Backup Restored",
-            file_name
-        )
-    )
+        print("\nFolder Selected Successfully.")
+        return True
 
-    connection.commit()
-    connection.close()
+    '''
+    @Function Name : scan_folder
 
-    print("Backup Restored Successfully.")
+    @Description   : Scans selected folder and stores file details.
 
-'''
-@Function Name : permanent_delete
-@Description   : This function permanently deletes a file from
-                 the Recycle Folder and removes its database record.
-@Input Param   : Recovery ID
-@Output Param  : None
-@Author        : Mamata Chaudhari
-'''
-def permanent_delete():
+    @InputParam    : NONE
 
-    recovery_id = input("Enter Recovery ID : ")
+    @OutParam      : NONE
 
-    connection = get_connection()
-    cursor = connection.cursor()
+    @Author        : Srushti Subhash Mahajan
+    '''
 
-    query = """
-    SELECT file_name
-    FROM Recycle_Bin
-    WHERE recovery_id = %s
-    """
+    def scan_folder(self):
 
-    cursor.execute(query,(recovery_id,))
-    record = cursor.fetchone()
+        if self.selected_folder == "":
+            self.selected_folder = os.getcwd()
+            print("\nNo folder selected.")
+            print(f"Scanning Current Directory : {self.selected_folder}")
 
-    if record is None:
-        print("File Not Found.")
-        connection.close()
-        return
+        elif not self.folder_scanned:
+            print("\nSelected folder is not scanned.")
+            print(f"Scanning Selected Folder : {self.selected_folder}")
+        
+        self.files.clear()
 
-    file_name = record[0]
+        try:
 
-    recycle_path = os.path.join("Recycle_Folder",file_name)
-    #--Delete file from Recycle Folder
-    if os.path.exists(recycle_path):
-        os.remove(recycle_path)
+            for root, directories, files in os.walk(self.selected_folder):
 
-    delete_query = """
-    DELETE FROM Recycle_Bin
-    WHERE recovery_id = %s
-    """
+                for file in files:
 
-    cursor.execute(delete_query,(recovery_id,))
+                    full_path = os.path.join(root, file)
 
-    connection.commit()
-    connection.close()
+                    try:
 
-    print("File Permanently Deleted.")
+                        size = os.path.getsize(full_path)
+                        accessed_time = datetime.fromtimestamp(os.path.getatime(full_path))
+                        modified_time = datetime.fromtimestamp(os.path.getmtime(full_path))
 
-'''
-@Function Name : show_recovery_status
-@Description   : This function displays the recovery status
-                 of all files stored in the database.
-@Input Param   : None
-@Output Param  : Recovery Details
-@Author        : Mamata Chaudhari
-'''
-def show_recovery_status():
+                        self.files.append({
+                            "name": file,
+                            "path": full_path,
+                            "size": size,
+                            "last_access": accessed_time,
+                            "last_modified": modified_time
+                        })
 
-    connection = get_connection()
-    cursor = connection.cursor()
-    #--Get recovery details from database
-    query = """
-    SELECT
-    recovery_id,
-    file_name,
-    deleted_date,
-    recovered_date,
-    recovery_status
-    FROM Recycle_Bin
-    """
+                    except Exception:
+                        continue
 
-    cursor.execute(query)
-    records = cursor.fetchall()
-    #--Check if recovery records exist
-    if len(records) == 0:
-        print("No Recovery Records Found.")
+            print(f"\nTotal Files Scanned : {len(self.files)}")
+            self.folder_scanned = True
+            self.log_operation(operation_type="Folder Scan", file_path=self.selected_folder, remarks=f"{len(self.files)} files scanned.")
 
-    else:
-        print("\n===== RECOVERY STATUS =====\n")
+        except Exception as error:
+            print(f"\nScan Error : {error}")
 
-        for record in records:
+    '''
+    @Function Name : generate_hash
 
-            print("Recovery ID    :",record[0])
-            print("File Name      :",record[1])
-            print("Deleted Date   :",record[2])
-            print("Recovered Date :",record[3])
-            print("Status         :",record[4])
-            print("-" * 40)
+    @Description   : Generates SHA-256 hash for a file.
 
-    connection.close()
+    @InputParam    : file_path
 
-'''
-@Function Name : create_folders
-@Description   : This function creates the required folders
-                 for file recovery operations if they do not exist.
-@Input Param   : None
-@Output Param  : None
-@Author        : Mamata Chaudhari
-'''
-def create_folders():
+    @OutParam      : SHA-256 Hash
 
-    if not os.path.exists("Recycle_Folder"):
-        os.makedirs("Recycle_Folder")
+    @Author        : Srushti Subhash Mahajan
+    '''
 
-    if not os.path.exists("Recovered_Files"):
-        os.makedirs("Recovered_Files")
+    def generate_hash(self, file_path):
 
-    if not os.path.exists("Backup_Folder"):
-        os.makedirs("Backup_Folder")
+        sha256 = hashlib.sha256()
 
-'''
-@Function Name : main
-@Description   : This function displays the menu and calls
-                 the appropriate function based on user choice.
-@Input Param   : User Choice
-@Output Param  : None
-@Author        : Mamata Chaudhari
-'''
+        try:
+
+            with open(file_path, "rb") as file:
+
+                while True:
+
+                    data = file.read(4096)
+
+                    if not data:
+                        break
+
+                    sha256.update(data)
+
+            return sha256.hexdigest()
+
+        except Exception:
+            return None
+
+    '''
+    @Function Name : detect_duplicate_files
+
+    @Description   : Detects duplicate files using SHA-256 hash.
+
+    @InputParam    : NONE
+
+    @OutParam      : NONE
+
+    @Author        : Srushti Subhash Mahajan
+    '''
+
+    def detect_duplicate_files(self):
+
+        if not self.files:
+            self.scan_folder()
+
+        file_hashes = {}
+        duplicate_files = []
+
+        print("\nSearching for duplicate files...\n")
+
+        for file in self.files:
+
+            file_hash = self.generate_hash(file["path"])
+
+            if file_hash is None:
+                continue
+
+            if file_hash in file_hashes:
+                duplicate_files.append((file_hashes[file_hash], file))
+            else:
+                file_hashes[file_hash] = file
+
+        if not duplicate_files:
+
+            print("No duplicate files found.")
+
+            self.log_operation(operation_type="Duplicate Scan", status="Success", remarks="No duplicate files found.")
+            return
+
+        print("\n" + "=" * 120)
+        print(f"{'Original File':<58} {'Duplicate File'}")
+        print("=" * 120)
+
+        for original, duplicate in duplicate_files:
+
+            print(f"{original['name']:<55} -> {duplicate['name']}")
+            print(f"{'Original Path :':<18} {original['path']}")
+            print(f"{'Duplicate Path:':<18} {duplicate['path']}")
+            print(f"{'Size (MB)     :':<18} {duplicate['size'] / (1024 * 1024):.2f}")
+            print("-" * 120)
+
+            self.log_operation(operation_type="Duplicate File Found", file_name=duplicate["name"], file_path=duplicate["path"], file_size=duplicate["size"], remarks=f"Duplicate of {original['path']}")
+
+        print(f"\nTotal Duplicate Files : {len(duplicate_files)}")
+
+    '''
+    @Function Name : identify_large_files
+
+    @Description   : Displays files larger than the user-specified
+                     size.
+
+    @InputParam    : NONE
+
+    @OutParam      : NONE
+
+    @Author        : Srushti Subhash Mahajan
+    '''
+
+    def identify_large_files(self):
+
+        if not self.files:
+            self.scan_folder()
+
+        try:
+
+            limit = input("\nEnter minimum file size in MB (Default 100): ").strip()
+
+            if limit == "":
+                limit = 100
+
+            limit = float(limit)
+            limit_bytes = limit * 1024 * 1024
+
+        except ValueError:
+            print("\nInvalid size.")
+            return
+
+        large_files = []
+
+        for file in self.files:
+
+            if file["size"] >= limit_bytes:
+                large_files.append(file)
+
+        if not large_files:
+
+            print(f"\nNo files larger than {limit} MB found.")
+
+            self.log_operation(operation_type="Large File Scan", status="Success", remarks="No large files found.")
+            return
+
+        large_files.sort(key=lambda file: file["size"], reverse=True)
+
+        print("\n" + "=" * 120)
+        print(f"{'File Name':<35} {'Size (MB)':>12} {'Last Modified':>28}")
+        print("=" * 120)
+
+        for file in large_files:
+
+            size_mb = file["size"] / (1024 * 1024)
+
+            print(f"{file['name'][:35]:<35} {size_mb:>12.2f} {str(file['last_modified']):>28}")
+            print(f"Path : {file['path']}")
+            print("-" * 120)
+
+            self.log_operation(operation_type="Large File Found", file_name=file["name"], file_path=file["path"], file_size=file["size"], remarks="Large file detected.")
+
+        print(f"\nTotal Large Files : {len(large_files)}")
+
+    '''
+    @Function Name : display_scanned_files
+
+    @Description   : Displays all scanned files with details.
+
+    @InputParam    : NONE
+
+    @OutParam      : NONE
+
+    @Author        : Srushti Subhash Mahajan
+    '''
+
+    def display_scanned_files(self):
+
+        if not self.files:
+            self.scan_folder()
+
+        if not self.files:
+            print("\nNo files available.")
+            return
+
+        print("\n" + "=" * 120)
+        print(f"{'No.':<5} {'File Name':<35} {'Size (MB)':>12} {'Last Access':>28}")
+        print("=" * 120)
+
+        for index, file in enumerate(self.files, start=1):
+
+            size_mb = file["size"] / (1024 * 1024)
+
+            print(f"{index:<5} {file['name'][:35]:<35} {size_mb:>12.2f} {str(file['last_access']):>28}")
+
+        print("=" * 120)
+        print(f"Total Files : {len(self.files)}")
+
+    '''
+    @Function Name : find_unused_files
+
+    @Description   : Displays files that have not been accessed
+                     for the specified number of days.
+
+    @InputParam    : NONE
+
+    @OutParam      : NONE
+
+    @Author        : Srushti Subhash Mahajan
+    '''
+
+    def find_unused_files(self):
+
+        if not self.files:
+            self.scan_folder()
+
+        try:
+
+            days = input("\nEnter unused days (Default 30): ").strip()
+
+            if days == "":
+                days = self.UNUSED_DAYS
+
+            days = int(days)
+
+        except ValueError:
+            print("\nInvalid number.")
+            return
+
+        current_time = datetime.now()
+        unused_files = []
+
+        for file in self.files:
+
+            difference = (current_time - file["last_access"]).days
+
+            if difference >= days:
+                unused_files.append((file, difference))
+
+        if not unused_files:
+
+            print(f"\nNo files unused for more than {days} days.")
+
+            self.log_operation(operation_type="Unused File Scan", remarks="No unused files found.")
+            return
+
+        print("\n" + "=" * 120)
+        print(f"{'File Name':<35} {'Unused Days':>15} {'Size (MB)':>15}")
+        print("=" * 120)
+
+        for file, difference in unused_files:
+
+            size_mb = file["size"] / (1024 * 1024)
+
+            print(f"{file['name'][:35]:<35} {difference:>15} {size_mb:>15.2f}")
+            print(f"Path : {file['path']}")
+            print("-" * 120)
+
+            self.log_operation(operation_type="Unused File Found", file_name=file["name"], file_path=file["path"], file_size=file["size"], remarks=f"Unused for {difference} days.")
+
+        print(f"\nTotal Unused Files : {len(unused_files)}")
+
+    '''
+    @Function Name : find_temporary_files
+
+    @Description   : Displays temporary files available in the
+                     selected folder.
+
+    @InputParam    : NONE
+
+    @OutParam      : NONE
+
+    @Author        : Srushti Subhash Mahajan
+    '''
+
+    def find_temporary_files(self):
+
+        if not self.files:
+            self.scan_folder()
+
+        temporary_files = []
+
+        for file in self.files:
+
+            extension = os.path.splitext(file["name"])[1].lower()
+
+            if extension in self.TEMP_EXTENSIONS:
+                temporary_files.append(file)
+
+        if not temporary_files:
+
+            print("\nNo temporary files found.")
+
+            self.log_operation(operation_type="Temporary File Scan", remarks="No temporary files found.")
+            return
+
+        print("\n" + "=" * 120)
+        print(f"{'File Name':<35} {'Extension':>15} {'Size (MB)':>15}")
+        print("=" * 120)
+
+        for file in temporary_files:
+
+            extension = os.path.splitext(file["name"])[1]
+            size_mb = file["size"] / (1024 * 1024)
+
+            print(f"{file['name'][:35]:<35} {extension:>15} {size_mb:>15.2f}")
+            print(f"Path : {file['path']}")
+            print("-" * 120)
+
+            self.log_operation(operation_type="Temporary File Found", file_name=file["name"], file_path=file["path"], file_size=file["size"], remarks="Temporary file detected.")
+
+        print(f"\nTotal Temporary Files : {len(temporary_files)}")
+
+    '''
+    @Function Name : display_storage_statistics
+
+    @Description   : Displays storage usage statistics of the
+                     selected folder.
+
+    @InputParam    : NONE
+
+    @OutParam      : NONE
+
+    @Author        : Srushti Subhash Mahajan
+    '''
+
+    def display_storage_statistics(self):
+
+        try:
+
+            if self.selected_folder == "":
+                self.selected_folder = os.getcwd()
+
+            usage = shutil.disk_usage(self.selected_folder)
+
+            total = usage.total / (1024 ** 3)
+            used = usage.used / (1024 ** 3)
+            free = usage.free / (1024 ** 3)
+            percentage = (usage.used / usage.total) * 100
+
+            print("\n========== Storage Statistics ==========")
+            print(f"Selected Folder : {self.selected_folder}")
+            print(f"Total Space     : {total:.2f} GB")
+            print(f"Used Space      : {used:.2f} GB")
+            print(f"Free Space      : {free:.2f} GB")
+            print(f"Usage           : {percentage:.2f}%")
+            print("========================================")
+
+            self.log_operation(operation_type="Storage Statistics", file_path=self.selected_folder, remarks="Storage statistics displayed.")
+
+        except Exception as error:
+            print(f"\nError : {error}")
+
+    '''
+    @Function Name : show_free_storage_space
+
+    @Description   : Displays available free storage space.
+
+    @InputParam    : NONE
+
+    @OutParam      : NONE
+
+    @Author        : Srushti Subhash Mahajan
+    '''
+
+    def show_free_storage_space(self):
+
+        try:
+
+            if self.selected_folder == "":
+                self.selected_folder = os.getcwd()
+
+            usage = shutil.disk_usage(self.selected_folder)
+
+            free_space = usage.free / (1024 ** 3)
+
+            print("\n========== Free Storage Space ==========")
+            print(f"Selected Folder : {self.selected_folder}")
+            print(f"Available Space : {free_space:.2f} GB")
+            print("========================================")
+
+            self.log_operation(operation_type="Free Storage Check", file_path=self.selected_folder, remarks=f"{free_space:.2f} GB free.")
+
+        except Exception as error:
+            print(f"\nError : {error}")
+
+    '''
+    @Function Name : suggest_files_to_delete
+
+    @Description   : Displays files that are recommended for deletion.
+
+    @InputParam    : NONE
+
+    @OutParam      : NONE
+
+    @Author        : Srushti Subhash Mahajan
+    '''
+
+    def suggest_files_to_delete(self):
+
+        if not self.files:
+            self.scan_folder()
+
+        suggestions = []
+        current_time = datetime.now()
+
+        for file in self.files:
+
+            extension = os.path.splitext(file["name"])[1].lower()
+            unused_days = (current_time - file["last_access"]).days
+
+            if file["size"] >= self.LARGE_FILE_SIZE or extension in self.TEMP_EXTENSIONS or unused_days >= self.UNUSED_DAYS:
+                suggestions.append((file, unused_days))
+
+        if not suggestions:
+
+            print("\nNo files suggested for deletion.")
+
+            self.log_operation(operation_type="Deletion Suggestion", remarks="No files suggested.")
+            return
+
+        print("\n" + "=" * 120)
+        print(f"{'No.':<5} {'File Name':<35} {'Reason':<20} {'Unused Days':>15} {'Size (MB)':>15}")
+        print("=" * 120)
+
+        for index, (file, unused_days) in enumerate(suggestions, start=1):
+
+            extension = os.path.splitext(file["name"])[1].lower()
+
+            if extension in self.TEMP_EXTENSIONS:
+                reason = "Temporary File"
+            elif file["size"] >= self.LARGE_FILE_SIZE:
+                reason = "Large File"
+            else:
+                reason = "Unused File"
+
+            size_mb = file["size"] / (1024 * 1024)
+
+            print(f"{index:<5} {file['name'][:35]:<35} {reason:<20} {unused_days:>15} {size_mb:>15.2f}")
+            print(f"Path : {file['path']}")
+            print("-" * 120)
+
+        print(f"\nTotal Suggested Files : {len(suggestions)}")
+
+        self.log_operation(operation_type="Deletion Suggestion", remarks=f"{len(suggestions)} files suggested.")
+
+    '''
+    @Function Name : delete_file
+
+    @Description   : Deletes the selected file after user
+                     confirmation.
+
+    @InputParam    : NONE
+
+    @OutParam      : NONE
+
+    @Author        : Srushti Subhash Mahajan
+    '''
+
+    def delete_file(self):
+
+        if not self.files:
+            self.scan_folder()
+
+        path = input("\nEnter complete file path to delete : ").strip()
+
+        if not os.path.exists(path):
+            print("\nFile not found.")
+            return
+
+        confirm = input("Delete this file? (Y/N) : ").strip().upper()
+
+        if confirm != "Y":
+            print("\nDeletion cancelled.")
+            return
+        try:
+
+            file_name = os.path.basename(path)
+            file_size = os.path.getsize(path)
+
+            os.remove(path)
+
+            print("\nFile deleted successfully.")
+
+            self.log_operation(operation_type="File Deleted", file_name=file_name, file_path=path, file_size=file_size, remarks="Deleted successfully.")
+
+            self.scan_folder()
+
+        except Exception as error:
+
+            print(f"\nDeletion Failed : {error}")
+
+            self.log_operation(operation_type="File Delete Failed", file_name=os.path.basename(path), file_path=path, status="Failed", remarks=str(error))
+
+    '''
+    @Function Name : close_connection
+
+    @Description   : Closes database connection safely.
+
+    @InputParam    : NONE
+
+    @OutParam      : NONE
+
+    @Author        : Srushti Subhash Mahajan
+    '''
+
+    def close_connection(self):
+
+        try:
+
+            if self.cursor:
+                self.cursor.close()
+
+            if self.connection:
+                self.connection.close()
+
+        except Exception:
+            pass
+    '''
+    @Function Name : menu
+
+    @Description   : Displays Storage Optimization menu and
+                     performs user selected operations.
+
+    @InputParam    : NONE
+
+    @OutParam      : NONE
+
+    @Author        : Srushti Subhash Mahajan
+    '''
+
+    def menu(self):
+
+        while True:
+
+            print("\n" + "=" * 50)
+            print("         STORAGE OPTIMIZATION")
+            print("=" * 50)
+            print("1. Select Folder")
+            print("2. Scan Folder")
+            print("3. Display Scanned Files")
+            print("4. Detect Duplicate Files")
+            print("5. Identify Large Files")
+            print("6. Find Unused Files")
+            print("7. Find Temporary Files")
+            print("8. Display Storage Statistics")
+            print("9. Show Free Storage Space")
+            print("10. Suggest Files To Delete")
+            print("11. Delete File")
+            print("12. Exit")
+            print("=" * 50)
+
+            choice = input("\nEnter Choice : ").strip()
+
+            if choice == "1":
+                self.select_folder()
+
+            elif choice == "2":
+                self.scan_folder()
+
+            elif choice == "3":
+                self.display_scanned_files()
+
+            elif choice == "4":
+                self.detect_duplicate_files()
+
+            elif choice == "5":
+                self.identify_large_files()
+
+            elif choice == "6":
+                self.find_unused_files()
+
+            elif choice == "7":
+                self.find_temporary_files()
+
+            elif choice == "8":
+                self.display_storage_statistics()
+
+            elif choice == "9":
+                self.show_free_storage_space()
+
+            elif choice == "10":
+                self.suggest_files_to_delete()
+
+            elif choice == "11":
+                self.delete_file()
+
+            elif choice == "12":
+
+                print("\nThank You For Using Storage Optimization.")
+
+                self.close_connection()
+
+                break
+
+            else:
+                print("\nInvalid Choice. Please Enter a Valid Option.")
+
+def close_connection(self):
+        if self.cursor:
+            self.cursor.close()
+
+        if self.connection:
+            self.connection.close() 
+
 def main():
 
-    create_folders()
+     obj = StorageOptimization()
 
-    while True:
+     while True:
 
-        print("\n" + "=" * 40)
-        print("      FILE RECOVERY SYSTEM")
-        print("=" * 40)
+        print("\n========== STORAGE OPTIMIZATION ==========")
+        print("1. Select Folder")
+        print("2. Scan Folder")
+        print("3. Detect Duplicate Files")
+        print("4. Identify Large Files")
+        print("5. Find Unused Files")
+        print("6. Find Temporary Files")
+        print("7. Display Storage Statistics")
+        print("8. Show Free Storage Space")
+        print("9. Suggest Files To Delete")
+        print("10. Delete File")
+        print("11. Display Scanned Files")
+        print("12. Exit")
 
-        print("1. Delete File")
-        print("2. Show Deleted Files")
-        print("3. Preview File")
-        print("4. Recover File")
-        print("5. Recover Multiple Files")
-        print("6. Restore Backup")
-        print("7. Permanent Delete")
-        print("8. Show Recovery Status")
-        print("9. Exit")
-
-        choice = input("\nEnter Your Choice : ")
+        choice = input("Enter Your Choice : ")
 
         if choice == "1":
-            delete_file()
+            obj.select_folder()
 
         elif choice == "2":
-            show_deleted_files()
+            obj.scan_folder()
 
         elif choice == "3":
-            preview_file()
+            obj.detect_duplicate_files()
 
         elif choice == "4":
-            recover_file()
+            obj.identify_large_files()
 
         elif choice == "5":
-            recover_multiple_files()
+            obj.find_unused_files()
 
         elif choice == "6":
-            restore_backup()
+            obj.find_temporary_files()
 
         elif choice == "7":
-            permanent_delete()
+            obj.display_storage_statistics()
 
         elif choice == "8":
-            show_recovery_status()
+            obj.show_free_storage_space()
 
         elif choice == "9":
-            print("Thank You...")
+            obj.suggest_files_to_delete()
+
+        elif choice == "10":
+            obj.delete_file()
+
+        elif choice == "11":
+            obj.display_scanned_files()
+
+        elif choice == "12":
+            obj.close_connection()
             break
 
         else:
-            print("Invalid Choice! Please Try Again.")
+            print("Invalid Choice.")
+
 
 if __name__ == "__main__":
-
-    main()        
-                                                   
+    main()

@@ -5,7 +5,8 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import ( SimpleDocTemplate,Table,TableStyle,Paragraph,Spacer)
 
-from database import get_connection
+from db_connection import get_connection
+conn = get_connection()
 
 
 class AutomaticReportGeneration:
@@ -652,19 +653,13 @@ class AutomaticReportGeneration:
             else:
                 print("\nInvalid Choice.")
 
-# ---------------------------------------------
-# Main Function
-# ---------------------------------------------
+def main():
+    report = AutomaticReportGeneration()
+    report.menu()
 
-if __name__ == "__main__":
+if __name__ =="__main__":
+    main()    
+    
+    
 
-    try:
-        report = AutomaticReportGeneration()
-        report.menu()
-
-    except KeyboardInterrupt:
-        print("\nProgram Interrupted.")
-
-    except Exception as error:
-        print(f"\nUnexpected Error : {error}")
 

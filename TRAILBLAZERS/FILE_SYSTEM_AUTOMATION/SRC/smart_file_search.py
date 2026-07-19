@@ -1,7 +1,7 @@
 import os
 import difflib
 from datetime import datetime
-from database import get_connection
+from db_connection import get_connection
 
 
 class SmartFileSearch:
@@ -400,12 +400,9 @@ class SmartFileSearch:
 # Standalone Execution
 # ---------------------------------
 
-if __name__ == "__main__":
+def main():
 
-    # Create SmartFileSearch object
     obj = SmartFileSearch()
-
-    # Create database table
     obj.create_table()
 
     while True:
@@ -419,74 +416,47 @@ if __name__ == "__main__":
         print("6. Display All Files")
         print("7. Exit")
 
-        # Accept user choice
         choice = input("Enter your choice: ")
 
         try:
 
-            # Scan folder option
             if choice == "1":
-
                 folder = input("Enter Folder Path: ")
                 obj.scan_folder(folder)
 
-
-            # Search by name option
             elif choice == "2":
-
                 name = input("Enter File Name: ")
                 obj.search_by_name(name)
 
-
-            # Search by extension option
             elif choice == "3":
-
                 extension = input("Enter Extension (Example .py): ")
                 obj.search_by_extension(extension)
 
-
-            # Search by size option
             elif choice == "4":
-
                 size = int(input("Enter maximum size in bytes: "))
                 obj.search_by_size(size)
 
-
-            # Search by date option
             elif choice == "5":
-
                 date = input("Enter Date (YYYY-MM-DD): ")
                 obj.search_by_date(date)
 
-
-            # Display all files option
             elif choice == "6":
-
                 obj.display_all()
 
-
-            # Exit program
             elif choice == "7":
-
                 obj.close()
-
                 print("Program Closed.")
-
                 break
 
-
             else:
-
                 print("Invalid Choice.")
 
-
         except ValueError:
-
-            # Handle invalid numeric input
             print("Please enter valid input.")
 
-
         except Exception as e:
-
-            # Handle unexpected errors
             print("Error:", e)
+
+
+if __name__ == "__main__":
+    main()

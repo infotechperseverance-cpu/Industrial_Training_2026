@@ -16,13 +16,13 @@ from datetime import datetime
 '''
 def create_files():
 
-    
+    # Create JSON file if it does not exist
     if not os.path.exists("protected_files.json"):
 
         with open("protected_files.json", "w") as file:
             json.dump([], file)
 
-    
+    # Create CSV log file if it does not exist
     if not os.path.exists("access_log.csv"):
 
         with open("access_log.csv","w",newline="") as file:
@@ -295,7 +295,7 @@ def remove_password():
                  prompt="Enter New Password : ",
                  mask="*"
             )
-            
+            #--Verify password
             if password != record["password"]:
 
                 print("Incorrect Password.")
