@@ -1,19 +1,4 @@
-'''
-@Library Name : db_connection
-@Description  : Used to establish a connection with the MySQL database.
 
-@Library Name : os
-@Description  : Used for file and directory handling operations.
-
-@Library Name : shutil
-@Description  : Used to copy, move and manage files.
-
-@Library Name : datetime
-@Description  : Used to get the current system date and time.
-
-@Library Name : difflib
-@Description  : Used to compare two file versions and display the differences.
-'''
 from db_connection import get_connection 
 import os  
 import shutil
@@ -44,7 +29,7 @@ def add_file():
     file_name = os.path.basename(file_path)
 
     try:
-        #--Connect to MySQL database
+        
         connection = get_connection()
         cursor = connection.cursor()
 
@@ -119,7 +104,7 @@ def get_file_path(file_id):
 def create_version_folder():
 
     folder_name = "versions"
-    #--Create folder only if it does not exist
+    
     if not os.path.exists(folder_name):
         os.mkdir(folder_name)
         print("Version folder created successfully.")
@@ -165,7 +150,7 @@ def create_version():
     shutil.copy(file_path, version_file)
 
     try:
-        #--Connect to MySQL database
+        
         connection = get_connection()
         cursor = connection.cursor()
 
@@ -261,7 +246,7 @@ def view_version_history():
         cursor.execute(query, (file_id,))
         #--Fetch all version records
         records = cursor.fetchall()
-        #--check if history exists
+    
         if not records:
             print("No Version History Found.")
 
@@ -299,7 +284,7 @@ def restore_version():
     version_number = int(input("Enter Version Number : "))
 
     file_path = get_file_path(file_id)
-    #--Stop if File ID is invalid
+    
     if file_path is None:
         print("File ID Not Found.")
         return
@@ -345,6 +330,12 @@ def compare_versions():
     #--Create paths of both version files
     file1 = f"versions/{name}_v{version1}{extension}"
     file2 = f"versions/{name}_v{version2}{extension}"
+
+    binary_extensions = [".pdf", ".docx", ".xlsx", ".jpg", ".jpeg", ".png"]
+
+    if extension.lower() in binary_extensions:
+        print("Binary files cannot be compared.")
+        return
 
     if not os.path.exists(file1):  #==Check whether both files exist
         print("First Version File Not Found.")
