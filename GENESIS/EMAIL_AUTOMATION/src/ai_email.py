@@ -19,7 +19,7 @@ class AIEmailWriter:
         # Creating a Gemini AI client using the API key
         # This client is used to communicate with the Gemini model
         self.client = genai.Client(
-            api_key="YOUR_API_KEY"
+            api_key="your_api"
         )
 
 
@@ -37,8 +37,30 @@ class AIEmailWriter:
         # so that AI can generate a complete email.
 
         prompt = f"""
-        ...
-        """
+    Write a complete email.
+
+    Topic:
+    {topic}
+
+    Tone:
+    {tone}
+
+    Details:
+    {details}
+
+    IMPORTANT
+
+    Return ONLY in this exact format.
+
+    Subject: <Email Subject>
+
+    Body:
+    <Complete Email Body>
+
+    Do not write any explanation.
+    Do not use markdown.
+    Do not bold anything.
+    """
 
         # Sending the prompt to Gemini AI to generate the email
         response = self.client.models.generate_content(

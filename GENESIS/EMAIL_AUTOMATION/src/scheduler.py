@@ -4,6 +4,24 @@ import time
 from datetime import datetime
 import threading
 from ai_email import AIEmailWriter
+import mysql.connector
+
+def db_connection():
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="system@123",
+            database="email_login"
+        )
+        return connection
+
+    except mysql.connector.Error as err:
+        print(f"\nDatabase Error : {err}")
+        return None
+
+
+
 
 # FUNCTION NAME: email_checker
 # WHAT IT DOES: This function runs in the background. It checks the time 
@@ -149,6 +167,38 @@ def schedule_email(sender_email, sender_password):
     except ValueError:
         print("\nError : Invalid Date/Time format! Please use YYYY-MM-DD HH:MM.")
         return
+
+
+
+    # -----------------------------
+    # Save Scheduled Email
+    # -----------------------------
+
+    conn = db_connection()
+
+    if conn:
+
+        cursor = conn.cursor()
+
+        query = """
+        INSERT INTO scheduled_emails
+        (recipient, subject, body, schedule_time, status)
+        VALUES (%s,%s,%s,%s,%s)
+        """
+
+        cursor.execute(query, (
+            receiver_email,
+            subject,
+            body,
+            user_time,
+            "Pending"
+        ))
+
+        conn.commit()
+
+        cursor.close()
+
+        conn.close()
 
     # starting thread so main menu does not freeze or block
     my_thread = threading.Thread(
