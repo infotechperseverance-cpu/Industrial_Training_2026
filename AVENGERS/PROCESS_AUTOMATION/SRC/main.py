@@ -1,112 +1,98 @@
-import csv
-import datetime
+import sqlite3
 
-# Desktop Notification (Optional)
-try:
-    from plyer import notification
-    desktop = True
-except:
-    desktop = False
+# Connect to database
+conn = sqlite3.connect("task_management.db")
+cursor = conn.cursor()
 
+# User Table
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS users (
+    user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
+    password TEXT NOT NULL,
+    role TEXT CHECK(role IN ('User','Admin')) NOT NULL
+)
+""")
 
-# -------------------------------
-# Notification Function
-# -------------------------------
-def send_notification(title, message):
-    print(f"\n{title}")
-    print(message)
+# Task Table
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS tasks (
+    task_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    task_name TEXT NOT NULL,
+    status TEXT DEFAULT 'Pending',
+    assigned_date DATE,
+    due_date DATE,
+    FOREIGN KEY(user_id) REFERENCES users(user_id)
+)
+""")
 
-    if desktop:
-        notification.notify(
-            title=title,
-            message=message,
-            timeout=5
-        )
+# Notification Table
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS notifications (
+    notification_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    message TEXT,
+    sent_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES users(user_id)
+)
+""")
 
+conn.commit()
 
-# -------------------------------
-# Log Function
-# -------------------------------
-def save_log(username, action):
-    with open("logs.txt", "a") as file:
-        file.write(f"{datetime.datetime.now()} - {username} - {action}\n")
+# Add User
+def add_user(username, password, role):
+    cursor.execute(
+        "INSERT INTO users(username,password,role) VALUES(?,?,?)",
+        (username, password, role)
+    )
+    conn.commit()
+    print("User Added Successfully")
 
+# Add Task
+def add_task(user_id, task_name, assigned_date, due_date):
+    cursor.execute(
+        "INSERT INTO tasks(user_id,task_name,assigned_date,due_date) VALUES(?,?,?,?)",
+        (user_id, task_name, assigned_date, due_date)
+    )
+    conn.commit()
+    print("Task Added Successfully")
 
-# -------------------------------
-# Login Function
-# -------------------------------
-def login():
+# Update Task Status
+def update_status(task_id, status):
+    cursor.execute(
+        "UPDATE tasks SET status=? WHERE task_id=?",
+        (status, task_id)
+    )
+    conn.commit()
+    print("Task Updated")
 
-    username = input("Enter Username: ")
-    password = input("Enter Password: ")
+# Send Notification
+def send_notification(user_id, message):
+    cursor.execute(
+        "INSERT INTO notifications(user_id,message) VALUES(?,?)",
+        (user_id, message)
+    )
+    conn.commit()
+    print("Notification Saved")
 
-    with open("users.csv", "r") as file:
-        reader = csv.DictReader(file)
+# Display Tasks
+def show_tasks():
+    cursor.execute("""
+    SELECT task_id, task_name, status
+    FROM tasks
+    """)
+    for row in cursor.fetchall():
+        print(row)
 
-        for row in reader:
+# Example
+add_user("admin", "admin123", "Admin")
+add_user("kanishka", "12345", "User")
 
-            if row["username"] == username and row["password"] == password:
+add_task(2, "Account Management", "2026-07-20", "2026-07-21")
+update_status(1, "Completed")
+send_notification(2, "Your task has been completed.")
 
-                print("\nLogin Successful")
-                print("Role :", row["role"])
+show_tasks()
 
-                save_log(username, "Login")
-
-                send_notification(
-                    "Login",
-                    "Login Successful"
-                )
-
-                return username
-
-    print("\nInvalid Username or Password")
-    return None
-
-
-# -------------------------------
-# Logout Function
-# -------------------------------
-def logout(username):
-
-    if username:
-
-        save_log(username, "Logout")
-
-        send_notification(
-            "Logout",
-            "Logout Successful"
-        )
-
-        print("Logged Out Successfully")
-
-    else:
-        print("No user logged in.")
-
-
-# -------------------------------
-# Main Menu
-# -------------------------------
-current_user = None
-
-while True:
-
-    print("\n===== PROCESS AUTOMATION =====")
-    print("1. Login")
-    print("2. Logout")
-    print("3. Exit")
-
-    choice = input("Enter Choice : ")
-
-    if choice == "1":
-        current_user = login()
-
-    elif choice == "2":
-        logout(current_user)
-        current_user = None
-
-    elif choice == "3":
-        print("Thank You")
-        break
-
-    else:
-        print("Invalid Choice")
+conn.close()
