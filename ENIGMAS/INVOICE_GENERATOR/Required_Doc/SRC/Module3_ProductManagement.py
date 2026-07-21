@@ -275,3 +275,9 @@ def product_menu(db_connection):
 
         else:
             print("Invalid Choice. Please Try Again.")
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> 1295afc (Final code)

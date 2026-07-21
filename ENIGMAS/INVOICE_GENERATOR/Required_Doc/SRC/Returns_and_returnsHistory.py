@@ -1,20 +1,22 @@
 
 from datetime import date
-import connection_management # module 
+from Connetion_Module import connection
+from search_invoice import search_invoice
 """
 @function name: return_product
 @description: this product make product return process possible 
 @input:none
 @output:none
-@author:harsh patil
+@author:
 """
-def return_product():
-
+def return_product(invoice_id=None):
+    conn = None
     try:
-        connection = connection_management.connection()
-        cursor = connection.cursor()
-
-        invoice_id = int(input("Enter Invoice ID : "))
+        
+        conn = connection()
+        cursor = conn.cursor()
+        if invoice_id is None:
+            invoice_id = int(input("Enter Invoice ID : "))
         product_id = int(input("Enter Product ID : "))
         quantity = int(input("Enter Return Quantity : "))
         reason = input("Enter Return Reason : ")
@@ -43,9 +45,9 @@ def return_product():
 
         days = (date.today() - invoice_date).days
 
-        if category.lower() == "food":
+        if category.lower() == "grocery":
             if days > 3:
-                print("Food Return Period Expired")
+                print("Grocery Return Period Expired")
                 return
         else:
             if days > 7:
@@ -63,10 +65,13 @@ def return_product():
             print("Product Not Purchased")
             return
 
+        if quantity <= 0:
+            print("Return quantity must be greater than 0")
+            return
+
         if quantity > item[0]:
             print("Invalid Return Quantity")
             return
-
         # Save Return
         cursor.execute("""INSERT INTO returns
             (invoice_id,product_id,quantity,return_date,return_reason)
@@ -76,12 +81,15 @@ def return_product():
         cursor.execute(""" UPDATE products SET stock_quantity=stock_quantity+%s
             WHERE product_id=%s""",(quantity, product_id))
 
-        connection.commit()
+        conn.commit()
         print("Return Successful")
 
+        cursor.close()
+        conn.close()
+
     except Exception as e:
-        if connection:
-            connection.rollback()
+        if conn:
+            conn.rollback()
         print("Error :", e)
 
 """
@@ -89,13 +97,15 @@ def return_product():
 @description: show all return history of product
 @input:none
 @output:none
-@author:harsh patil
+@author:
 """
 def return_history():
-    try:
+    conn = None
+    cursor = None
 
-        connection = connection_management.connection()
-        cursor = connection.cursor()
+    try:
+        conn = connection()
+        cursor = conn.cursor()
 
         cursor.execute("""SELECT r.return_id,r.invoice_id,p.product_name,r.quantity,r.return_date,
         r.return_reason FROM returns r JOIN products p ON r.product_id=p.product_id""")
@@ -120,16 +130,21 @@ def return_history():
 
     except Exception as e:
         print(e)
+    finally:
+        if cursor:
+            cursor.close()
 
+        if conn:
+            conn.close()
 """
 function name: returns
 @description: show choice selection of module
 @input:none
 @output:none
-@author:harsh patil
+@author:
 """
 
-def returns():
+def returns(invoice_id=None):
     while True:
 
         print("\n===== RETURN MODULE =====")
@@ -140,15 +155,19 @@ def returns():
         choice = input("Enter Choice : ")
 
         if choice == "1":
-            return_product()
+
+            if invoice_id is None:
+                invoice_id = search_invoice()
+
+            if invoice_id:
+                return_product(invoice_id)
 
         elif choice == "2":
             return_history()
 
         elif choice == "3":
             print("Thank You")
+            return
 
-            return None
         else:
             print("Invalid Choice")
-

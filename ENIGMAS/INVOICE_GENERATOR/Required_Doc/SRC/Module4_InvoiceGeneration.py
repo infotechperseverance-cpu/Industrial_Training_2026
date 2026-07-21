@@ -1,3 +1,7 @@
+
+
+
+
 import mysql.connector
 from datetime import datetime 
 
@@ -11,36 +15,32 @@ from datetime import datetime
 @outParam     : NONE
 @Author       : Dimpal Rajput
 '''
-def invoice_generation(db_connection):
+def invoice_generation(db_connection, username):
     print("-" * 15 + "GENERATING INVOICE" + "-" * 15)
     cursor = db_connection.cursor()
-    
+
     final_subtotal = 0.0
     final_gst = 0.0
     
-    # 1. Cashier Validation 
-    while True:
-        
-        username = input("Enter User Name: ").strip()
-
-        cursor.execute(
-            "SELECT user_id, username FROM users WHERE LOWER(username) = LOWER(%s)",
-            (username,)
-        )
-
-        userData = cursor.fetchone()
-
-        if userData:
-            userId = userData[0]        # user_id
-            username = userData[1]      # username
-
-            print(f"Cashier : {username}")
-            break
-        else:
-            print("Invalid Username")
-
+    
         
 
+    print(f"Cashier: {username}")
+
+    cursor.execute(
+        "SELECT user_id FROM users WHERE username = %s",
+        (username,)
+    )
+
+    user = cursor.fetchone()
+
+    if user:
+        userId = user[0]
+    else:
+        print("User not found in database.")
+        return None
+
+   
     # 2. User Validation
     while True:
         try:
@@ -159,11 +159,11 @@ def invoice_generation(db_connection):
         # FIXED: Moved outside of the 'for' loop to commit the whole cart transaction cleanly at once
         db_connection.commit()
         print(f"\nTransaction saved successfully! Generated Invoice ID: {invoice_id}")
-
+        return invoice_id
+    
     except mysql.connector.Error as e:
         db_connection.rollback()
         print(f"Database error encountered: Transaction rolled back. -> {e}")
-        
+        return None
     finally:
         cursor.close()
-

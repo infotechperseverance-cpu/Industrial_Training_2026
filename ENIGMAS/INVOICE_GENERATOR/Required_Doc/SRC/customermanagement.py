@@ -1,28 +1,13 @@
-import sqlite3
-
-conn = sqlite3.connect("customer.db")
-cur =  conn.cursor()
+from Connetion_Module import connection
 
 
-'''
-@Function Name : create_table
-@Description   : This function creates the customer table in the database.
-                 If the table is already present, it will not create it again.
-@Input Param   : NONE
-@Output Param  : NONE
-@Author        : Prashik Dabhade
-'''        
-def create_table():
-        cur.execute("""
-        CREATE TABLE IF NOT EXISTS customer(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT,
-            mobile TEXT,
-            email TEXT
-        )
-        """)
-        conn.commit()
+conn = connection()
 
+
+if conn:
+    cur = conn.cursor()
+else:
+    raise Exception("Database connection failed")
 '''
 @Function Name : add_customer
 @Description   : This function takes customer name, mobile number and email
@@ -66,8 +51,9 @@ def add_customer():
             break
 
     cur.execute(
-        "INSERT INTO customer(name,mobile,email) VALUES(?,?,?)",
-        (name, mobile, email)
+    "INSERT INTO customers(customer_name,mobile_no,email) VALUES(%s,%s,%s)",
+    (name, mobile, email)
+
     )
 
     conn.commit()
@@ -99,21 +85,21 @@ def search_customer():
     if choice == "1":
         cid = input("Enter Customer ID : ")
         cur.execute(
-            "SELECT * FROM customer WHERE id=?",
+            "SELECT * FROM customers WHERE customer_id=%s",
             (cid,)
         )
 
     elif choice == "2":
         name = input("Enter Customer Name : ")
         cur.execute(
-            "SELECT * FROM customer WHERE name=?",
+            "SELECT * FROM customers WHERE customer_name=%s",
             (name,)
         )
 
     elif choice == "3":
         mobile = input("Enter Mobile Number : ")
         cur.execute(
-            "SELECT * FROM customer WHERE mobile=?",
+            "SELECT * FROM customers WHERE mobile_no=%s",
             (mobile,)
         )
 
@@ -151,7 +137,7 @@ def update_customer():
     name = input("Enter Name of customer: ")
 
     cur.execute(
-            "SELECT * FROM customer WHERE name=?",
+            "SELECT * FROM customers WHERE customer_name=%s",
             (name,)
         )
 
@@ -160,7 +146,7 @@ def update_customer():
         email = input("Enter New Email: ")
 
         cur.execute(
-            "UPDATE customer SET mobile=?, email=? WHERE name=?",
+            "UPDATE customers SET mobile_no=%s, email=%s WHERE customer_name=%s",
             (mobile, email, name)
         )
         conn.commit()
@@ -183,9 +169,9 @@ def update_customer():
 def show_customer():
     c_id=input("Enter customer id:")
     cur.execute(
-        "SELECT * FROM customer where id=?",
-        (c_id,)
-        )
+    "SELECT * FROM customers WHERE customer_id=%s",
+    (c_id,)
+    )
     
     data=cur.fetchone()
     if data:
@@ -198,34 +184,45 @@ def show_customer():
     else:
         print("Customer Not Found!")
         
+def customer_menu():
     
-create_table()
 
-while True:
-    print("\n===== Customer Management =====")
-    print("1. Add Customer")
-    print("2. Search Customer")
-    print("3. Update Customer")
-    print("4. Show customer")
-    print("5. Exit")
+    while True:
+        print("\n===== Customer Management =====")
+        print("1. Add Customer")
+        print("2. Search Customer")
+        print("3. Update Customer")
+        print("4. Show Customer")
+        print("5. Exit")
 
-    choice = input("Enter Choice: ")
+        choice = input("Enter Choice: ")
 
-    if choice == "1":
-        add_customer()
-        
-    elif choice == "2":
-        search_customer()
-        
-    elif choice == "3":
-        update_customer()
-        
-    elif choice == "4":
-         show_customer()
+        if choice == "1":
+            add_customer()
 
-    elif choice == "5":
-        print("Thank You for visiting our store!")
-        break
-    
-    else:
-        print("Invalid Choice!")
+        elif choice == "2":
+            search_customer()
+
+        elif choice == "3":
+            update_customer()
+
+        elif choice == "4":
+            show_customer()
+
+        elif choice == "5":
+            print("Thank You for visiting our store!")
+            break
+
+        else:
+            print("Invalid Choice!")
+
+
+
+'''
+@Function Name : create_table
+@Description   : This function creates the customer table in the database.
+                 If the table is already present, it will not create it again.
+@Input Param   : NONE
+@Output Param  : NONE
+@Author        : Prashik Dabhade
+'''        
