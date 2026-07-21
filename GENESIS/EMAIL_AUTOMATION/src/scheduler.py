@@ -3,6 +3,25 @@ import ssl
 import time
 from datetime import datetime
 import threading
+from ai_email import AIEmailWriter
+import mysql.connector
+
+def db_connection():
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="system@123",
+            database="email_login"
+        )
+        return connection
+
+    except mysql.connector.Error as err:
+        print(f"\nDatabase Error : {err}")
+        return None
+
+
+
 
 # FUNCTION NAME: email_checker
 # WHAT IT DOES: This function runs in the background. It checks the time 
@@ -64,10 +83,76 @@ def schedule_email(sender_email, sender_password):
         return
 
     # taking basic inputs from user
+    # taking recipient email
     receiver_email = input("Enter Recipient Email ID: ").strip()
-    subject = input("Enter Email Subject: ").strip()
-    body = input("Enter Email Message Body: ").strip()
-    
+
+    print("\nEmail Writing Options")
+    print("1. Write Email Yourself")
+    print("2. Generate Using AI")
+
+    choice = input("Select Option (1-2): ").strip()
+
+    if choice == "1":
+
+        subject = input("Enter Email Subject: ").strip()
+        body = input("Enter Email Message Body: ").strip()
+
+    elif choice == "2":
+
+        # Taking email topic and tone from the user
+        topic = input("Enter Email Topic: ").strip()
+        tone = input("Enter Tone (Professional/Friendly/Formal): ").strip()
+
+        # Variable to store the information required for email generation
+        details = ""
+
+        # Asking for required details if the topic is an offer letter
+        if topic.lower() == "offer letter":
+
+            candidate_name = input("Enter Candidate Name: ").strip()
+            company_name = input("Enter Company Name: ").strip()
+            job_title = input("Enter Job Title: ").strip()
+            start_date = input("Enter Start Date: ").strip()
+            salary = input("Enter Salary: ").strip()
+            acceptance_deadline = input("Enter Acceptance Deadline: ").strip()
+            sender_name = input("Enter Your Name: ").strip()
+            sender_designation = input("Enter Your Designation: ").strip()
+
+            # Combining all user details into a single string
+            details = f"""
+    Candidate Name: {candidate_name}
+    Company Name: {company_name}
+    Job Title: {job_title}
+    Start Date: {start_date}
+    Salary: {salary}
+    Acceptance Deadline: {acceptance_deadline}
+    Sender Name: {sender_name}
+    Sender Designation: {sender_designation}
+    """
+
+        else:
+
+            # Taking custom details for other email topics
+            details = input("Enter Details: ").strip()
+
+        # Creating an AI email writer object
+        writer = AIEmailWriter()
+
+        # Generating the email subject and body using Gemini AI
+        subject, body = writer.generate_email(topic, tone, details)
+
+        # Displaying the generated email
+        print("\nGenerated Email")
+        print("--------------------------------")
+        print("Subject:", subject)
+        print()
+        print("Body:")
+        print(body)
+
+    else:
+        print("\nInvalid Choice!")
+        return
+
     print("\nEnter Scheduled Date & Time (Format: YYYY-MM-DD HH:MM)")
     user_time = input("Your Target Time: ").strip()
 
@@ -82,6 +167,38 @@ def schedule_email(sender_email, sender_password):
     except ValueError:
         print("\nError : Invalid Date/Time format! Please use YYYY-MM-DD HH:MM.")
         return
+
+
+
+    # -----------------------------
+    # Save Scheduled Email
+    # -----------------------------
+
+    conn = db_connection()
+
+    if conn:
+
+        cursor = conn.cursor()
+
+        query = """
+        INSERT INTO scheduled_emails
+        (recipient, subject, body, schedule_time, status)
+        VALUES (%s,%s,%s,%s,%s)
+        """
+
+        cursor.execute(query, (
+            receiver_email,
+            subject,
+            body,
+            user_time,
+            "Pending"
+        ))
+
+        conn.commit()
+
+        cursor.close()
+
+        conn.close()
 
     # starting thread so main menu does not freeze or block
     my_thread = threading.Thread(

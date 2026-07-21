@@ -15,7 +15,7 @@ from datetime import datetime
 
 class FaceRecognitionSystem:
     '''
-    @Function Name : __init__
+    @Function Name : _init_
     @Description :This constructor initializes folders,database objects and creates
                   the required folders and database automatically.
     @Input Param :NONE
@@ -25,8 +25,8 @@ class FaceRecognitionSystem:
 
     def __init__(self):
         print("\n========== MYSQL LOGIN ==========")
-        self.db_user = input("Enter MySQL Username : ")
-        self.db_password = input("Enter MySQL Password : ")
+        self.db_user = input("Enter username:")
+        self.db_password = input("Enter password:" )
 
         self.connection = None
         self.cursor = None
@@ -49,7 +49,7 @@ class FaceRecognitionSystem:
     def initialize_database(self):
         try:
             self.connection = mysql.connector.connect(
-                host="localhost",
+                host="127.0.0.1",
                 user=self.db_user,
                 password=self.db_password
             )
@@ -295,8 +295,7 @@ class FaceRecognitionSystem:
 
     @Input Param :
     reference_id : Reference image ID
-
-    @Output Param :
+@Output Param :
     Returns image path if found otherwise None.
 
     @Author :
@@ -681,8 +680,8 @@ class FaceRecognitionSystem:
         except Exception as error:
 
             print(error)
-
-if __name__ == "__main__":
+            
+def main():
 
     system = FaceRecognitionSystem()
 
@@ -702,59 +701,36 @@ if __name__ == "__main__":
         choice = input("\nEnter Your Choice : ")
 
         if choice == "1":
-
             image_path = input("Enter Reference Image Path : ")
-
             system.upload_reference_image(image_path)
 
         elif choice == "2":
-
             system.display_reference_images()
+
         elif choice == "3":
-
-            try:
-
-                reference_id = int(input("Enter Reference ID : "))
-
-                system.view_reference_image(reference_id)
-
-            except ValueError:
-
-                print("\nInvalid Reference ID.")
+            reference_id = int(input("Enter Reference ID : "))
+            system.view_reference_image(reference_id)
 
         elif choice == "4":
-
-            try:
-
-                reference_id = int(input("Enter Reference ID : "))
-                new_image = input("Enter New Image Path : ")
-                system.update_reference_image(reference_id, new_image)
-
-            except ValueError:
-                print("\nPlease Enter Valid Reference ID.")
+            reference_id = int(input("Enter Reference ID : "))
+            new_image = input("Enter New Image Path : ")
+            system.update_reference_image(reference_id, new_image)
 
         elif choice == "5":
-            try:
-                reference_id = int(input("Enter Reference ID : "))
-                folder_path = input("Enter Folder Path : ")
-                system.scan_images(reference_id, folder_path)
-
-            except ValueError:
-                print("\nPlease Enter Valid Reference ID.")
+            reference_id = int(input("Enter Reference ID : "))
+            folder = input("Enter Folder Path : ")
+            system.scan_images(reference_id, folder)
 
         elif choice == "6":
-
-            try:
-                reference_id = int(input("Enter Reference ID : "))
-                system.display_scan_result(reference_id)
-
-            except ValueError:
-                print("\nPlease Enter Valid Reference ID.")
+            reference_id = int(input("Enter Reference ID : "))
+            system.display_scan_result(reference_id)
 
         elif choice == "7":
             system.close_connection()
-            print("\nThank You.")
             break
 
         else:
-            print("\nInvalid Choice. Please Try Again.")
+            print("Invalid Choice.")
+
+if __name__ == "__main__":
+    main()

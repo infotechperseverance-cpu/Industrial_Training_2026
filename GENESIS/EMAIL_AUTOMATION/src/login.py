@@ -11,7 +11,7 @@ def db_connection():
         connection = mysql.connector.connect(
             host="localhost",
             user="root",         
-            password="rootsql25@8", 
+            password="system@123", 
             database="email_login"
         )
         return connection

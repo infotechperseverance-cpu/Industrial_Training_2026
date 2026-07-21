@@ -43,7 +43,7 @@ class BackupSystem:
 
     def connect_database(self):
         try:
-            self.connection = mysql.connector.connect(host="localhost",user="root",password="Youtube@2114",)
+            self.connection = mysql.connector.connect(host="localhost",user="root",password="12345")
             self.cursor = self.connection.cursor(buffered=True)
             self.cursor.execute("CREATE DATABASE IF NOT EXISTS file_automation")
             self.cursor.execute("USE file_automation")
@@ -685,16 +685,52 @@ class BackupSystem:
 
     # ===========================================================
 
-if __name__ == "__main__":
-    print("=" * 70)
-    print("      AUTOMATIC BACKUP SYSTEM")
-    print("=" * 70)
+
+
+def main():
+
+    source_folder = input("Enter Source Folder Path : ").strip()
 
     try:
-        source_folder = input("\nEnter Source Folder Path : ").strip()
         backup = BackupSystem(source_folder)
-        backup.start()
+
+        while True:
+            print("\n========== BACKUP SYSTEM ==========")
+            print("1. Create Backup")
+            print("2. Display Backup History")
+            print("3. Check Backup Status")
+            print("4. Restore Backup")
+            print("5. Exit")
+
+            choice = input("Enter Your Choice : ")
+
+            if choice == "1":
+                file_path = input("Enter File Path : ")
+                category = input("Enter Category (or press Enter for General): ")
+                backup.create_backup(file_path, category)
+
+            elif choice == "2":
+                backup.display_backup_records()
+
+            elif choice == "3":
+                backup.check_backup_status()
+
+            elif choice == "4":
+                filename = input("Enter Backup File Name : ")
+                restore_path = input("Enter Restore Folder Path : ")
+                backup.restore_backup(filename, restore_path)
+
+            elif choice == "5":
+                backup.close_database()
+                print("Thank You!")
+                break
+
+            else:
+                print("Invalid Choice.")
 
     except Exception as error:
-        print("\nProgram Terminated.")
         print(error)
+
+
+if __name__ == "__main__":
+    main()        

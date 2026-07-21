@@ -12,7 +12,7 @@ class FollowUpEmail:
         self.connection = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="pass@123",
+            password="system@123",
             database="email_db"
         )
 

@@ -409,9 +409,46 @@ class DuplicateFileManager:
                 print("\nInvalid Choice.")
 
 # ---------------- MAIN PROGRAM ---------------- #
-try:
-    manager = DuplicateFileManager()
-    manager.main_menu()
 
-except Exception as error:
-    print("Program Error :", error)
+def main():
+
+    obj = DuplicateFileManager()   
+
+    while True:
+        print("\n========== DUPLICATE FILE MANAGEMENT ==========")
+        print("1. Detect Duplicate Files")
+        print("2. Display Duplicate Files")
+        print("3. Move Duplicate Files")
+        print("4. Delete Duplicate Files")
+        print("5. Show Storage Saved")
+        print("6. Display Duplicate Report")
+        print("7. Exit")
+
+        choice = input("Enter Your Choice : ")
+
+        if choice == "1":
+            obj.detect_duplicate_files()
+
+        elif choice == "2":
+            obj.display_duplicate_files()
+
+        elif choice == "3":
+            obj.move_duplicate_files()
+
+        elif choice == "4":
+            obj.delete_duplicate_files()
+
+        elif choice == "5":
+            obj.show_storage_saved()
+
+        elif choice == "6":
+            obj.display_duplicate_report()
+
+        elif choice == "7":
+            break
+
+        else:
+            print("Invalid Choice")
+
+if __name__ == "__main__":
+    main()    

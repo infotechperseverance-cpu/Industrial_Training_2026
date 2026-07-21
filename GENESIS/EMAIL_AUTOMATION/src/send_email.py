@@ -11,7 +11,7 @@ class SendEmail:
         self.connection = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="pass@123",
+            password="root123",
             database="email_db"
         )
 
