@@ -12,15 +12,12 @@
 
 @Author      : Bhoomi Sapke
 '''
-import os
+
 from message_handler import *
-from voice import speak
 from voice_recognition import speech
 from search_manager import *
 from folder_operations import *
 from file_operations import *
-import asyncio
-import config
 
 def process(command):
 
@@ -28,27 +25,34 @@ def process(command):
 
     if "create folder" in command:
         create_folder_workflow()
+        return True
 
     elif "create file" in command:
         create_file_workflow()
+        return True
 
     elif "open folder" in command:
         open_folder_workflow()
+        return True
 
     elif "open file" in command:
         open_file_workflow()
+        return True
 
     elif "delete folder" in command:
         delete_folder_workflow()
+        return True
 
     elif "delete file" in command:
         delete_file_workflow()
+        return True
 
-    else:
-        error("Invalid file or folder command.")
+    return False
 
 
 def create_folder_workflow():
+
+    ''' Creates a folder through voice interaction. '''
 
     ask("What should be the folder name?")
     folder_name = speech()
@@ -214,7 +218,7 @@ def open_folder_workflow():
     folder_path = find_folder(folder_name)
 
     if folder_path:
-        confirm("Folder found. Deleting folder.")
+        confirm("Folder found.")
         if open_folder(folder_path):
             success("Opening folder.")
         else:

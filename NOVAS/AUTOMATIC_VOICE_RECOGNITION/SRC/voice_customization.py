@@ -2,11 +2,11 @@
 @Module Name : voice_customization.py
 @Description : Language and Voice Selection Module
 @Author      : Vaishnavi Teli
-
 """
 
 import asyncio
 import time
+
 from config import (
     VOICE_OPTIONS,
     NUMBER_WORDS,
@@ -15,19 +15,17 @@ from config import (
     YES_WORDS,
     NO_WORDS
 )
+
 from voice_setting import save_voice
 
-FILE_NAME = "voice_data.json"
 
 '''
-
 @Function Name : word_to_number
 @Description   : Converts a spoken number into its numeric value.
 @InputParam    : text (String)
 @OutputParam   : Number or None
-
+@Author        : Vaishnavi Teli
 '''
-
 def word_to_number(text):
 
     if not text:
@@ -41,16 +39,15 @@ def word_to_number(text):
 
     return None
 
-'''
 
+'''
 @Function Name : get_language_choice
 @Description   : Identifies the selected language from the user's spoken
                  command.
 @InputParam    : command (String), languages (List)
 @OutputParam   : Language number or None
-
+@Author        : Vaishnavi Teli
 '''
-
 def get_language_choice(command, languages):
 
     if not command:
@@ -58,146 +55,166 @@ def get_language_choice(command, languages):
 
     command = command.lower().strip()
 
-    # Check language aliases
     if command in LANGUAGE_ALIASES:
         language = LANGUAGE_ALIASES[command]
 
         if language in languages:
             return languages.index(language) + 1
 
-    # Check number words
     return word_to_number(command)
 
-'''
 
+'''
 @Function Name : select_voice
 @Description   : Lets the user select a language and voice, plays a sample
                  voice, asks for confirmation, and saves the selected voice.
 @InputParam    : None
 @OutputParam   : Selected voice
-
+@Author        : Vaishnavi Teli
 '''
-
 def select_voice():
 
     from voice import speak
     from voice_recognition import speech
 
-    languages = list(VOICE_OPTIONS.keys())
+    try:
 
-    # ------------------ Language Selection ------------------
+        languages = list(VOICE_OPTIONS.keys())
 
-    asyncio.run(speak("Please select a language."))
+        # ---------------- Language Selection ----------------
 
-    print("\n========== Select Language ==========\n")
+        asyncio.run(speak("Please select a language."))
 
-    for index, language in enumerate(languages, start=1):
-        print(f"{index}. {language}")
-        asyncio.run(speak(f"{index}. {language}"))
+        print("\n========== Select Language ==========\n")
 
-    while True:
+        for index, language in enumerate(languages, start=1):
+            print(f"{index}. {language}")
+            asyncio.run(speak(f"{index}. {language}"))
 
-        asyncio.run(speak("Please say the language number."))
+        while True:
 
-        command = speech()
-        print("Recognized:", repr(command))
+            asyncio.run(speak("Please say the language number."))
 
-        language_choice = get_language_choice(command, languages)
+            command = speech()
 
-        if language_choice is None:
-            asyncio.run(speak("Invalid language selection. Please try again."))
-            continue
+            language_choice = get_language_choice(command, languages)
 
-        if language_choice < 1 or language_choice > len(languages):
-            asyncio.run(speak("Invalid language selection."))
-            continue
+            if language_choice is None:
+                asyncio.run(
+                    speak("Invalid language selection. Please try again.")
+                )
+                continue
 
-        break
+            if not (1 <= language_choice <= len(languages)):
+                asyncio.run(
+                    speak("Invalid language selection.")
+                )
+                continue
 
-    selected_language = languages[language_choice - 1]
+            break
 
-    speech_code = VOICE_OPTIONS[selected_language]["speech"]
+        selected_language = languages[language_choice - 1]
 
-    voices = VOICE_OPTIONS[selected_language]["voices"]
+        speech_code = VOICE_OPTIONS[selected_language]["speech"]
 
-# ------------------ Voice Selection ------------------
+        voices = VOICE_OPTIONS[selected_language]["voices"]
 
-    asyncio.run(speak(f"You selected {selected_language}."))
+        # ---------------- Voice Selection ----------------
 
-    print(f"\n========== {selected_language} Voices ==========\n")
-
-    for index, voice in enumerate(voices, start=1):
-       print(f"{index}. {voice}")
-       asyncio.run(speak(f"Voice {index}"))
-
-    while True:
-
-       asyncio.run(speak("Please say the voice number."))
-
-    # Always recognize menu selections in English
-       command = speech(language="en-IN")
-
-       print("Voice Recognized:", repr(command))
-
-       voice_choice = word_to_number(command)
-
-       if voice_choice is None:
-        asyncio.run(speak("Invalid voice selection. Please try again."))
-        continue
-
-       if not (1 <= voice_choice <= len(voices)):
-        asyncio.run(speak("Invalid voice selection."))
-        continue
-
-       selected_voice = voices[voice_choice - 1]
-
-       print("\nSelected Voice:", selected_voice)
-
-    # Play sample
-       asyncio.run(
-           speak(
-                SAMPLE_TEXT[selected_language],
-                selected_voice
-    )
-)
-
-       asyncio.run(speak("Do you want to save this voice? Say yes or no."))
-
-       time.sleep(0.7) 
-
-       answer = speech(language="en-IN")
-
-       print("Raw Answer:", answer)
-       print("Answer:", repr(answer))
-
-       if not answer:
-        asyncio.run(speak("I didn't hear you."))
-        continue
-
-       answer = answer.lower().strip()
-       print("Answer:", repr(answer))
-
-       if any(word in answer for word in YES_WORDS):
-
-        save_voice(
-            selected_language,
-            speech_code,
-            selected_voice
+        asyncio.run(
+            speak(f"You selected {selected_language}.")
         )
 
-        asyncio.run(speak("Voice saved successfully."))
+        print(f"\n========== {selected_language} Voices ==========\n")
 
-        print("\n========== Voice Saved ==========")
-        print("Language :", selected_language)
-        print("Speech   :", speech_code)
-        print("Voice    :", selected_voice)
+        for index, voice in enumerate(voices, start=1):
+            print(f"{index}. {voice}")
+            asyncio.run(speak(f"Voice {index}"))
 
-        return selected_voice
+        while True:
 
-       elif answer in ["no", "change"]:
+            asyncio.run(
+                speak("Please say the voice number.")
+            )
 
-        asyncio.run(speak("Please choose another voice."))
+            command = speech()
 
-       else:
+            voice_choice = word_to_number(command)
 
-        asyncio.run(speak("Please answer yes or no."))
+            if voice_choice is None:
+                asyncio.run(
+                    speak("Invalid voice selection. Please try again.")
+                )
+                continue
+
+            if not (1 <= voice_choice <= len(voices)):
+                asyncio.run(
+                    speak("Invalid voice selection.")
+                )
+                continue
+
+            selected_voice = voices[voice_choice - 1]
+
+            print("\nSelected Voice :", selected_voice)
+
+            asyncio.run(
+                speak(
+                    SAMPLE_TEXT[selected_language],
+                    selected_voice
+                )
+            )
+
+            asyncio.run(
+                speak("Do you want to save this voice? Say yes or no.")
+            )
+
+            time.sleep(0.7)
+
+            answer = speech()
+
+            if not answer:
+                asyncio.run(speak("I didn't hear you."))
+                continue
+
+            answer = answer.lower().strip()
+
+            if any(word in answer for word in YES_WORDS):
+
+                save_voice(
+                    selected_language,
+                    speech_code,
+                    selected_voice
+                )
+
+                asyncio.run(
+                    speak("Voice saved successfully.")
+                )
+
+                print("\n========== Voice Saved ==========")
+                print("Language :", selected_language)
+                print("Speech   :", speech_code)
+                print("Voice    :", selected_voice)
+
+                return selected_voice
+
+            elif any(word in answer for word in NO_WORDS):
+
+                asyncio.run(
+                    speak("Please choose another voice.")
+                )
+
+            else:
+
+                asyncio.run(
+                    speak("Please answer yes or no.")
+                )
+
+    except Exception as e:
+
+        print(f"Voice Selection Error: {e}")
+
+        asyncio.run(
+            speak("Unable to complete voice selection.")
+        )
+
+        return None

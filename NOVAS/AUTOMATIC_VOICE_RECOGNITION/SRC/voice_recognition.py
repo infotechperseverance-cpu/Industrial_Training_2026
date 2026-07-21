@@ -1,47 +1,54 @@
-
 '''
-
 @Module Name : voice_recognition.py
-@Description : Voice Input Recognition Module
-@InputParam  : None
-@OutputParam : None
-@Author      : Vaishnavi Teli
 
+@Description : This module captures voice input from the
+               microphone, converts it into text using
+               Google Speech Recognition, and returns the
+               recognized command.
+
+@InputParam  : None
+
+@OutputParam : Recognized text / None
+
+@Author      : Vaishnavi Teli
 '''
+
+import asyncio
+import time
 
 import speech_recognition as sr
-import asyncio
 
+from logs import add_log
+from voice import speak
 from config import (
     TIMEOUT,
-    PHARSE_TIME_LIMIT,
+    PHRASE_TIME_LIMIT,
     DEFAULT_SPEECH_LANGUAGE
 )
-
-from voice_setting import get_settings
-from voice import speak
-# from logs import add_log
-
 
 # Create recognizer object
 recognizer = sr.Recognizer()
 
-# Store commands
+# Store recognized commands
 commands = []
 
 
-def speech(language=None):
+'''
+@Function Name : speech
 
-    # Get saved voice settings
-    settings = get_settings()
+@Description   : Captures voice input from the microphone,
+                 converts it into text using Google Speech
+                 Recognition and returns the recognized text.
 
-    # Use selected language
-    if language is None:
-        language = settings.get(
-            "speech",
-            DEFAULT_SPEECH_LANGUAGE
-        )
+@InputParam    : language
 
+@OutputParam   : Recognized text / None
+
+@Author        : Vaishnavi Teli
+'''
+def speech(language=DEFAULT_SPEECH_LANGUAGE):
+
+    time.sleep(0.8)
 
     try:
 
@@ -49,15 +56,14 @@ def speech(language=None):
 
             recognizer.adjust_for_ambient_noise(
                 source,
-                duration=2
+                duration=0.5
             )
 
             audio = recognizer.listen(
                 source,
                 timeout=TIMEOUT,
-                phrase_time_limit=PHARSE_TIME_LIMIT
+                phrase_time_limit=PHRASE_TIME_LIMIT
             )
-
 
             try:
 
@@ -66,102 +72,69 @@ def speech(language=None):
                     language=language
                 )
 
-
                 text = text.lower().strip()
 
                 commands.append(text)
 
+                # Save success log
+                try:
 
-                # # Save success log
-                # try:
+                    add_log(
+                        module="Voice Recognition",
+                        command=text,
+                        status="SUCCESS"
+                    )
 
-                #     add_log(
-                #         module="Voice Recognition",
-                #         command=text,
-                #         status="SUCCESS"
-                #     )
+                except Exception as e:
 
-                # except Exception as e:
-
-                #     print("Log Error:", e)
-
+                    print(f"Log Error: {e}")
 
                 return text
 
-
-
             except sr.UnknownValueError:
 
-                # asyncio.run(
-                #    speak(  "❌ Google could not understand speech")
-                #  )
+                try:
 
+                    add_log(
+                        module="Voice Recognition",
+                        command="Unknown Speech",
+                        status="FAILED"
+                    )
 
-                # try:
+                except Exception as e:
 
-                #     add_log(
-                #         module="Voice Recognition",
-                #         command="Unknown Speech",
-                #         status="FAILED"
-                #     )
-
-                # except Exception as e:
-                #     return None
+                    print(f"Log Error: {e}")
 
                 return None
-
-
 
             except sr.RequestError as e:
 
                 asyncio.run(
-                   speak(  "❌ Google Speech API Error:",
-                    e)
-                 )
+                    speak(f"Google Speech API Error: {e}")
+                )
 
                 return None
-
-
 
     except sr.WaitTimeoutError:
 
         asyncio.run(
-            speak(  "No Detect speech"
-               )
-            )
-
-        try:
-
-            asyncio.run(
-                speak(
-                    "No speech detected"
-                )
-            )
-
-        except Exception:
-            pass
-
+            speak("No speech detected.")
+        )
 
         return None
 
-
-
     except OSError as e:
 
-           print(
-            "Microphone Error:",
-            e
-          )
+        asyncio.run(
+            speak(f"Microphone Error: {e}")
+        )
 
-
+        return None
 
     except Exception as e:
 
-        print(
-            "Speech Recognition Error:",
-            e
+        asyncio.run(
+            speak(f"Speech Recognition Error: {e}")
         )
 
-    
-    
-    
+        return None

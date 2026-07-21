@@ -59,8 +59,8 @@ def find_file(file_name):
         return None
 
     except Exception as e:
-        asyncio.run(print("Error :", e))
-        asyncio.run(speak("Error :", e))
+        print(f"Search Error: {e}")
+        asyncio.run(speak("An error occurred while searching File."))
         return None
 
 
@@ -104,6 +104,6 @@ def find_folder(folder_name):
         return None
 
     except Exception as e:
-        asyncio.run(print("Error :", e))
-        asyncio.run(speak("Error :", e))
+        print(f"Search Error: {e}")
+        asyncio.run(speak("An error occurred while searching Folder."))
         return None

@@ -7,6 +7,7 @@ from voice_setting import get_settings
 @Description   : Returns the message in the user's selected language.
 @InputParam    : key (Message key)
 @OutputParam   : Message (String)
+@Author        : Vaishnavi Teli
 
 '''
 
@@ -14,4 +15,4 @@ def get_message(key):
 
     language = get_settings()["language"]
 
-    return MESSAGES[language][key]
+    return MESSAGES[language].get(key, key)

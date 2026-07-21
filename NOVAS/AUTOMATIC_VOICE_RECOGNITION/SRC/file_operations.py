@@ -27,8 +27,8 @@ def create_file(file_name, folder_path):
         return True
 
     except Exception as e:
-        asyncio.run(print("Error :", e))
-        asyncio.run(speak("Error :", e))
+        print("Error:",e)
+        asyncio.run(speak(f"Error: {e}"))
         return False
 
 
@@ -41,8 +41,8 @@ def delete_file(file_path):
         return True
 
     except Exception as e:
-        asyncio.run(print("Error :", e))
-        asyncio.run(speak("Error :", e))
+        print("Error :", e)
+        asyncio.run(speak(f"Error: {e}"))
         return False
 
 
@@ -55,6 +55,6 @@ def open_file(file_path):
         return True
 
     except Exception as e:
-        asyncio.run(print("Error :", e))
-        asyncio.run(speak("Error :", e))
+        print("Error :", e)
+        asyncio.run(speak(f"Error: {e}"))
         return False

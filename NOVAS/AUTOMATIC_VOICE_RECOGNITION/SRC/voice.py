@@ -1,18 +1,44 @@
 """
-
 @Module Name : voice.py
-@Description : Convert text to speech using the 
-               selected Edge-TTS voice.
-@Author      : Vaishani Teli
 
+@Description : This module converts text into speech using
+               the selected Edge-TTS voice and plays the
+               generated audio.
+
+@InputParam  : Text to speak, Voice (Optional)
+
+@OutputParam : Voice Output
+
+@Author      : Vaishnavi Teli
 """
+
+import os
+import uuid
+import threading
 
 import edge_tts
 from playsound import playsound
-import os
+
 from voice_setting import get_settings
 
 
+# Prevent multiple threads from speaking simultaneously
+speech_lock = threading.Lock()
+
+
+'''
+@Function Name : speak
+
+@Description   : Converts the given text into speech using
+                 Microsoft Edge-TTS and plays the generated
+                 audio.
+
+@InputParam    : text, voice (Optional)
+
+@OutputParam   : Voice Output
+
+@Author        : Vaishnavi Teli
+'''
 async def speak(text, voice=None):
 
     settings = get_settings()
@@ -20,16 +46,31 @@ async def speak(text, voice=None):
     if voice is None:
         voice = settings["voice"]
 
-    communicate = edge_tts.Communicate(
-        text=text,
-        voice=voice
-    )
+    with speech_lock:
 
-    filename = "voice.mp3"
+        filename = f"voice_{uuid.uuid4().hex}.mp3"
 
-    await communicate.save(filename)
+        try:
 
-    playsound(filename)
+            communicate = edge_tts.Communicate(
+                text=text,
+                voice=voice
+            )
 
-    if os.path.exists(filename):
-        os.remove(filename)
+            await communicate.save(filename)
+
+            playsound(filename)
+
+        except Exception as e:
+
+            print(f"Voice Error: {e}")
+
+        finally:
+
+            if os.path.exists(filename):
+
+                try:
+                    os.remove(filename)
+
+                except PermissionError:
+                    pass

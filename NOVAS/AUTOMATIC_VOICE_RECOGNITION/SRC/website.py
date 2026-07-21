@@ -1,74 +1,154 @@
-import webbrowser
-import socket
-from voice import speak
-import config
+"""
+@Module Name : website.py
+
+@Description : This module dynamically searches for and
+               opens websites in the default web browser.
+
+@InputParam  : Website name
+
+@OutputParam : Opens the requested website
+
+@Author      : Vaishnavi Teli
+"""
+
 import asyncio
+import webbrowser
+
+import requests
+
+from voice import speak
+
 
 '''
+@Function Name : check_url
 
-@Module Name : check_internet
-@Description : This module check internet is provide 
-@InputParam  : NONE
-@OutputParam : True or False
-@Author      : Unnati Thakur
+@Description   : Checks whether the given website URL is
+                 accessible.
 
+@InputParam    : url
+
+@OutputParam   : True if the URL exists, otherwise False
+
+@Author        : Vaishnavi Teli
 '''
+def check_url(url):
 
-
-def check_internet():
     try:
-        socket.create_connection(("www.google.com", 80), timeout=5)
-        return True
-    except:
+
+        response = requests.get(
+            url,
+            timeout=5,
+            headers={
+                "User-Agent": "Mozilla/5.0"
+            }
+        )
+
+        return response.status_code < 400
+
+    except requests.RequestException:
+
         return False
-    
+
 
 '''
+@Function Name : find_website
 
-@Module Name : open_website
-@Description : This module open a website
-@InputParam  : command(user command want to open)
-@OutputParam : NONE
-@Author      : Unnati Thakur
+@Description   : Searches for a valid website URL using
+                 common domain extensions.
+
+@InputParam    : name
+
+@OutputParam   : Website URL / None
+
+@Author        : bhoomi sapke
+'''
+def find_website(name):
+
+    name = name.replace(" ", "")
+
+    extensions = [
+        ".com",
+        ".in",
+        ".ac.in",
+        ".org",
+        ".edu",
+        ".gov.in",
+        ".net"
+    ]
+
+    prefixes = [
+        "https://",
+        "https://www."
+    ]
+
+    for prefix in prefixes:
+
+        for ext in extensions:
+
+            url = prefix + name + ext
+
+            print("Checking:", url)
+
+            if check_url(url):
+                return url
+
+    return None
+
 
 '''
+@Function Name : open_website
 
+@Description   : Finds and opens the requested website in
+                 the default web browser.
 
+@InputParam    : command
 
+@OutputParam   : Opens website
+
+@Author        : Vaishnavi Teli
+'''
 def open_website(command):
 
-    if command == "":
-        asyncio.run(print("Website name cannot be empty."))
+    if not command:
         return
 
     website = command.lower().strip()
 
-    if website.startswith("open"):
-        website = website.replace("open", "").strip()
+    if website.startswith("open "):
+        website = website[5:].strip()
 
-    if " " in website:
-        website = website.replace(" ", "")
+    if website.endswith("website"):
+        website = website.replace(
+            "website",
+            ""
+        ).strip()
 
-    if website.startswith("www."):
-        url = "https://" + website
-
-    elif website.startswith("http://") or website.startswith("https://"):
-        url = website
-
-    elif "." in website:
-        url = "https://" + website
-
-    else:
-        url = "https://www." + website + ".com"
-
-    if not check_internet():
-        asyncio.run(print("No Internet Connection."))
-        return
+    print("Finding:", website)
 
     try:
-        webbrowser.open(url)
-        asyncio.run(speak("Website Opened Successfully"))
 
-    except:
-        print("Website not found.")
+        url = find_website(website)
 
+        if url:
+
+            print("Opening:", url)
+
+            webbrowser.open(url)
+
+            asyncio.run(
+                speak(f"Opening {website}")
+            )
+
+        else:
+
+            asyncio.run(
+                speak("Website not found.")
+            )
+
+    except Exception as e:
+
+        print(f"Website Error: {e}")
+
+        asyncio.run(
+            speak("Unable to open the website.")
+        )

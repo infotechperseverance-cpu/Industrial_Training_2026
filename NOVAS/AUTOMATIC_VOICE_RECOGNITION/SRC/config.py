@@ -12,6 +12,7 @@
 @OutputParam : Common configuration constants
 
 '''
+import os
 
 # PROJECT INFORMATION
 
@@ -29,16 +30,27 @@ SLEEP_RESPONSE = "Going to sleep."
 WAKE_WORD = f"hi {ASSISTANT_NAME.lower()}"
 EXIT_COMMAND = f"exit {ASSISTANT_NAME.lower()}"
 TIMEOUT = 10
-PHARSE_TIME_LIMIT = 5
+PHRASE_TIME_LIMIT = 5
 DEFAULT_SPEECH_LANGUAGE = "en-IN"
 
 # DATABASE CONFIGURATION
 
 DB_HOST = "localhost"
 DB_PORT = 3306
-DB_NAME = "NOVA"
+DB_NAME = "assistant"
 DB_USER = "root"
 DB_PASSWORD = "BSS2008"
+
+# Exit NOVA
+
+EXIT_COMMANDS = [
+    "exit",
+    "exit nova",
+    "close nova",
+    "stop nova",
+    "shutdown nova",
+    "goodbye"
+]
 
 
 # VOICE CONFIGURATION
@@ -70,197 +82,9 @@ VOICE_OPTIONS = {
             "mr-IN-AarohiNeural",
             "mr-IN-ManoharNeural"
         ]
-    },
-
-    "Gujarati": {
-        "speech": "gu-IN",
-        "voices": [
-            "gu-IN-DhwaniNeural",
-            "gu-IN-NiranjanNeural"
-        ]
-    },
-
-    "Bengali": {
-        "speech": "bn-IN",
-        "voices": [
-            "bn-IN-TanishaaNeural",
-            "bn-IN-BashkarNeural"
-        ]
-    },
-
-    "Kannada": {
-        "speech": "kn-IN",
-        "voices": [
-            "kn-IN-SapnaNeural",
-            "kn-IN-GaganNeural"
-        ]
-    },
-
-    "Malayalam": {
-        "speech": "ml-IN",
-        "voices": [
-            "ml-IN-SobhanaNeural",
-            "ml-IN-MidhunNeural"
-        ]
-    },
-
-    "Tamil": {
-        "speech": "ta-IN",
-        "voices": [
-            "ta-IN-PallaviNeural",
-            "ta-IN-ValluvarNeural"
-        ]
-    },
-
-    "Telugu": {
-        "speech": "te-IN",
-        "voices": [
-            "te-IN-ShrutiNeural",
-            "te-IN-MohanNeural"
-        ]
-    },
-
-    "Punjabi": {
-        "speech": "pa-IN",
-        "voices": [
-            "pa-IN-GurleenNeural",
-            "pa-IN-VaaniNeural"
-        ]
     }
 }
 
-MESSAGES = {
-
-    "English": {
-        "opening": "Opening {}...",
-        "unknown_application": "Unknown application.",
-        "application_not_found": "Application not found.",
-        "opening_google": "Opening Google Search.",
-        "listening": "I'm listening.",
-        "sleep": "Going to sleep.",
-        "closing": "Closing NOVA.",
-        "no_speech": "No speech detected.",
-        "speech_error": "Speech recognition service unavailable.",
-        "voice_saved": "Voice saved successfully."
-    },
-
-    "Hindi": {
-        "opening": "{} खोल रहा हूँ...",
-        "unknown_application": "एप्लिकेशन पहचान में नहीं आया।",
-        "application_not_found": "एप्लिकेशन नहीं मिला।",
-        "opening_google": "गूगल सर्च खोल रहा हूँ।",
-        "listening": "मैं सुन रहा हूँ।",
-        "sleep": "स्लीप मोड में जा रहा हूँ।",
-        "closing": "नोवा बंद कर रहा हूँ।",
-        "no_speech": "कोई आवाज़ नहीं मिली।",
-        "speech_error": "स्पीच सेवा उपलब्ध नहीं है।",
-        "voice_saved": "आवाज़ सफलतापूर्वक सहेज ली गई।"
-    },
-
-    "Marathi": {
-        "opening": "{} उघडत आहे...",
-        "unknown_application": "अनुप्रयोग ओळखता आला नाही.",
-        "application_not_found": "अनुप्रयोग सापडला नाही.",
-        "opening_google": "Google Search उघडत आहे.",
-        "listening": "मी ऐकत आहे.",
-        "sleep": "स्लीप मोडमध्ये जात आहे.",
-        "closing": "नोव्हा बंद करत आहे.",
-        "no_speech": "कोणताही आवाज ऐकू आला नाही.",
-        "speech_error": "स्पीच सेवा उपलब्ध नाही.",
-        "voice_saved": "आवाज यशस्वीरित्या जतन केला."
-    },
-
-    "Gujarati": {
-        "opening": "{} ખોલી રહ્યો છું...",
-        "unknown_application": "એપ્લિકેશન ઓળખી શકાયું નથી.",
-        "application_not_found": "એપ્લિકેશન મળ્યું નથી.",
-        "opening_google": "Google Search ખોલી રહ્યો છું.",
-        "listening": "હું સાંભળી રહ્યો છું.",
-        "sleep": "સ્લીપ મોડમાં જઈ રહ્યો છું.",
-        "closing": "નોવા બંધ કરી રહ્યો છું.",
-        "no_speech": "કોઈ અવાજ મળ્યો નથી.",
-        "speech_error": "સ્પીચ સેવા ઉપલબ્ધ નથી.",
-        "voice_saved": "અવાજ સફળતાપૂર્વક સાચવ્યો."
-    },
-
-    "Bengali": {
-        "opening": "{} খুলছি...",
-        "unknown_application": "অ্যাপ্লিকেশন সনাক্ত করা যায়নি।",
-        "application_not_found": "অ্যাপ্লিকেশন পাওয়া যায়নি।",
-        "opening_google": "Google Search খুলছি।",
-        "listening": "আমি শুনছি।",
-        "sleep": "স্লিপ মোডে যাচ্ছি।",
-        "closing": "নোভা বন্ধ করছি।",
-        "no_speech": "কোনও শব্দ শোনা যায়নি।",
-        "speech_error": "স্পিচ সার্ভিস উপলব্ধ নয়।",
-        "voice_saved": "ভয়েস সফলভাবে সংরক্ষণ করা হয়েছে।"
-    },
-
-    "Kannada": {
-        "opening": "{} ತೆರೆಯುತ್ತಿದ್ದೇನೆ...",
-        "unknown_application": "ಅಪ್ಲಿಕೇಶನ್ ಗುರುತಿಸಲಾಗಲಿಲ್ಲ.",
-        "application_not_found": "ಅಪ್ಲಿಕೇಶನ್ ಸಿಗಲಿಲ್ಲ.",
-        "opening_google": "Google Search ತೆರೆಯುತ್ತಿದ್ದೇನೆ.",
-        "listening": "ನಾನು ಕೇಳುತ್ತಿದ್ದೇನೆ.",
-        "sleep": "ಸ್ಲೀಪ್ ಮೋಡ್‌ಗೆ ಹೋಗುತ್ತಿದ್ದೇನೆ.",
-        "closing": "ನೋವಾ ಮುಚ್ಚಲಾಗುತ್ತಿದೆ.",
-        "no_speech": "ಯಾವ ಧ್ವನಿಯೂ ಕಂಡುಬಂದಿಲ್ಲ.",
-        "speech_error": "ಸ್ಪೀಚ್ ಸೇವೆ ಲಭ್ಯವಿಲ್ಲ.",
-        "voice_saved": "ಧ್ವನಿ ಯಶಸ್ವಿಯಾಗಿ ಉಳಿಸಲಾಗಿದೆ."
-    },
-
-    "Malayalam": {
-        "opening": "{} തുറക്കുന്നു...",
-        "unknown_application": "ആപ്ലിക്കേഷൻ കണ്ടെത്താനായില്ല.",
-        "application_not_found": "ആപ്ലിക്കേഷൻ ലഭ്യമായില്ല.",
-        "opening_google": "Google Search തുറക്കുന്നു.",
-        "listening": "ഞാൻ കേൾക്കുന്നു.",
-        "sleep": "സ്ലീപ്പ് മോഡിലേക്ക് പോകുന്നു.",
-        "closing": "നോവ അടയ്ക്കുന്നു.",
-        "no_speech": "ശബ്ദം കണ്ടെത്തിയില്ല.",
-        "speech_error": "സ്പീച്ച് സേവനം ലഭ്യമല്ല.",
-        "voice_saved": "ശബ്ദം വിജയകരമായി സേവ് ചെയ്തു."
-    },
-
-    "Tamil": {
-        "opening": "{} திறக்கிறேன்...",
-        "unknown_application": "பயன்பாடு கண்டறியப்படவில்லை.",
-        "application_not_found": "பயன்பாடு கிடைக்கவில்லை.",
-        "opening_google": "Google Search திறக்கிறேன்.",
-        "listening": "நான் கேட்கிறேன்.",
-        "sleep": "ஸ்லீப் முறைக்கு செல்கிறேன்.",
-        "closing": "நோவாவை மூடுகிறேன்.",
-        "no_speech": "எந்த குரலும் கண்டறியப்படவில்லை.",
-        "speech_error": "குரல் சேவை கிடைக்கவில்லை.",
-        "voice_saved": "குரல் வெற்றிகரமாக சேமிக்கப்பட்டது."
-    },
-
-    "Telugu": {
-        "opening": "{} తెరుస్తున్నాను...",
-        "unknown_application": "అప్లికేషన్ గుర్తించబడలేదు.",
-        "application_not_found": "అప్లికేషన్ కనబడలేదు.",
-        "opening_google": "Google Search తెరుస్తున్నాను.",
-        "listening": "నేను వింటున్నాను.",
-        "sleep": "స్లీప్ మోడ్‌లోకి వెళ్తున్నాను.",
-        "closing": "నోవాను మూసివేస్తున్నాను.",
-        "no_speech": "శబ్దం గుర్తించబడలేదు.",
-        "speech_error": "స్పీచ్ సేవ అందుబాటులో లేదు.",
-        "voice_saved": "వాయిస్ విజయవంతంగా సేవ్ చేయబడింది."
-    },
-
-    "Punjabi": {
-        "opening": "{} ਖੋਲ੍ਹ ਰਿਹਾ ਹਾਂ...",
-        "unknown_application": "ਐਪਲੀਕੇਸ਼ਨ ਨਹੀਂ ਮਿਲੀ।",
-        "application_not_found": "ਐਪਲੀਕੇਸ਼ਨ ਉਪਲਬਧ ਨਹੀਂ ਹੈ।",
-        "opening_google": "Google Search ਖੋਲ੍ਹ ਰਿਹਾ ਹਾਂ।",
-        "listening": "ਮੈਂ ਸੁਣ ਰਿਹਾ ਹਾਂ।",
-        "sleep": "ਸਲੀਪ ਮੋਡ ਵਿੱਚ ਜਾ ਰਿਹਾ ਹਾਂ।",
-        "closing": "ਨੋਵਾ ਬੰਦ ਕਰ ਰਿਹਾ ਹਾਂ।",
-        "no_speech": "ਕੋਈ ਆਵਾਜ਼ ਨਹੀਂ ਮਿਲੀ।",
-        "speech_error": "ਸਪੀਚ ਸੇਵਾ ਉਪਲਬਧ ਨਹੀਂ ਹੈ।",
-        "voice_saved": "ਆਵਾਜ਼ ਸਫਲਤਾਪੂਰਵਕ ਸੇਵ ਹੋ ਗਈ।"
-    }
-}
 
 # ---------------- Number Words ----------------
 
@@ -290,27 +114,6 @@ LANGUAGE_ALIASES = {
     "marathi": "Marathi",
     "मराठी": "Marathi",
 
-    "gujarati": "Gujarati",
-    "ગુજરાતી": "Gujarati",
-
-    "bengali": "Bengali",
-    "bangla": "Bengali",
-    "বাংলা": "Bengali",
-
-    "kannada": "Kannada",
-    "ಕನ್ನಡ": "Kannada",
-
-    "malayalam": "Malayalam",
-    "മലയാളം": "Malayalam",
-
-    "tamil": "Tamil",
-    "தமிழ்": "Tamil",
-
-    "telugu": "Telugu",
-    "తెలుగు": "Telugu",
-
-    "punjabi": "Punjabi",
-    "ਪੰਜਾਬੀ": "Punjabi"
 }
 
 
@@ -324,13 +127,6 @@ SAMPLE_TEXT = {
     "English": "Hello. This is a sample voice.",
     "Hindi": "नमस्ते। यह चुनी गई आवाज़ का नमूना है।",
     "Marathi": "नमस्कार. हा निवडलेल्या आवाजाचा नमुना आहे.",
-    "Gujarati": "નમસ્તે. આ પસંદ કરેલા અવાજનો નમૂનો છે.",
-    "Bengali": "নমস্কার। এটি নির্বাচিত কণ্ঠের একটি নমুনা।",
-    "Kannada": "ನಮಸ್ಕಾರ. ಇದು ಆಯ್ಕೆ ಮಾಡಿದ ಧ್ವನಿಯ ಮಾದರಿ.",
-    "Malayalam": "നമസ്കാരം. ഇത് തിരഞ്ഞെടുത്ത ശബ്ദത്തിന്റെ മാതൃകയാണ്.",
-    "Tamil": "வணக்கம். இது தேர்ந்தெடுக்கப்பட்ட குரலின் மாதிரி.",
-    "Telugu": "నమస్కారం. ఇది ఎంచుకున్న స్వరానికి నమూనా.",
-    "Punjabi": "ਸਤ ਸ੍ਰੀ ਅਕਾਲ। ਇਹ ਚੁਣੀ ਹੋਈ ਆਵਾਜ਼ ਦਾ ਨਮੂਨਾ ਹੈ."
 }
 
 YES_WORDS = [
@@ -352,7 +148,38 @@ NO_WORDS = [
     "disable"
 ]
 
-import os
+
+SETTINGS_TEXT = {
+    "en-IN": {
+        "opening": "Opening settings.",
+        "menu": """Settings
+        1. Change Language and Voice
+        2. Brightness Control
+        3. Shutdown Laptop
+        4. Exit""",
+        "prompt": "Say change language and voice, brightness, shutdown laptop or exit."
+    },
+
+    "hi-IN": {
+        "opening": "सेटिंग्स खोल रहा हूँ।",
+        "menu": """सेटिंग्स
+        1. भाषा और आवाज़ बदलें
+        2. ब्राइटनेस कंट्रोल
+        3. लैपटॉप बंद करें
+        4. बाहर निकलें""",
+        "prompt": "भाषा और आवाज़ बदलें, ब्राइटनेस, लैपटॉप बंद करें या बाहर निकलें।"
+    },
+
+    "mr-IN": {
+        "opening": "सेटिंग्ज उघडत आहे.",
+        "menu": """सेटिंग्ज
+        1. भाषा आणि आवाज बदला
+        2. ब्राइटनेस कंट्रोल
+        3. लॅपटॉप बंद करा
+        4. बाहेर पडा""",
+        "prompt": "भाषा आणि आवाज बदला, ब्राइटनेस, लॅपटॉप बंद करा किंवा बाहेर पडा."
+    }
+}
 
 # SYSTEM CONFIGURATION
 
@@ -366,3 +193,289 @@ DEFAULT_SEARCH_PATHS = [
     os.path.join(HOME_DIRECTORY, "Downloads"),
     HOME_DIRECTORY
 ]
+
+MESSAGES =  {
+
+    "English": {
+
+        "opening": "Opening {}...",
+        "unknown_application": "Unknown application.",
+        "application_not_found": "Application not found.",
+        "opening_google": "Opening Google Search.",
+        "listening": "I'm listening.",
+        "sleep": "Going to sleep.",
+        "closing": "Closing NOVA.",
+        "no_speech": "No speech detected.",
+        "speech_error": "Speech recognition service unavailable.",
+        "voice_saved": "Voice saved successfully.",
+        "please_select_language": "Please select a language.",
+        "select_language": "Select Language.",
+        "say_language_number": "Please say the language number.",
+        "invalid_language_selection": "Invalid language selection. Please try again.",
+        "you_selected": "You selected.",
+        "voices": "Voices.",
+        "say_voice_number": "Please say the voice number.",
+        "invalid_voice_selection": "Invalid voice selection. Please try again.",
+        "selected_voice": "Selected Voice.",
+        "save_voice_question": "Do you want to save this voice? Say yes or no.",
+        "didnt_hear": "I didn't hear you.",
+        "choose_another_voice": "Please choose another voice.",
+        "answer_yes_no": "Please answer yes or no.",
+        "website_empty": "Website name cannot be empty.",
+        "no_internet": "No Internet Connection.",
+        "website_opened": "Website Opened Successfully.",
+        "website_not_found": "Website not found.",
+        "google_api_error": "Google Speech API Error.",
+        "opening_settings": "Opening settings.",
+        "settings_command": "Say change language and voice, brightness, shutdown laptop or back.",
+        "brightness_command": "Say increase brightness, decrease brightness or set brightness.",
+        "brightness_increased": "Brightness increased.",
+        "brightness_decreased": "Brightness decreased.",
+        "brightness_set": "Brightness set to {value} percent.",
+        "brightness_not_detected": "Brightness value not detected.",
+        "invalid_brightness": "Invalid brightness command.",
+        "brightness_not_supported": "Brightness control is not supported on this device.",
+        "shutdown_message": "Shutting down your laptop in ten seconds.",
+        "command_not_recognized": "Command not recognized.",
+        "application_launch_error": "Application Launch Error.",
+        "unable_open_application": "Unable to open application.",
+        "settings": "SETTINGS",
+        "change_language_voice": "1. Change Language and Voice",
+        "brightness_control": "2. Brightness Control",
+        "shutdown_laptop_option": "3. Shutdown Laptop",
+        "exit_option": "4. Exit",
+
+        "invalid_file_folder_command" : "Invalid file or folder command.",
+        "ask_folder_name": "What should be the folder name?",
+        "no_folder_name_received": "No folder name received.",
+        "ask_folder_location": "Where do you want to create this folder?",
+        "no_parent_folder_received": "No parent folder received.",
+        "searching_destination_folder": "Searching for the destination folder...",
+        "destination_folder_found": "Destination folder found.",
+        "folder_created_successfully": "Folder created successfully.",
+        "unable_to_create_folder": "Unable to create folder.",
+        "parent_folder_not_found": "Parent folder not found.",
+
+        "ask_file_name_with_extension": "What should be the file name with extension?",
+        "no_file_name_received": "No file name received.",
+        "ask_file_location": "Where do you want to create this file?",
+        "file_created_successfully": "File created successfully.",
+        "unable_to_create_file": "Unable to create file.",
+
+        "ask_file_name": "What is the file name?",
+        "searching_file": "Searching for the file...",
+        "file_found_deleting": "File found. Deleting file.",
+        "file_deleted_successfully": "File deleted successfully.",
+        "unable_to_delete_file": "Unable to delete file.",
+        "file_not_found": "File not found.",
+
+        "ask_folder_name_delete": "What is the folder name?",
+        "searching_folder": "Searching for the folder...",
+        "deleting": "Deleting:",
+        "folder_found_deleting": "Folder found. Deleting folder.",
+        "unable_to_delete_folder": "Unable to delete folder.",
+        "folder_deleted_successfully": "Folder deleted successfully.",
+        "folder_not_found": "Folder not found.",
+
+        "file_found": "File found.",
+        "opening_file": "Opening file.",
+        "unable_to_open_file": "Unable to open file.",
+
+        "opening_folder": "Opening folder.",
+        "unable_to_open_folder": "Unable to open folder.",
+
+        "folder_already_exists": "Folder already exists."
+
+
+    },
+
+    "Hindi": {
+        "opening": "{} खोल रहा हूँ...",
+        "unknown_application": "एप्लिकेशन पहचान में नहीं आया।",
+        "application_not_found": "एप्लिकेशन नहीं मिला।",
+        "opening_google": "गूगल सर्च खोल रहा हूँ।",
+        "listening": "मैं सुन रहा हूँ।",
+        "sleep": "स्लीप मोड में जा रहा हूँ।",
+        "closing": "नोवा बंद कर रहा हूँ।",
+        "no_speech": "कोई आवाज़ नहीं मिली।",
+        "speech_error": "स्पीच सेवा उपलब्ध नहीं है।",
+        "voice_saved": "आवाज़ सफलतापूर्वक सहेज ली गई।",
+        "please_select_language": "कृपया एक भाषा चुनें।",
+        "select_language": "भाषा चुनें।",
+        "say_language_number": "कृपया भाषा का नंबर बोलें।",
+        "invalid_language_selection_retry": "अमान्य भाषा चयन। कृपया पुनः प्रयास करें।",
+        "invalid_language_selection": "अमान्य भाषा चयन।",
+        "you_selected": "आपने चुना है।",
+        "voices": "आवाज़ें।",
+        "say_voice_number": "कृपया आवाज़ का नंबर बोलें।",
+        "invalid_voice_selection_retry": "अमान्य आवाज़ चयन। कृपया पुनः प्रयास करें।",
+        "invalid_voice_selection": "अमान्य आवाज़ चयन।",
+        "selected_voice": "चयनित आवाज़:",
+        "save_voice_confirmation": "क्या आप इस आवाज़ को सहेजना चाहते हैं? हाँ या नहीं कहें।",
+        "didnt_hear_you": "मैं आपकी आवाज़ नहीं सुन पाया।",
+        "voice_saved": "आवाज़ सफलतापूर्वक सहेजी गई।",
+        "choose_another_voice": "कृपया दूसरी आवाज़ चुनें।",
+        "answer_yes_no": "कृपया हाँ या नहीं में उत्तर दें।",
+        "website_name_empty": "वेबसाइट का नाम खाली नहीं हो सकता।",
+        "no_internet": "इंटरनेट कनेक्शन नहीं है।",
+        "website_opened": "वेबसाइट सफलतापूर्वक खोली गई।",
+        "website_not_found": "वेबसाइट नहीं मिली।",
+        "google_speech_api_error": "गूगल स्पीच API त्रुटि:",
+        "opening_settings": "सेटिंग्स खोली जा रही हैं।",
+        "settings_options": "भाषा और आवाज़ बदलें, ब्राइटनेस, लैपटॉप बंद करें या वापस कहें।",
+        "brightness_options": "ब्राइटनेस बढ़ाएँ, घटाएँ या सेट करें कहें।",
+        "brightness_increased": "ब्राइटनेस बढ़ा दी गई है।",
+        "brightness_decreased": "ब्राइटनेस घटा दी गई है।",
+        "brightness_set": "ब्राइटनेस {value} प्रतिशत पर सेट की गई है।",
+        "brightness_value_not_detected": "ब्राइटनेस का मान नहीं मिला।",
+        "invalid_brightness_command": "अमान्य ब्राइटनेस कमांड।",
+        "brightness_not_supported": "यह डिवाइस ब्राइटनेस नियंत्रण का समर्थन नहीं करता।",
+        "shutdown_laptop": "आपका लैपटॉप दस सेकंड में बंद होगा।",
+        "settings_command_prompt": "कृपया भाषा और आवाज़ बदलें, ब्राइटनेस, लैपटॉप बंद करें या वापस कहें।",
+        "command_not_recognized": "कमांड पहचानी नहीं गई।",
+        "application_launch_error": "एप्लिकेशन लॉन्च त्रुटि:",
+        "unable_to_open_application": "एप्लिकेशन खोलने में असमर्थ।",
+        "settings": "सेटिंग्स",
+        "change_language_voice": "1. भाषा और आवाज़ बदलें",
+        "brightness_control": "2. ब्राइटनेस नियंत्रण",
+        "shutdown_laptop_option": "3. लैपटॉप बंद करें",
+        "exit_option": "4. बाहर निकलें",
+
+        "invalid_file_folder_command": "अमान्य फ़ाइल या फ़ोल्डर कमांड।",
+        "ask_folder_name": "फ़ोल्डर का नाम क्या होना चाहिए?",
+        "no_folder_name_received": "फ़ोल्डर का नाम प्राप्त नहीं हुआ।",
+        "ask_folder_location": "आप यह फ़ोल्डर कहाँ बनाना चाहते हैं?",
+        "no_parent_folder_received": "पैरेंट फ़ोल्डर प्राप्त नहीं हुआ।",
+        "searching_destination_folder": "गंतव्य फ़ोल्डर खोजा जा रहा है...",
+        "destination_folder_found": "गंतव्य फ़ोल्डर मिल गया।",
+        "folder_created_successfully": "फ़ोल्डर सफलतापूर्वक बनाया गया।",
+        "unable_to_create_folder": "फ़ोल्डर बनाने में असमर्थ।",
+        "parent_folder_not_found": "पैरेंट फ़ोल्डर नहीं मिला।",
+
+        "ask_file_name_with_extension": "एक्सटेंशन सहित फ़ाइल का नाम क्या होना चाहिए?",
+        "no_file_name_received": "फ़ाइल का नाम प्राप्त नहीं हुआ।",
+        "ask_file_location": "आप यह फ़ाइल कहाँ बनाना चाहते हैं?",
+        "file_created_successfully": "फ़ाइल सफलतापूर्वक बनाई गई।",
+        "unable_to_create_file": "फ़ाइल बनाने में असमर्थ।",
+
+        "ask_file_name": "फ़ाइल का नाम क्या है?",
+        "searching_file": "फ़ाइल खोजी जा रही है...",
+        "file_found_deleting": "फ़ाइल मिल गई। फ़ाइल हटाई जा रही है।",
+        "file_deleted_successfully": "फ़ाइल सफलतापूर्वक हटा दी गई।",
+        "unable_to_delete_file": "फ़ाइल हटाने में असमर्थ।",
+        "file_not_found": "फ़ाइल नहीं मिली।",
+
+        "ask_folder_name_delete": "फ़ोल्डर का नाम क्या है?",
+        "searching_folder": "फ़ोल्डर खोजा जा रहा है...",
+        "deleting": "हटाया जा रहा है:",
+        "folder_found_deleting": "फ़ोल्डर मिल गया। फ़ोल्डर हटाया जा रहा है।",
+        "unable_to_delete_folder": "फ़ोल्डर हटाने में असमर्थ।",
+        "folder_deleted_successfully": "फ़ोल्डर सफलतापूर्वक हटा दिया गया।",
+        "folder_not_found": "फ़ोल्डर नहीं मिला।",
+
+        "file_found": "फ़ाइल मिल गई।",
+        "opening_file": "फ़ाइल खोली जा रही है।",
+        "unable_to_open_file": "फ़ाइल खोलने में असमर्थ।",
+
+        "opening_folder": "फ़ोल्डर खोला जा रहा है।",
+        "unable_to_open_folder": "फ़ोल्डर खोलने में असमर्थ।",
+
+        "folder_already_exists": "फ़ोल्डर पहले से मौजूद है।"
+
+
+    },
+
+    "Marathi": {
+        "opening": "{} उघडत आहे...",
+        "unknown_application": "अनुप्रयोग ओळखता आला नाही.",
+        "application_not_found": "अनुप्रयोग सापडला नाही.",
+        "opening_google": "Google Search उघडत आहे.",
+        "listening": "मी ऐकत आहे.",
+        "sleep": "स्लीप मोडमध्ये जात आहे.",
+        "closing": "नोव्हा बंद करत आहे.",
+        "no_speech": "कोणताही आवाज ऐकू आला नाही.",
+        "speech_error": "स्पीच सेवा उपलब्ध नाही.",
+        "voice_saved": "आवाज यशस्वीरित्या जतन केला.",
+        "please_select_language": "कृपया भाषा निवडा.",
+        "select_language": "भाषा निवडा.",
+        "say_language_number": "कृपया भाषेचा क्रमांक सांगा.",
+        "invalid_language_selection_retry": "अवैध भाषा निवड. कृपया पुन्हा प्रयत्न करा.",
+        "invalid_language_selection": "अवैध भाषा निवड.",
+        "you_selected": "तुम्ही निवडले.",
+        "voices": "आवाज.",
+        "say_voice_number": "कृपया आवाजाचा क्रमांक सांगा.",
+        "invalid_voice_selection_retry": "अवैध आवाज निवड. कृपया पुन्हा प्रयत्न करा.",
+        "invalid_voice_selection": "अवैध आवाज निवड.",
+        "selected_voice": "निवडलेला आवाज:",
+        "save_voice_confirmation": "तुम्हाला हा आवाज जतन करायचा आहे का? होय किंवा नाही म्हणा.",
+        "didnt_hear_you": "मी तुमचा आवाज ऐकू शकलो नाही.",
+        "voice_saved": "आवाज यशस्वीरित्या जतन केला.",
+        "choose_another_voice": "कृपया दुसरा आवाज निवडा.",
+        "answer_yes_no": "कृपया होय किंवा नाही असे उत्तर द्या.",
+        "website_name_empty": "वेबसाइटचे नाव रिकामे असू शकत नाही.",
+        "no_internet": "इंटरनेट कनेक्शन नाही.",
+        "website_opened": "वेबसाइट यशस्वीरित्या उघडली.",
+        "website_not_found": "वेबसाइट सापडली नाही.",
+        "google_speech_api_error": "Google Speech API त्रुटी:",
+        "opening_settings": "सेटिंग्ज उघडत आहे.",
+        "settings_options": "भाषा आणि आवाज बदला, ब्राइटनेस, लॅपटॉप बंद करा किंवा मागे म्हणा.",
+        "brightness_options": "ब्राइटनेस वाढवा, कमी करा किंवा सेट करा म्हणा.",
+        "brightness_increased": "ब्राइटनेस वाढवला आहे.",
+        "brightness_decreased": "ब्राइटनेस कमी केला आहे.",
+        "brightness_set": "ब्राइटनेस {value} टक्के सेट केला आहे.",
+        "brightness_value_not_detected": "ब्राइटनेस मूल्य आढळले नाही.",
+        "invalid_brightness_command": "अवैध ब्राइटनेस कमांड.",
+        "brightness_not_supported": "या डिव्हाइसवर ब्राइटनेस नियंत्रण समर्थित नाही.",
+        "shutdown_laptop": "तुमचा लॅपटॉप दहा सेकंदात बंद होईल.",
+        "settings_command_prompt": "कृपया भाषा आणि आवाज बदला, ब्राइटनेस, लॅपटॉप बंद करा किंवा मागे म्हणा.",
+        "command_not_recognized": "कमांड ओळखली गेली नाही.",
+        "application_launch_error": "अॅप्लिकेशन सुरू करताना त्रुटी:",
+        "unable_to_open_application": "अॅप्लिकेशन उघडता आले नाही.",
+        "change_language_voice": "1. भाषा आणि आवाज बदला",
+        "brightness_control": "2. ब्राइटनेस नियंत्रण",
+        "shutdown_laptop_option": "3. लॅपटॉप बंद करा",
+        "exit_option": "4. बाहेर पडा",
+
+
+        "invalid_file_folder_command": "अवैध फाइल किंवा फोल्डर कमांड.",
+        "ask_folder_name": "फोल्डरचे नाव काय असावे?",
+        "no_folder_name_received": "फोल्डरचे नाव प्राप्त झाले नाही.",
+        "ask_folder_location": "हा फोल्डर कुठे तयार करायचा आहे?",
+        "no_parent_folder_received": "पॅरेंट फोल्डर प्राप्त झाला नाही.",
+        "searching_destination_folder": "गंतव्य फोल्डर शोधत आहे...",
+        "destination_folder_found": "गंतव्य फोल्डर सापडला.",
+        "folder_created_successfully": "फोल्डर यशस्वीरित्या तयार केला.",
+        "unable_to_create_folder": "फोल्डर तयार करता आला नाही.",
+        "parent_folder_not_found": "पॅरेंट फोल्डर सापडला नाही.",
+
+        "ask_file_name_with_extension": "एक्स्टेन्शनसह फाइलचे नाव काय असावे?",
+        "no_file_name_received": "फाइलचे नाव प्राप्त झाले नाही.",
+        "ask_file_location": "ही फाइल कुठे तयार करायची आहे?",
+        "file_created_successfully": "फाइल यशस्वीरित्या तयार केली.",
+        "unable_to_create_file": "फाइल तयार करता आली नाही.",
+
+        "ask_file_name": "फाइलचे नाव काय आहे?",
+        "searching_file": "फाइल शोधत आहे...",
+        "file_found_deleting": "फाइल सापडली. फाइल हटवत आहे.",
+        "file_deleted_successfully": "फाइल यशस्वीरित्या हटवली.",
+        "unable_to_delete_file": "फाइल हटवता आली नाही.",
+        "file_not_found": "फाइल सापडली नाही.",
+
+        "ask_folder_name_delete": "फोल्डरचे नाव काय आहे?",
+        "searching_folder": "फोल्डर शोधत आहे...",
+        "deleting": "हटवत आहे:",
+        "folder_found_deleting": "फोल्डर सापडला. फोल्डर हटवत आहे.",
+        "unable_to_delete_folder": "फोल्डर हटवता आला नाही.",
+        "folder_deleted_successfully": "फोल्डर यशस्वीरित्या हटवला.",
+        "folder_not_found": "फोल्डर सापडला नाही.",
+
+        "file_found": "फाइल सापडली.",
+        "opening_file": "फाइल उघडत आहे.",
+        "unable_to_open_file": "फाइल उघडता आली नाही.",
+
+        "opening_folder": "फोल्डर उघडत आहे.",
+        "unable_to_open_folder": "फोल्डर उघडता आला नाही.",
+
+        "folder_already_exists": "फोल्डर आधीपासून अस्तित्वात आहे."
+    }
+}

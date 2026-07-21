@@ -26,12 +26,12 @@ def create_folder(folder_name, parent_path):
 
     except FileExistsError:
         asyncio.run(speak("Folder already exists."))
-        asyncio.run(print("Folder already exists."))
+        print("Folder already exists.")
         return False
 
     except Exception as e:
-        asyncio.run(print("Error :", e))
-        asyncio.run(speak("Error :", e))
+        print("Error :", e)
+        asyncio.run(speak(f"Error: {e}"))
         return False
 
 
@@ -44,8 +44,8 @@ def delete_folder(folder_path):
         return True
 
     except Exception as e:
-        asyncio.run(print("Error :", e))
-        asyncio.run(speak("Error :", e))
+        print("Error :", e)
+        asyncio.run(speak(f"Error: {e}"))
         return False
 
 
@@ -58,6 +58,6 @@ def open_folder(folder_path):
         return True
 
     except Exception as e:
-        asyncio.run(print("Error :", e))
-        asyncio.run(speak("Error :", e))
+        print("Error :", e)
+        asyncio.run(speak(f"Error: {e}"))        
         return False

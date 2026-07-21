@@ -1,7 +1,7 @@
 
 '''
 
-@Module Name (class) : Registrylaunher 
+@Module Name         : Registry 
 @Description         : This module Launch Windows applications
 #                      and websites dynamically
 @Inputparam          : None
@@ -41,26 +41,56 @@ class RegistryLauncher:
 
         self.applications = {
 
+            # Browsers
             "chrome": "chrome.exe",
             "edge": "msedge.exe",
 
+            # Windows Apps
             "notepad": "notepad.exe",
             "paint": "mspaint.exe",
-
             "calculator": "calc.exe",
-
             "cmd": "cmd.exe",
-
             "explorer": "explorer.exe",
 
+            # Microsoft Office
             "word": "WINWORD.EXE",
             "excel": "EXCEL.EXE",
             "powerpoint": "POWERPNT.EXE",
 
+            # IDEs
             "vs code": "Code.exe",
-            "visual studio code": "Code.exe"
-        }
+            "visual studio code": "Code.exe",
 
+            # Communication
+            "whatsapp": "WhatsApp.exe",
+            "chatgpt": "ChatGPT.exe",
+            "telegram": "Telegram.exe",
+            "discord": "Discord.exe",
+            "zoom": "Zoom.exe",
+
+            # Design
+            "canva": "Canva.exe",
+            "figma": "Figma.exe",
+
+            # Development
+            "pycharm": "pycharm64.exe",
+            "intellij": "idea64.exe",
+            "eclipse": "eclipse.exe",
+
+            # Media
+            "vlc": "vlc.exe",
+            "spotify": "Spotify.exe",
+
+            # Utilities
+            "snipping tool": "SnippingTool.exe",
+            "task manager": "Taskmgr.exe",
+            "control panel": "control.exe",
+
+            # Adobe
+            "photoshop": "Photoshop.exe",
+            "illustrator": "Illustrator.exe",
+            "acrobat": "Acrobat.exe"
+        }
 
 
     def get_application_path(self, exe_name):
@@ -141,8 +171,7 @@ class RegistryLauncher:
                     return True
 
 
-                except:
-
+                except Exception:
                     pass
 
 
@@ -161,9 +190,7 @@ class RegistryLauncher:
 
 
         asyncio.run(
-            speak(
-                "Command not recognized."
-            )
+            speak(get_message("command_not_recognized"))
         )
 
         return False
@@ -192,13 +219,29 @@ class RegistryLauncher:
 
         except Exception as e:
 
-            print(
-                "Application Launch Error:",
-                e
-            )
+            print(f"Application Launch Error: {e}")
 
             asyncio.run(
                 speak(
                     "Unable to open application."
                 )
             )
+
+'''
+@Function Name : process
+@Description   : Processes application and website opening commands.
+@Input Param   : command
+@Output Param  : TRUE if handled, otherwise FALSE.
+@Author        : bhoomi sapke
+'''
+
+launcher = RegistryLauncher()
+
+def process(command):
+
+    command = command.lower().strip()
+
+    if command.lower().startswith("open"):
+        return launcher.launch(command)
+
+    return False
