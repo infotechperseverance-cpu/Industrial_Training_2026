@@ -1,87 +1,328 @@
+# =============================================================================
+# FILE NAME : ai_email.py
+#
+# MODULE NAME : AI Email Generator
+#
+# DESCRIPTION:
+# This module generates professional emails using Google Gemini AI.
+#
+# FEATURES:
+# 1. Generate email subject
+# 2. Generate email body
+# 3. Supports different tones
+# 4. Returns generated email to main program
+#
+# IMPORTANT:
+# This file does NOT import draft_management.py.
+# Draft saving is handled by main.py.
+#
+# =============================================================================
+
+
+# Gemini AI Library
 from google import genai
 
 
-# CLASS NAME: AIEmailWriter
-# WHAT IT DOES: This class connects to the Gemini AI model and generates
-#               complete emails based on the topic, tone, and user details.
-# INPUTS: topic, tone, details
-# OUTPUT: Returns the generated email subject and body separately.
+
+# =============================================================================
+# CLASS NAME : AIEmailWriter
+#
+# PURPOSE:
+# Handles communication with Gemini AI model.
+# =============================================================================
+
 
 class AIEmailWriter:
 
-    # FUNCTION NAME: __init__
-    # WHAT IT DOES: Initializes the Gemini AI client using the API key.
-    # INPUTS: None
-    # OUTPUT: Creates a Gemini AI client object.
+
+
+    # =========================================================================
+    # FUNCTION NAME : __init__
+    #
+    # WHAT IT DOES:
+    # Creates Gemini AI client.
+    #
+    # INPUT:
+    # None
+    #
+    # OUTPUT:
+    # Gemini client object
+    # =========================================================================
+
 
     def __init__(self):
 
-        # Creating a Gemini AI client using the API key
-        # This client is used to communicate with the Gemini model
-        self.client = genai.Client(
-            api_key="your_api"
-        )
+
+        try:
 
 
-    # FUNCTION NAME: generate_email
-    # WHAT IT DOES: Sends the email topic, tone, and user details to
-    #               Gemini AI and generates a complete email. It then
-    #               separates the generated email into subject and body.
-    # INPUTS: topic, tone, details
-    # OUTPUT: Returns the email subject and body.
+            self.client = genai.Client(
 
-    def generate_email(self, topic, tone, details):
+                api_key="YOUR_API_KEY"
 
-        # Creating a prompt for Gemini AI
-        # It includes the email topic, tone, and user details
-        # so that AI can generate a complete email.
+            )
+
+
+        except Exception as e:
+
+
+            print(
+                "\nAI Initialization Error :",
+                e
+            )
+
+            self.client = None
+
+
+
+
+
+    # =========================================================================
+    # FUNCTION NAME : generate_email
+    #
+    # WHAT IT DOES:
+    # Sends user requirements to Gemini AI
+    # and generates complete email.
+    #
+    # INPUT:
+    # topic
+    # tone
+    # details
+    #
+    # OUTPUT:
+    # Returns subject and body
+    #
+    # =========================================================================
+
+
+
+    def generate_email(
+            self,
+            topic,
+            tone,
+            details
+        ):
+
+
+
+        if self.client is None:
+
+
+            return (
+                "Error",
+                "AI service is not available"
+            )
+
+
+
 
         prompt = f"""
-    Write a complete email.
 
-    Topic:
-    {topic}
 
-    Tone:
-    {tone}
+            You are an expert email writer.
 
-    Details:
-    {details}
 
-    IMPORTANT
+            Create a complete professional email.
 
-    Return ONLY in this exact format.
 
-    Subject: <Email Subject>
+            Email Topic:
+            {topic}
 
-    Body:
-    <Complete Email Body>
 
-    Do not write any explanation.
-    Do not use markdown.
-    Do not bold anything.
-    """
+            Email Tone:
+            {tone}
 
-        # Sending the prompt to Gemini AI to generate the email
-        response = self.client.models.generate_content(
-            model="gemini-flash-latest",
-            contents=prompt,
-        )
 
-        # Store the generated email
-        email = response.text.strip()
+            Additional Details:
+            {details}
 
-        # Variables to store subject and body
-        subject = ""
-        body = ""
 
-        # Checking if the generated email contains a Body section
-        if "Body:" in email:
 
-            # Separating the generated email into subject and body
-            parts = email.split("Body:", 1)
+            Follow this exact format:
 
-            subject = parts[0].replace("Subject:", "").strip()
-            body = parts[1].strip()
 
-        return subject, body
+            Subject:
+                Only email subject>
+
+
+            Body:
+                <Complete email body>
+
+
+
+            Rules:
+
+            1. Do not add explanation.
+            2. Do not use markdown.
+            3. Do not use bullet points.
+            4. Write only email content.
+            
+        """
+
+
+
+        try:
+
+
+
+            response = self.client.models.generate_content(
+                model="gemini-3.6-flash",
+                contents=prompt
+            )
+
+            email_text = response.text.strip()
+
+
+            subject = ""
+
+            body = ""
+
+
+
+
+            # ---------------------------------------------------------
+            # Separate Subject and Body
+            # ---------------------------------------------------------
+
+
+            if "Body:" in email_text:
+
+
+
+                parts = email_text.split(
+
+                    "Body:",
+
+                    1
+
+                )
+
+
+
+                subject = parts[0].replace(
+
+                    "Subject:",
+
+                    ""
+
+                ).strip()
+
+
+
+                body = parts[1].strip()
+
+
+
+
+            else:
+
+
+
+                # If AI does not follow format
+
+                subject = "Generated Email"
+
+                body = email_text
+
+
+
+
+
+            return subject, body
+
+
+
+
+
+        except Exception as e:
+
+
+
+            print(
+
+                "\nAI Generation Error :",
+
+                e
+
+            )
+
+
+            return (
+
+                "Error",
+
+                "Unable to generate email"
+
+            )
+
+
+
+
+
+# =============================================================================
+# TEST PROGRAM
+# =============================================================================
+
+
+if __name__ == "__main__":
+
+
+
+    writer = AIEmailWriter()
+
+
+
+    topic = input(
+
+        "Enter Email Topic : "
+
+    )
+
+
+
+    tone = input(
+
+        "Enter Email Tone : "
+
+    )
+
+
+
+    details = input(
+
+        "Enter Email Details : "
+
+    )
+
+
+
+
+    subject, body = writer.generate_email(
+
+        topic,
+
+        tone,
+
+        details
+
+    )
+
+
+
+    print("\n================================")
+
+    print("GENERATED EMAIL")
+
+    print("================================")
+
+
+
+    print("\nSubject:")
+
+    print(subject)
+
+
+
+    print("\nBody:")
+
+    print(body)

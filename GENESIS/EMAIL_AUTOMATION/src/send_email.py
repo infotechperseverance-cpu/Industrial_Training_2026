@@ -1,135 +1,511 @@
+# =============================================================================
+# FILE NAME : send_email.py
+#
+# PROJECT : EMAIL AUTOMATION SYSTEM
+#
+# MODULE NAME : Send Email System
+#
+# DESCRIPTION:
+# Sends emails using Gmail SMTP.
+# Supports:
+# 1. Receiver management
+# 2. Attachment sending
+# 3. Email reports
+#
+# DATABASE:
+# email_automation
+#
+# =============================================================================
+
 import smtplib
+import ssl
 import mysql.connector
+
+from mysql.connector import Error
 from email.message import EmailMessage
+from datetime import datetime
+
 from attachment import AttachmentManager
-from datetime import date
+
+
+# =============================================================================
+# DATABASE CONNECTION
+# =============================================================================
+
+def db_connection():
+
+    try:
+
+        connection = mysql.connector.connect(
+
+            host="localhost",
+
+            user="root",
+
+            password="root123",
+
+            database="email_automation"
+
+        )
+
+        return connection
+
+    except Error as err:
+
+        print("\nDatabase Connection Error :", err)
+
+        return None
+
+
+# =============================================================================
+# CREATE DATABASE TABLES
+# =============================================================================
+
+def create_tables():
+
+    conn = db_connection()
+
+    if conn is None:
+
+        return
+
+    cursor = conn.cursor()
+
+    try:
+
+        # ---------------------------------------------------------
+        # EMAIL ACCOUNT TABLE
+        # ---------------------------------------------------------
+
+        cursor.execute("""
+
+        CREATE TABLE IF NOT EXISTS email_accounts
+        (
+
+            id INT AUTO_INCREMENT PRIMARY KEY,
+
+            email VARCHAR(255) UNIQUE,
+
+            app_password VARCHAR(255)
+
+        )
+
+        """)
+
+        # ---------------------------------------------------------
+        # RECEIVER TABLE
+        # ---------------------------------------------------------
+
+        cursor.execute("""
+
+        CREATE TABLE IF NOT EXISTS receiver_email
+        (
+
+            id INT AUTO_INCREMENT PRIMARY KEY,
+
+            name VARCHAR(100),
+
+            receiver_email VARCHAR(255) UNIQUE
+
+        )
+
+        """)
+
+        # ---------------------------------------------------------
+        # EMAIL REPORT TABLE
+        # ---------------------------------------------------------
+
+        cursor.execute("""
+
+        CREATE TABLE IF NOT EXISTS email_reports
+        (
+
+            id INT AUTO_INCREMENT PRIMARY KEY,
+
+            recipient_email VARCHAR(255),
+
+            subject VARCHAR(255),
+
+            status VARCHAR(50),
+
+            sent_date DATETIME DEFAULT CURRENT_TIMESTAMP
+
+        )
+
+        """)
+
+        conn.commit()
+
+        print("\nDatabase Tables Ready.")
+
+    except Error as err:
+
+        print("\nTable Creation Error :", err)
+
+    finally:
+
+        cursor.close()
+
+        conn.close()
+
+
+# =============================================================================
+# CLASS NAME : SendEmail
+# =============================================================================
 
 class SendEmail:
 
+    # =========================================================================
+    # CONSTRUCTOR
+    # =========================================================================
+
     def __init__(self):
 
-        self.connection = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="root123",
-            database="email_db"
-        )
+        create_tables()
+
+        self.connection = db_connection()
+
+        if self.connection is None:
+
+            exit()
 
         self.cursor = self.connection.cursor()
 
-        self.cursor.execute(
-            "SELECT email,password FROM email_id WHERE id=1"
-        )
+        self.load_sender()
+
+    # =========================================================================
+    # LOAD SENDER ACCOUNT
+    # =========================================================================
+
+    def load_sender(self):
+
+        self.cursor.execute("""
+
+            SELECT email, app_password
+
+            FROM email_accounts
+
+            LIMIT 1
+
+        """)
 
         result = self.cursor.fetchone()
 
-        self.email = result[0]
-        self.password = result[1]
+        if result:
 
-    def display_receivers(self):
+            self.email = result[0]
+
+            self.password = result[1]
+
+        else:
+
+            print("\nNo Sender Email Found.")
+
+            print("Please insert Gmail ID and App Password into email_accounts table.")
+
+            self.email = None
+
+            self.password = None
+
+    # =========================================================================
+    # ADD RECEIVER
+    # =========================================================================
+
+    def add_receiver(self):
+
+        name = input("\nReceiver Name : ").strip()
+
+        email = input("Receiver Email : ").strip()
 
         self.cursor.execute(
-            "SELECT id,name,receiver_email FROM receiver_email"
-        )
 
-        data = self.cursor.fetchall()
+            """
+            SELECT id
+            FROM receiver_email
+            WHERE receiver_email=%s
+            """,
 
-        print("\nReceiver List")
+            (email,)
 
-      
-        print("-" * 45)
-        print("ID\tName\t\tEmail")
-        print("-" * 45)
-
-        for row in data:
-         print(f"{row[0]}\t{row[1]}\t\t{row[2]}")
-    def get_receiver_email(self, receiver_id):
-
-        self.cursor.execute(
-            "SELECT receiver_email FROM receiver_email WHERE id=%s",
-            (receiver_id,)
         )
 
         result = self.cursor.fetchone()
 
         if result:
-            return result[0]
 
-        return None
+            return email
+
+        self.cursor.execute(
+
+            """
+            INSERT INTO receiver_email
+            (name, receiver_email)
+
+            VALUES(%s,%s)
+            """,
+
+            (
+
+                name,
+
+                email
+
+            )
+
+        )
+
+        self.connection.commit()
+
+        print("\nReceiver Added Successfully.")
+
+        return email
+
+    # =========================================================================
+    # FUNCTION NAME : save_report
+    #
+    # PURPOSE:
+    # Saves email sending report into database.
+    # =========================================================================
+
+    def save_report(self, receiver, subject, status):
+
+        query = """
+
+        INSERT INTO email_reports
+
+        (
+
+            recipient_email,
+
+            subject,
+
+            status
+
+        )
+
+        VALUES(%s,%s,%s)
+
+        """
+
+        self.cursor.execute(
+
+            query,
+
+            (
+
+                receiver,
+
+                subject,
+
+                status
+
+            )
+
+        )
+
+        self.connection.commit()
+
+
+    # =========================================================================
+    # FUNCTION NAME : send_mail
+    #
+    # PURPOSE:
+    # Sends email immediately using Gmail SMTP.
+    # =========================================================================
 
     def send_mail(self):
 
-        self.display_receivers()
+        if self.email is None or self.password is None:
 
-        receiver_id = int(input("Enter Receiver ID : "))
+            print("\nSender Gmail Account Not Configured.")
 
-        receiver_email = self.get_receiver_email(receiver_id)
-
-        if receiver_email is None:
-            print("Invalid Receiver ID")
             return
 
-        subject = input("Enter Subject : ")
-        message = input("Enter Message : ")
+        # ---------------------------------------------------------
+        # Receiver Details
+        # ---------------------------------------------------------
+
+        receiver_email = self.add_receiver()
+
+        # ---------------------------------------------------------
+        # Email Details
+        # ---------------------------------------------------------
+
+        subject = input("\nEnter Subject : ").strip()
+
+        message = input("Enter Message : ").strip()
+
+        # ---------------------------------------------------------
+        # Create Email
+        # ---------------------------------------------------------
 
         email = EmailMessage()
 
         email["From"] = self.email
+
         email["To"] = receiver_email
+
         email["Subject"] = subject
+
         email.set_content(message)
 
-        # Call Attachment Module
-        attachment = input("Enter Attachment Path (Press Enter to Skip): ")
+        # ---------------------------------------------------------
+        # Attachment
+        # ---------------------------------------------------------
 
-        manager = AttachmentManager()
-        manager.add_attachment(email, attachment)
+        file_path = input(
+            "\nEnter Attachment Path (Press Enter to Skip) : "
+        ).strip()
+
+        if file_path != "":
+
+            try:
+
+                manager = AttachmentManager()
+
+                manager.add_attachment(
+                    email,
+                    file_path
+                )
+
+                print("Attachment Added Successfully.")
+
+            except Exception as e:
+
+                print("Attachment Error :", e)
+
+                return
+
+        # ---------------------------------------------------------
+        # Send Email
+        # ---------------------------------------------------------
 
         try:
 
-            with smtplib.SMTP("smtp.gmail.com", 587, timeout=30) as smtp:
+            print("\nConnecting To Gmail Server...")
 
-                smtp.starttls()
+            context = ssl.create_default_context()
 
-                smtp.login(self.email,self.password)
+            server = smtplib.SMTP_SSL(
 
-                smtp.send_message(email)
+                "smtp.gmail.com",
 
-            print("Email Sent Successfully.")
-            query = """
-            INSERT INTO sent_email
-            (receiver_email, subject, message, sent_date,replied, followup_sent,followup_status)
-            VALUES (%s, %s, %s, %s, %s,%s,%s)
-            """
+                465,
 
-            values = (
-                         receiver_email,
-                         subject,
-                         message,
-                         date.today(),
-                         "No",
-                         "No",
-                         "pending"
-                      )
+                context=context
 
-            self.cursor.execute(query, values)
-            self.connection.commit()
+            )
 
-            print("Email details saved successfully.")
+            server.login(
+
+                self.email,
+
+                self.password
+
+            )
+
+            print("Logged Into Gmail Successfully.")
+
+            server.send_message(email)
+
+            server.quit()
+
+            print("\n======================================")
+
+            print(" Email Sent Successfully")
+
+            print("======================================")
+
+            print("Receiver :", receiver_email)
+
+            print("Subject  :", subject)
+
+            print("Time     :", datetime.now())
+
+            self.save_report(
+
+                receiver_email,
+
+                subject,
+
+                "Success"
+
+            )
+
         except Exception as e:
 
-            print("Error :",e)
+            print("\nEmail Sending Failed.")
+
+            print("Reason :", e)
+
+            self.save_report(
+
+                receiver_email,
+
+                subject,
+
+                "Failed"
+
+            )
+
+    # =========================================================================
+    # FUNCTION NAME : close_connection
+    #
+    # PURPOSE:
+    # Closes MySQL database connection safely.
+    #
+    # =========================================================================
 
     def close_connection(self):
 
-        self.cursor.close()
-        self.connection.close()
+        try:
 
+            if self.cursor:
+
+                self.cursor.close()
+
+        except:
+
+            pass
+
+
+        try:
+
+            if self.connection:
+
+                self.connection.close()
+
+        except:
+
+            pass
+
+
+        print("\nDatabase Connection Closed.")
+
+
+
+# =============================================================================
+# MAIN PROGRAM
+# =============================================================================
 
 if __name__ == "__main__":
 
-    obj = SendEmail()
+    print("\n========================================")
+    print("        SEND EMAIL MODULE")
+    print("========================================")
 
-    obj.send_mail()
+    try:
 
-    obj.close_connection()
+        obj = SendEmail()
+
+        obj.send_mail()
+
+        obj.close_connection()
+
+    except KeyboardInterrupt:
+
+        print("\n\nProgram Interrupted By User.")
+
+    except Exception as e:
+
+        print("\nUnexpected Error :", e)

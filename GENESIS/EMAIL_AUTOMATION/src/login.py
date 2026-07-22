@@ -1,161 +1,583 @@
-import smtplib
-import ssl
-import re
-import mysql.connector
-import msvcrt
-import sys
+"""
+==============================================================================
+                            LOGIN MODULE
+==============================================================================
 
-# 1. Function to establish database connection
-def db_connection():
+Project Name : Email Automation System
+Module Name  : login.py
+
+Description:
+This module is responsible for
+
+1. User Registration
+2. User Login
+3. MySQL Database Connection
+4. Gmail Validation
+5. Password Masking
+
+==============================================================================
+"""
+
+import re
+import sys
+import msvcrt
+import mysql.connector
+from mysql.connector import Error
+
+# ============================================================================
+# DATABASE CONFIGURATION
+# ============================================================================
+
+HOST = "localhost"
+USER = "root"
+PASSWORD = "root123"      # Change according to your MySQL password
+DATABASE = "email_automation"
+
+
+# ============================================================================
+# FUNCTION : create_database()
+# PURPOSE  : Creates the database if it does not exist.
+# ============================================================================
+
+def create_database():
+
+    connection = None
+    cursor = None
+
     try:
+
         connection = mysql.connector.connect(
-            host="localhost",
-            user="root",         
-            password="system@123", 
-            database="email_login"
+            host=HOST,
+            user=USER,
+            password=PASSWORD
         )
+
+        cursor = connection.cursor()
+
+        cursor.execute(
+            f"CREATE DATABASE IF NOT EXISTS {DATABASE}"
+        )
+
+        connection.commit()
+
+    except Error as e:
+
+        print("\nDatabase Creation Error")
+        print(e)
+
+    finally:
+
+        if cursor:
+            cursor.close()
+
+        if connection:
+            connection.close()
+
+
+# ============================================================================
+# FUNCTION : db_connection()
+# PURPOSE  : Connects to MySQL database.
+# ============================================================================
+
+def db_connection():
+
+    create_database()
+
+    try:
+
+        connection = mysql.connector.connect(
+
+            host=HOST,
+            user=USER,
+            password=PASSWORD,
+            database=DATABASE
+
+        )
+
         return connection
-    except mysql.connector.Error as err:
-        print(f"\nError: Could not connect to MySQL: {err}")
+
+    except Error as e:
+
+        print("\n======================================")
+        print("DATABASE CONNECTION FAILED")
+        print("======================================")
+
+        print(e)
+
+        print("\nPossible Reasons")
+        print("----------------------------")
+        print("1. MySQL Service is not running.")
+        print("2. Wrong Username.")
+        print("3. Wrong Password.")
+        print("4. Database does not exist.")
+
         return None
 
-# 2. Function to validate email format syntax
-def check_email(email):
-    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    return bool(re.match(pattern, email))
 
-# 3. Function to mask password input with stars (*) on terminal
-def get_password(prompt="Enter your Gmail App Password: "):
-    print(prompt, end="", flush=True)
-    password = ""
-    
-    while True:
-        ch = msvcrt.getch()
-        if ch in [b'\r', b'\n']:
-            print() 
-            break
-        elif ch == b'\x08':
-            if len(password) > 0:
-                password = password[:-1]
-                sys.stdout.write('\b \b')
-                sys.stdout.flush()
-        else:
-            try:
-                char = ch.decode('utf-8')
-                password += char
-                sys.stdout.write('*') 
-                sys.stdout.flush()
-            except UnicodeDecodeError:
-                pass 
-                
-    return password
+# ============================================================================
+# FUNCTION : create_table()
+# PURPOSE  : Creates users table.
+# ============================================================================
 
-# 4. Function to register a new user in the database (Sign Up)
-def register():
-    print("\n-----------------------------------------")
-    print("         USER REGISTRATION PANEL         ")
-    print("-----------------------------------------")
-    
-    # Reading email from the new user
-    user_email = input("Enter a Gmail ID for Registration: ").strip()
-    
-    # Validating if the input is empty
-    if user_email == "":
-        print("\n[Error] Email cannot be blank!")
-        return False
-        
-    # Validating correct email format structure
-    if not check_email(user_email):
-        print("\n[Error] Invalid email format!")
-        return False
-        
-    # Reading password securely with star masks
-    user_password = get_password("Create a Gmail App Password: ")
-    if user_password == "":
-        print("\n[Error] Password cannot be blank!")
-        return False
+def create_table():
 
-    # Connecting to the database to insert the new user record
     conn = db_connection()
+
     if conn is None:
-        return False
-        
-    cursor = conn.cursor()
+        return
+
+    cursor = None
+
     try:
-        query = "INSERT INTO users (user_id, password) VALUES (%s, %s)"
-        cursor.execute(query, (user_email, user_password))
-        conn.commit() 
-        print("\n[Success] Registration successful! Your account is created in Database.")
-        print("[Info] You can now Sign In using Option 2.")
-        return True
-    except mysql.connector.Error as err:
-        print(f"\n[Error] Registration failed: Account might already exist.")
-        return False
+
+        cursor = conn.cursor(buffered=True)
+
+        query = """
+        CREATE TABLE IF NOT EXISTS users
+        (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+
+            user_id VARCHAR(150)
+            UNIQUE
+            NOT NULL,
+
+            password VARCHAR(255)
+            NOT NULL
+        )
+        """
+
+        cursor.execute(query)
+
+        conn.commit()
+
+    except Error as e:
+
+        print("\nTable Creation Error")
+        print(e)
+
     finally:
-        cursor.close()
+
+        if cursor:
+            cursor.close()
+
         conn.close()
 
-# 5. Core function to handle user login workflow (Sign In)
-def login():
-    print("\n-----------------------------------------")
-    print("            USER LOGIN PANEL             ")
-    print("-----------------------------------------")
-    
-    # Reading credentials from existing user
-    user_email = input("Enter your Gmail ID: ").strip()
-    user_password = get_password() 
-    
-    # Rejecting empty credentials inputs
-    if user_email == "" or user_password == "":
-        print("\n[Error] Email or Password cannot be blank!")
-        return None, None
-        
-    # Validating basic email format syntax
-    if not check_email(user_email):
-        print("\n[Error] Invalid email format!")
-        return None, None
 
-    # Step 1: Check if user exists in the local database
+# ============================================================================
+# FUNCTION : check_email()
+# PURPOSE  : Checks whether Gmail ID is valid.
+# ============================================================================
+
+def check_email(email):
+
+    pattern = r'^[A-Za-z0-9._%+-]+@gmail\.com$'
+
+    return bool(re.fullmatch(pattern, email))
+
+
+# ============================================================================
+# FUNCTION : get_password()
+# PURPOSE  : Reads password using '*' symbols.
+# ============================================================================
+
+def get_password(prompt="Enter Password : "):
+
+    print(prompt, end="", flush=True)
+
+    password = ""
+
+    while True:
+
+        ch = msvcrt.getch()
+
+        # ENTER KEY
+
+        if ch in (b'\r', b'\n'):
+
+            print()
+
+            break
+
+        # BACKSPACE
+
+        elif ch == b'\x08':
+
+            if len(password) > 0:
+
+                password = password[:-1]
+
+                sys.stdout.write("\b \b")
+
+                sys.stdout.flush()
+
+        else:
+
+            try:
+
+                character = ch.decode("utf-8")
+
+                password += character
+
+                sys.stdout.write("*")
+
+                sys.stdout.flush()
+
+            except:
+
+                pass
+
+    return password
+
+# ============================================================================
+# FUNCTION : register()
+# PURPOSE  : Registers a new Gmail account in the database.
+# INPUT    : None
+# OUTPUT   : Stores Gmail ID and App Password in MySQL.
+# ============================================================================
+
+def register():
+
+    # Create table if it does not exist
+    create_table()
+
+    print("\n======================================")
+    print("         USER REGISTRATION")
+    print("======================================")
+
+    # ---------------------------------------------------------
+    # Gmail Validation
+    # ---------------------------------------------------------
+
+    while True:
+
+        email = input("Enter Gmail ID : ").strip()
+
+        if email == "":
+
+            print("\nEmail cannot be empty.")
+
+            continue
+
+        if not check_email(email):
+
+            print("\nPlease enter a valid Gmail ID.")
+            print("Example : example@gmail.com")
+
+            continue
+
+        break
+
+    # ---------------------------------------------------------
+    # Gmail App Password Validation
+    # ---------------------------------------------------------
+
+    while True:
+
+        password = get_password("Enter Gmail App Password : ")
+
+        # Remove spaces (Google sometimes displays it grouped)
+        password = password.replace(" ", "")
+
+        if password == "":
+
+            print("\nPassword cannot be empty.")
+
+            continue
+
+        # Gmail App Password should be 16 characters
+        if len(password) != 16:
+
+            print("\nInvalid Gmail App Password.")
+            print("App Password must contain exactly 16 characters.")
+
+            continue
+
+        break
+
+    # ---------------------------------------------------------
+    # Database Connection
+    # ---------------------------------------------------------
+
     conn = db_connection()
+
     if conn is None:
-        return None, None
-        
-    cursor = conn.cursor()
-    query = "SELECT password FROM users WHERE user_id = %s"
-    cursor.execute(query, (user_email,))
-    result = cursor.fetchone()
-    cursor.close()
-    conn.close()
 
-    # Step 2: If user does not exist, notify and stop login process
-    if result is None:
-        print("\n[Notice] This Email is not registered. Please sign up first.")
-        return None, None
+        return False
 
-    # Step 3: Verify the password against recorded database value
-    db_password = result[0]
-    if user_password != db_password:
-        print("\n[Login Failed] Incorrect Password recorded in Database!")
-        return None, None
+    cursor = None
 
-    # Step 4: Perform real-time authentication via live Google SMTP Server
-    smtp_host = "smtp.gmail.com"
-    smtp_port = 465
-    secure_context = ssl.create_default_context()
-    
-    print("\nConnecting to Gmail server to verify active status...")
     try:
-        server = smtplib.SMTP_SSL(smtp_host, smtp_port, context=secure_context)
-        server.login(user_email, user_password)
-        server.quit()
 
-        print("\nSuccess: Login successful! Welcome to the system.")
-        return user_email, user_password
-        
-    except smtplib.SMTPAuthenticationError:
-        print("\nERROR: Authentication Failed on Live Server!")
-        print(" Password matches DB, but rejected by Gmail. Verify your 16-digit App Password.")
+        cursor = conn.cursor(buffered=True)
+
+        # -----------------------------------------------------
+        # Check whether email already exists
+        # -----------------------------------------------------
+
+        cursor.execute(
+
+            "SELECT id FROM users WHERE user_id=%s",
+
+            (email,)
+        )
+
+        record = cursor.fetchone()
+
+        if record:
+
+            print("\n======================================")
+            print("ACCOUNT ALREADY EXISTS")
+            print("======================================")
+            print("This Gmail ID is already registered.")
+
+            return False
+
+        # -----------------------------------------------------
+        # Insert New User
+        # -----------------------------------------------------
+
+        cursor.execute(
+
+            """
+            INSERT INTO users(user_id, password)
+            VALUES(%s, %s)
+            """,
+
+            (email, password)
+        )
+
+        conn.commit()
+
+        print("\n======================================")
+        print("REGISTRATION SUCCESSFUL")
+        print("======================================")
+        print("Your account has been created successfully.")
+        print("You can now login using your Gmail ID.")
+
+        return True
+
+    except Error as e:
+
+        print("\nRegistration Error")
+        print(e)
+
+        conn.rollback()
+
+        return False
+
+    finally:
+
+        if cursor:
+            cursor.close()
+
+        if conn:
+            conn.close()
+
+# ============================================================================
+# FUNCTION : login()
+# PURPOSE  : Authenticates the user using Gmail ID and App Password.
+# INPUT    : None
+# OUTPUT   : Returns (email, password) after successful login.
+# ============================================================================
+
+def login():
+
+    # Create table if it does not exist
+    create_table()
+
+    print("\n======================================")
+    print("            USER LOGIN")
+    print("======================================")
+
+    # ---------------------------------------------------------
+    # Enter Gmail ID
+    # ---------------------------------------------------------
+
+    email = input("Enter Gmail ID : ").strip()
+
+    if email == "":
+
+        print("\nEmail cannot be empty.")
+
         return None, None
-    except Exception as e:
-        print(f"\nERROR: Could not reach Gmail Server: {e}")
+
+    if not check_email(email):
+
+        print("\nInvalid Gmail ID.")
+        print("Please enter a valid Gmail address.")
+
         return None, None
+
+    # ---------------------------------------------------------
+    # Connect Database
+    # ---------------------------------------------------------
+
+    conn = db_connection()
+
+    if conn is None:
+
+        return None, None
+
+    cursor = None
+
+    try:
+
+        cursor = conn.cursor(buffered=True)
+
+        # -----------------------------------------------------
+        # Check whether email exists
+        # -----------------------------------------------------
+
+        cursor.execute(
+
+            "SELECT password FROM users WHERE user_id=%s",
+
+            (email,)
+        )
+
+        record = cursor.fetchone()
+
+        # -----------------------------------------------------
+        # User not registered
+        # -----------------------------------------------------
+
+        if record is None:
+
+            print("\n======================================")
+            print("USER NOT REGISTERED")
+            print("======================================")
+            print("This Gmail ID is not registered.")
+            print("Please register first.")
+
+            choice = input("\nDo you want to register? (Y/N): ").strip().upper()
+
+            if choice == "Y":
+
+                register()
+
+            return None, None
+
+        # -----------------------------------------------------
+        # Enter Password
+        # -----------------------------------------------------
+
+        password = get_password("Enter Gmail App Password : ")
+
+        password = password.replace(" ", "")
+
+        if password == "":
+
+            print("\nPassword cannot be empty.")
+
+            return None, None
+
+        # -----------------------------------------------------
+        # Verify Password
+        # -----------------------------------------------------
+
+        stored_password = record[0]
+
+        if password != stored_password:
+
+            print("\n======================================")
+            print("LOGIN FAILED")
+            print("======================================")
+            print("Incorrect App Password.")
+
+            return None, None
+
+        # -----------------------------------------------------
+        # Login Successful
+        # -----------------------------------------------------
+
+        print("\n======================================")
+        print("        LOGIN SUCCESSFUL")
+        print("======================================")
+        print("Welcome,", email)
+
+        return email, password
+
+    except Error as e:
+
+        print("\nLogin Error")
+        print(e)
+
+        return None, None
+
+    finally:
+
+        if cursor:
+            cursor.close()
+
+        if conn:
+            conn.close()
+
+# ============================================================================
+# MAIN PROGRAM
+# PURPOSE : Demonstrates Registration and Login Module
+# ============================================================================
+
+if __name__ == "__main__":
+
+    while True:
+
+        print("\n======================================")
+        print("       EMAIL AUTOMATION SYSTEM")
+        print("======================================")
+        print("1. Register")
+        print("2. Login")
+        print("3. Exit")
+        print("======================================")
+
+        choice = input("Enter Choice : ").strip()
+
+        # -----------------------------------------------------
+        # Register
+        # -----------------------------------------------------
+
+        if choice == "1":
+
+            register()
+
+        # -----------------------------------------------------
+        # Login
+        # -----------------------------------------------------
+
+        elif choice == "2":
+
+            user_email, user_password = login()
+
+            if user_email is not None:
+
+                print("\nLogged in Successfully.")
+                print("User :", user_email)
+
+                # =====================================================
+                # Import dashboard after successful login
+                # Uncomment this when dashboard.py is ready
+                # =====================================================
+
+                # from dashboard import dashboard
+                # dashboard(user_email, user_password)
+
+        # -----------------------------------------------------
+        # Exit
+        # -----------------------------------------------------
+
+        elif choice == "3":
+
+            print("\n======================================")
+            print("Thank You for using")
+            print("EMAIL AUTOMATION SYSTEM")
+            print("======================================")
+
+            break
+
+        # -----------------------------------------------------
+        # Invalid Choice
+        # -----------------------------------------------------
+
+        else:
+
+            print("\nInvalid Choice.")
+            print("Please Enter 1, 2 or 3.")

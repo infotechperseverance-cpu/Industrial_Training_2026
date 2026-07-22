@@ -1,198 +1,626 @@
+# =============================================================================
+# FILE NAME : main.py
+#
+# PROJECT : EMAIL AUTOMATION SYSTEM
+#
+# DESCRIPTION:
+# Main menu driven program.
+# Controls all email automation modules.
+#
+# =============================================================================
+
+
 import sys
-from datetime import datetime
+
+
+
+# ========================= IMPORT MODULES =========================
+
+
 import login
-import send_email
-import scheduler
-import Follow_up
-import BULKEMAILL
-import Contactg
-import Smart_Spam
-import Ai_email
+
+from ai_email import AIEmailWriter
+
 import Draft_Management
-import EMAILRS
-import REPORTS
+
+import contactg
+
+import smart_spam
+
+import send_email
+
+import bulk_email
+
+import scheduler
+
+import follow_up
+
+import approval_flow
+
+import emailers
+
+import repoarts
+
 import Dashboard
+
 import retrieved_data
-import approval_workflow
 
-def authentication_sub_menu():
-    """Sub-menu for Authentication (Sign Up / Sign In)"""
+
+
+
+# ========================= GLOBAL VARIABLES =========================
+
+
+logged_user = None
+
+app_password = None
+
+
+
+
+
+# =============================================================================
+# USER AUTHENTICATION
+# =============================================================================
+
+
+def authentication():
+
+    global logged_user
+
+    global app_password
+
+
+
     while True:
-        print("\n-----------------------------------------")
-        print("     1. USER AUTHENTICATION SYSTEM      ")
-        print("-----------------------------------------")
-        print("1. Sign Up (Register New Account)")
-        print("2. Sign In (Login)")
-        print("3. Back to Main Menu")
-        print("-----------------------------------------")
-        
-        choice = input("Select Option (1-3): ").strip()
-        
-        if choice == '1':
+
+
+        print("\n==============================")
+
+        print("       AUTHENTICATION")
+
+        print("==============================")
+
+        print("1. Register")
+
+        print("2. Login")
+
+        print("3. Back")
+
+
+
+        choice = input("Enter Choice : ")
+
+
+
+        if choice == "1":
+
+
             login.register()
-        elif choice == '2':
-            email, pwd = login.login()
-            if email and pwd:
-                return email, pwd
-            else:
-                return None, None
-        elif choice == '3':
-            return None, None
+
+
+
+        elif choice == "2":
+
+
+            user, password = login.login()
+
+
+
+            if user:
+
+
+                logged_user = user
+
+                app_password = password
+
+
+                print("\nLogin Successful")
+
+                print("Welcome :",logged_user)
+
+
+                break
+
+
+
+        elif choice == "3":
+
+
+            break
+
+
+
         else:
-            print("\n[Error]: Invalid selection! Choose 1, 2, or 3.")
 
-def contact_sub_menu():
-    """Sub-menu for Contact and Group Management"""
-    con = Contactg.connect_database()
-    if con:
-        Contactg.create_tables(con)
-        print("\n-----------------------------------------")
-        print("    CONTACT & GROUP MANAGEMENT MENU      ")
-        print("-----------------------------------------")
-        Contactg.menu()
-        sub_ch = input("Enter Choice: ").strip()
-        
-        if sub_ch == "1": Contactg.create_group(con)
-        elif sub_ch == "2": Contactg.view_groups(con)
-        elif sub_ch == "3": Contactg.add_contact(con)
-        elif sub_ch == "4": Contactg.view_contacts(con)
-        elif sub_ch == "5": Contactg.update_contact(con)
-        elif sub_ch == "6": Contactg.delete_contact(con)
-        elif sub_ch == "7": Contactg.delete_group(con)
-        con.close()
 
-def main_menu():
-    authenticated_user = None
-    saved_password = None
-    status = "Not Authenticated"
-    
-    analytics_obj = Dashboard.EmailAnalytics()
-    ai_writer = Ai_email.AIEmailWriter()
+            print("Invalid Choice")
+
+
+
+
+
+
+
+# =============================================================================
+# AI EMAIL GENERATOR
+# =============================================================================
+
+
+def ai_email_menu():
+
+
+
+    writer = AIEmailWriter()
+
+
+
+    topic = input("\nEmail Topic : ")
+
+    tone = input("Email Tone : ")
+
+    details = input("Email Details : ")
+
+
+
+
+    subject,body = writer.generate_email(
+
+        topic,
+
+        tone,
+
+        details
+
+    )
+
+
+
+    print("\nGenerated Email")
+
+    print("----------------------------")
+
+    print("Subject :",subject)
+
+    print("\nBody :")
+
+    print(body)
+
+
+
+
+
+
+
+# =============================================================================
+# CONTACT MENU
+# =============================================================================
+
+
+def contact_menu():
+
+
+
+    contactg.create_tables()
+
+
 
     while True:
-        print("\n==================================================")
-        print("        EMAIL AUTOMATION & MANAGEMENT SYSTEM      ")
-        print("==================================================")
-        print(f"Status: {status}")
-        if authenticated_user:
-            print(f"Logged In User: {authenticated_user}")
-        print("--------------------------------------------------")
-        print(" 1. Account Access (Sign Up / Sign In)")
-        print(" 2. AI Email Generator (Write Email with AI)")
-        print(" 3. Draft Management (Create/Edit Drafts)")
-        print(" 4. Contact & Group Management")
-        print(" 5. Smart Spam Checker (Quality Score)")
-        print(" 6. Send Single Email (with Attachment)")
-        print(" 7. Send Bulk Email")
-        print(" 8. Schedule Email")
-        print(" 9. Send FollowUp Email")
-        print("10. Email Approval Workflow (FR-14 - User/Manager)")
-        print("11. Email Reminder System")
-        print("12. Retrieve Data (Email History, Templates & Drafts)")
-        print("13. Analytics Dashboard & Reports")
-        print("14. Exit System")
-        print("==================================================")
-        
-        choice = input("Select an Option (1-14): ").strip()
-        
-        # 1. ACCOUNT ACCESS
-        if choice == '1':
-            email, pwd = authentication_sub_menu()
-            if email and pwd:
-                authenticated_user = email
-                saved_password = pwd
-                status = "Authenticated"
-                print(f"\n[Success]: Welcome {authenticated_user}!")
 
-        # ALL OTHER OPTIONS REQUIRE AUTHENTICATION FIRST
-        elif choice in [str(i) for i in range(2, 14)] and status != "Authenticated":
-            print("\n[Access Denied]: You must Sign In (Option 1) first to perform this action!")
 
-        # 2. AI EMAIL GENERATOR
-        elif choice == '2':
-            topic = input("Enter Email Topic: ")
-            tone = input("Enter Tone (e.g., Formal / Professional / Casual): ")
-            details = input("Enter Key Details: ")
-            sub, body = ai_writer.generate_email(topic, tone, details)
-            print(f"\n--- Generated Subject ---\n{sub}")
-            print(f"\n--- Generated Body ---\n{body}")
+        print("\n==============================")
 
-        # 3. DRAFT MANAGEMENT
-        elif choice == '3':
-            print("\n--- Draft Management ---")
-            Draft_Management.view_drafts()
+        print(" CONTACT MANAGEMENT")
 
-        # 4. CONTACT & GROUP MANAGEMENT
-        elif choice == '4':
-            contact_sub_menu()
+        print("==============================")
 
-        # 5. SMART SPAM CHECKER
-        elif choice == '5':
-            content = input("Enter Email Content to Check Spam Score:\n")
-            Smart_Spam.spam_checker(content)
+        print("1. Create Group")
 
-        # 6. SEND SINGLE EMAIL
-        elif choice == '6':
+        print("2. View Groups")
+
+        print("3. Add Contact")
+
+        print("4. View Contacts")
+
+        print("5. Update Contact")
+
+        print("6. Delete Contact")
+
+        print("7. Delete Group")
+
+        print("8. Back")
+
+
+
+        choice=input("Choice : ")
+
+
+
+
+        if choice=="1":
+
+            contactg.create_group()
+
+
+
+        elif choice=="2":
+
+            contactg.view_groups()
+
+
+
+        elif choice=="3":
+
+            contactg.add_contact()
+
+
+
+        elif choice=="4":
+
+            contactg.view_contacts()
+
+
+
+        elif choice=="5":
+
+            contactg.update_contact()
+
+
+
+        elif choice=="6":
+
+            contactg.delete_contact()
+
+
+
+        elif choice=="7":
+
+            contactg.delete_group()
+
+
+
+        elif choice=="8":
+
+            break
+
+
+
+        else:
+
+            print("Invalid Choice")
+
+
+
+
+
+
+
+# =============================================================================
+# MAIN PROGRAM
+# =============================================================================
+
+
+
+while True:
+
+
+
+    print("\n================================================")
+
+    print("      EMAIL AUTOMATION MANAGEMENT SYSTEM")
+
+    print("================================================")
+
+
+
+    print(
+
+        "Logged User :",
+
+        logged_user if logged_user else "Not Logged In"
+
+    )
+
+
+
+    print("-----------------------------------------------")
+
+
+
+    print("""
+1. User Authentication
+2. AI Email Generator
+3. Draft Management
+4. Contact Management
+5. Smart Spam Checker
+6. Send Single Email
+7. Send Bulk Email
+8. Schedule Email
+9. Follow Up Email
+10. Approval Workflow
+11. Email Reminder
+12. Retrieve Data
+13. Reports
+14. Dashboard
+15. Exit
+ """)
+    print("---------------------------------------")
+
+
+
+    try:
+
+        choice=int(input("Enter Choice : "))
+
+
+    except:
+
+
+        print("Invalid Input")
+
+        continue
+
+
+
+
+
+    # ========================= MENU =========================
+
+
+
+    match choice:
+
+
+
+        case 1:
+
+
+            authentication()
+
+
+
+        case 2:
+
+
+            if logged_user:
+
+                ai_email_menu()
+
+            else:
+
+                print("Please Login First")
+
+
+
+
+        case 3:
+
+
+            Draft_Management.draft_menu()
+
+
+
+
+        case 4:
+
+
+            contact_menu()
+
+
+
+
+        case 5:
+
+
+            text=input(
+
+                "\nEnter Email Content : "
+
+            )
+
+
+            smart_spam.check_spam_email(text)
+
+
+
+
+        case 6:
+
+
             try:
-                obj = send_email.SendEmail()
-                obj.send_mail()
-                obj.close_connection()
-            except Exception as e:
-                print(f"\n[Error]: {e}")
 
-        # 7. SEND BULK EMAIL
-        elif choice == '7':
-            BULKEMAILL.send_bulk_email()
 
-        # 8. SCHEDULE EMAIL
-        elif choice == '8':
-            scheduler.schedule_email(authenticated_user, saved_password)
+                if logged_user:
 
-        # 9. FOLLOW-UP EMAIL
-        elif choice == '9':
-            try:
-                followup = Follow_up.FollowUpEmail()
-                followup.display_receivers()
-                receiver_id = int(input("Enter Receiver ID : "))
-                receiver = followup.get_receiver_email(receiver_id)
 
-                if receiver:
-                    subject = input("Enter Subject : ")
-                    message = input("Enter Follow-up Message : ")
-                    delay = int(input("Enter Delay in Seconds : "))
-                    followup.send_followup(receiver, subject, message, delay)
+                    obj=send_email.SendEmail()
+
+
+                    obj.send_mail()
+
+
+                    obj.close_connection()
+
+
+
                 else:
-                    print("[Error]: Invalid Receiver ID")
-                followup.close_connection()
+
+
+                    print("Please Login First")
+
+
+
             except Exception as e:
-                print(f"\n[Error in FollowUp]: {e}")
 
-        # 10. EMAIL APPROVAL WORKFLOW (FR-14)
-        elif choice == '10':
-            approval_workflow.approval_workflow_menu(authenticated_user, saved_password)
 
-        # 11. EMAIL REMINDER SYSTEM
-        elif choice == '11':
-            EMAILRS.add_reminder()
+                print("Send Email Error :",e)
 
-        # 12. RETRIEVE DATA & HISTORY
-        elif choice == '12':
-            obj = retrieved_data.RetrieveData()
+
+
+
+
+
+        case 7:
+
+
+            try:
+
+
+                obj=bulk_email.BulkEmail()
+
+
+                obj.run()
+
+
+                obj.close_connection()
+
+
+
+            except Exception as e:
+
+
+                print("Bulk Email Error :",e)
+
+
+
+
+
+
+        case 8:
+
+
+            if logged_user:
+
+
+                scheduler.scheduler_menu(
+
+                    logged_user,
+
+                    app_password
+
+                )
+
+
+            else:
+
+
+                print("Please Login First")
+
+
+
+
+
+
+        case 9:
+
+
+            if logged_user:
+
+
+                follow_up.followup_menu(
+
+                    logged_user,
+
+                    app_password
+
+                )
+
+
+            else:
+
+
+                print("Please Login First")
+
+
+
+
+
+
+        case 10:
+
+
+            approval_flow.create_tables()
+
+
+            approval_flow.approval_workflow_menu(
+
+                logged_user,
+
+                app_password
+
+            )
+
+
+
+
+
+
+
+        case 11:
+
+
+            emailers.reminder_menu()
+
+
+
+
+
+        case 12:
+
+
+            obj=retrieved_data.RetrieveData()
+
+
             obj.retrieve_menu()
 
-        # 13. ANALYTICS & REPORTS
-        elif choice == '13':
-            print("\n--- Email Reports & Statistics ---")
-            REPORTS.statistics()
-            analytics_obj.dashboard()
 
-        # 14. EXIT
-        elif choice == '14':
-            print("\nExiting Email Automation System. Goodbye!")
+            obj.close_connection()
+
+
+
+
+
+
+        case 13:
+
+
+            repoarts.report_menu()
+
+
+
+
+
+
+        case 14:
+
+
+            dashboard=Dashboard.EmailAnalytics()
+
+
+            dashboard.dashboard()
+
+
+            dashboard.close_connection()
+
+
+
+
+
+
+        case 15:
+
+
+            print(
+
+                "\nThank You For Using Email Automation System"
+
+            )
+
+
             sys.exit()
 
-        else:
-            print("\n[Error]: Invalid selection! Please enter a number between 1 and 14.")
 
-if __name__ == "__main__":
-    main_menu()
+        case _:
+
+
+            print("Invalid Choice")
