@@ -16,7 +16,7 @@ def connection():
         conn = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="1234"
+            password="root1234"
         )
 
         cursor = conn.cursor()
@@ -31,11 +31,11 @@ def connection():
         return mysql.connector.connect(
             host="localhost",
             user="root",
-            password="1234",
+            password="root1234",
             database="invoice_generator"
         )
-    except :
-        print("print something went wrong connection is  not possible")
+    except Exception as e:
+        print("Connection error:", e)
         return None
 
 #create tables function
@@ -45,9 +45,30 @@ def create_tables():
         cursor = conn.cursor()
 
        #users table
-        cursor.execute(
-            """CREATE TABLE IF NOT EXISTS users (user_id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50)
-                NOT NULL UNIQUE, password VARCHAR(255) NOT NULL, counter_no INT NOT NULL)""")
+        # users table
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            user_id INT AUTO_INCREMENT PRIMARY KEY,
+            username VARCHAR(50) NOT NULL UNIQUE,
+            password VARCHAR(255) NOT NULL,
+            counter_no INT NOT NULL
+        )
+        """)
+
+        default_users = [
+            ("counter1", "admin123", 1),
+            ("counter2", "admin123", 2),
+            ("counter3", "admin123", 3),
+            ("counter4", "admin123", 4),
+            ("counter5", "admin123", 5),
+            ("counter6", "admin123", 6),
+        ]
+
+        cursor.executemany("""
+        INSERT IGNORE INTO users (username, password, counter_no)
+        VALUES (%s, %s, %s)
+        """, default_users)
+                
 
        #customers table
         cursor.execute(
@@ -82,6 +103,7 @@ def create_tables():
         conn.commit()
         cursor.close()
         conn.close()
-    except :
-        print("something went wrong connection is  not possible")
+    except Exception as e:
+        print("something went wrong")
         return None
+

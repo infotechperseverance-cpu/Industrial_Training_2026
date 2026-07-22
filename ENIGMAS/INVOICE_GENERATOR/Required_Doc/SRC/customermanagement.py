@@ -1,28 +1,13 @@
-import sqlite3
-
-conn = sqlite3.connect("customer.db")
-cur =  conn.cursor()
+from Connetion_Module import connection
 
 
-'''
-@Function Name : create_table
-@Description   : This function creates the customer table in the database.
-                 If the table is already present, it will not create it again.
-@Input Param   : NONE
-@Output Param  : NONE
-@Author        : Prashik Dabhade
-'''        
-def create_table():
-        cur.execute("""
-        CREATE TABLE IF NOT EXISTS customer(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT,
-            mobile TEXT,
-            email TEXT
-        )
-        """)
-        conn.commit()
+conn = connection()
 
+
+if conn:
+    cur = conn.cursor()
+else:
+    raise Exception("Database connection failed")
 '''
 @Function Name : add_customer
 @Description   : This function takes customer name, mobile number and email
@@ -36,93 +21,133 @@ def create_table():
 '''
 
 def add_customer():
-    name = input("Enter Customer Name: ")
-    mobile = input("Enter Mobile Number: ")
-    email = input("Enter Email: ")
+    
+    while True:
+        name = input("Enter Customer Name: ").strip()
+
+        if name == "":
+            print("Name cannot be empty.")
+        elif not name.replace(" ", "").isalpha():
+            print("Name should contain only alphabets.")
+        else:
+            break
+
+    while True:
+        mobile = input("Enter Mobile Number: ").strip()
+
+        if len(mobile) != 10:
+            print("Mobile number must be 10 digits.")
+        elif not mobile.isdigit():
+            print("Mobile number should contain only digits.")
+        else:
+            break
+
+    while True:
+        email = input("Enter Email: ").strip()
+
+        if "@" not in email or "." not in email:
+            print("Invalid Email.")
+        else:
+            break
 
     cur.execute(
-        "INSERT INTO customer(name,mobile,email) VALUES(?,?,?)",
-        (name, mobile, email)
-        )
+    "INSERT INTO customers(customer_name,mobile_no,email) VALUES(%s,%s,%s)",
+    (name, mobile, email)
+
+    )
+
     conn.commit()
+
     print("Customer Added Successfully!")
+    print("Customer ID :", cur.lastrowid)
     
 
 '''
 @Function Name : search_customer
-@Description   : This function asks the user to search a customer by
+@Description   : This function asks the user to search a customer by customer id,
                  name or mobile number. If the customer is found,
                  it displays the customer details.
 @Input Param   : NONE (User Input)
                  Search Choice
-                 Name or Mobile Number
+                 Customer id or Name or Mobile Number
 @Output Param  : NONE
 @Author        : Prashik Dabhade
 '''
 def search_customer():
 
-    choice = input("Search by (1-Name / 2-Mobile): ")
+    print("Search By")
+    print("1. Customer ID")
+    print("2. Name")
+    print("3. Mobile")
+
+    choice = input("Enter Choice : ")
 
     if choice == "1":
-        name = input("Enter Customer Name: ")
+        cid = input("Enter Customer ID : ")
         cur.execute(
-            "SELECT * FROM customer WHERE name=?",
-                (name,)
-                )
-        
+            "SELECT * FROM customers WHERE customer_id=%s",
+            (cid,)
+        )
+
     elif choice == "2":
-        mobile = input("Enter Mobile Number: ")
+        name = input("Enter Customer Name : ")
         cur.execute(
-            "SELECT * FROM customer WHERE mobile=?",
+            "SELECT * FROM customers WHERE customer_name=%s",
+            (name,)
+        )
+
+    elif choice == "3":
+        mobile = input("Enter Mobile Number : ")
+        cur.execute(
+            "SELECT * FROM customers WHERE mobile_no=%s",
             (mobile,)
-            )
-        
+        )
+
     else:
-        print("Invalid Choice!")
+        print("Invalid Choice")
         return
 
     customer = cur.fetchall()
 
     if customer:
         for data in customer:
-        
             print("\nCustomer Found")
             print("ID:", data[0])
             print("Name:", data[1])
             print("Mobile:", data[2])
             print("Email:", data[3])
-            
+
     else:
         print("Customer Not Found!")
         
 
 '''
 @Function Name : update_customer
-@Description   : This function finds a customer using the mobile number.
+@Description   : This function finds a customer using name.
                  If the customer exists, it updates the customer's
                  name and email address.
 @Input Param   : NONE (User Input)
-                 Mobile Number
-                 New Name
+                 Name
+                 New Mobile_no
                  New Email
 @Output Param  : NONE
 @Author        : Prashik Dabhade
 '''
 def update_customer():
-    mobile = input("Enter Mobile Number of Customer: ")
+    name = input("Enter Name of customer: ")
 
     cur.execute(
-            "SELECT * FROM customer WHERE mobile=?",
-            (mobile,)
+            "SELECT * FROM customers WHERE customer_name=%s",
+            (name,)
         )
 
     if cur.fetchone():
-        name = input("Enter New Name: ")
+        mobile = input("Enter New mobie number: ")
         email = input("Enter New Email: ")
 
         cur.execute(
-            "UPDATE customer SET name=?, email=? WHERE mobile=?",
-            (name, email, mobile)
+            "UPDATE customers SET mobile_no=%s, email=%s WHERE customer_name=%s",
+            (mobile, email, name)
         )
         conn.commit()
 
@@ -144,9 +169,9 @@ def update_customer():
 def show_customer():
     c_id=input("Enter customer id:")
     cur.execute(
-        "SELECT * FROM customer where id=?",
-        (c_id,)
-        )
+    "SELECT * FROM customers WHERE customer_id=%s",
+    (c_id,)
+    )
     
     data=cur.fetchone()
     if data:
@@ -159,34 +184,45 @@ def show_customer():
     else:
         print("Customer Not Found!")
         
+def customer_menu():
     
-create_table()
 
-while True:
-    print("\n===== Customer Management =====")
-    print("1. Add Customer")
-    print("2. Search Customer")
-    print("3. Update Customer")
-    print("4. Show customer")
-    print("5. Exit")
+    while True:
+        print("\n===== Customer Management =====")
+        print("1. Add Customer")
+        print("2. Search Customer")
+        print("3. Update Customer")
+        print("4. Show Customer")
+        print("5. Exit")
 
-    choice = input("Enter Choice: ")
+        choice = input("Enter Choice: ")
 
-    if choice == "1":
-        add_customer()
-        
-    elif choice == "2":
-        search_customer()
-        
-    elif choice == "3":
-        update_customer()
-        
-    elif choice == "4":
-         show_customer()
+        if choice == "1":
+            add_customer()
 
-    elif choice == "5":
-        print("Thank You for visiting our store!")
-        break
-    
-    else:
-        print("Invalid Choice!")
+        elif choice == "2":
+            search_customer()
+
+        elif choice == "3":
+            update_customer()
+
+        elif choice == "4":
+            show_customer()
+
+        elif choice == "5":
+            print("Thank You for visiting our store!")
+            break
+
+        else:
+            print("Invalid Choice!")
+
+
+
+'''
+@Function Name : create_table
+@Description   : This function creates the customer table in the database.
+                 If the table is already present, it will not create it again.
+@Input Param   : NONE
+@Output Param  : NONE
+@Author        : Prashik Dabhade
+'''        

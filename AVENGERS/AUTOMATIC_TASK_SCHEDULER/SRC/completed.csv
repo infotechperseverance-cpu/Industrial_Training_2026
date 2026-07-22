@@ -2,3 +2,6 @@ Task_ID,Task_Name,Task_Date,Task_Time,Task_Recurring,Task_Status
 11,riding,08/07/2026,05:38 PM,Daily,Completed
 14,cab booking,06/07/2026,10:30 AM,Daily,Completed
 34,watching TV,07/07/2026,08:30 PM,pending,Completed
+101,Project,08/07/2026,11:30 AM,Weekly,Completed
+103,cab,08/07/2026,11:24 AM,Daily,Completed
+102,project Demo,08/07/2026,12:10 PM,Daily,Completed

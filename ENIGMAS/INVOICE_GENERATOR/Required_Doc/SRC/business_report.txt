@@ -1,0 +1,9 @@
+STORE BUSINESS REPORT
+=====================
+Total Customers: 4
+Total Products: 2
+Total Invoices: 1
+Total Sales Revenue: Rs 33.40
+
+LOW STOCK PRODUCTS LIST
+-----------------------

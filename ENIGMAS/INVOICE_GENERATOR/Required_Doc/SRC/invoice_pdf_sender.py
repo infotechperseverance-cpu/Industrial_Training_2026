@@ -12,7 +12,7 @@ output parameters :none
 
 def send_invoice(email,file_path):
     try:
-        if email or file_path is none:
+        if email is None or file_path is None:
            return False
         customer_email = email #customer email
     
@@ -29,10 +29,10 @@ def send_invoice(email,file_path):
             return False
         
      #Give sender's email
-        sender_email = "patilharshwardhan218@gmail.com"
+        sender_email = "email id"
     
     #Give 16-digits email password
-        app_password = "app_password"       
+        app_password = "your password"       
     
         msg = EmailMessage()
         msg["Subject"] = "Invoice from Enigmas Supermarket"
@@ -70,9 +70,9 @@ def send_invoice(email,file_path):
             server.login(sender_email, app_password)
     
             server.send_message(msg)
-    
+            server.send_message(msg)
             server.quit()
-    
+
             print("\nEmail Sent Successfully")
             return True
     except KeyboardInterrupt:

@@ -1,6 +1,9 @@
 
+import matplotlib
+matplotlib.use("Agg")
+
 import matplotlib.pyplot as plt
-import connection_management as cm
+import Connetion_Module as cm
 ''' 1.function name :graph : it gives all information in form of graph
                            it automatically connect to database
                            and close it
@@ -82,11 +85,14 @@ def graph():
         # Layout
         fig.suptitle('sales and products information', fontsize=16, weight='bold')
         plt.tight_layout()
-        plt.show()
+
+        plt.savefig("sales_dashboard.png")
+        print("Sales dashboard graph saved as sales_dashboard.png")
+
+        plt.close()
         connection.close()
-    except:
-        print("something went wrong")
-        return None
+    except Exception as e:
+        print("Something went wrong:", e)
 
 def generate_simple_report():
     try:
@@ -135,8 +141,7 @@ def generate_simple_report():
     
         print("Report saved successfully to business_report.txt")
         
-    except:
-        print("something went wrong")
-        return None
-    
-    
+    except Exception as e:
+        print("Something went wrong:", e)
+if __name__ == "__main__":
+    graph()    

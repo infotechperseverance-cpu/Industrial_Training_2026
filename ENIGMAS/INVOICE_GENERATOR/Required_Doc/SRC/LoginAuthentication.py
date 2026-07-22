@@ -40,8 +40,8 @@ def login():
         print("\nLogin Successful!")
         print("Logged-in User:", username)
         dashboard(username)
+        return username
     else:
         print("\nError: Invalid Username or Password!")
-        
-# Main Program
-login()
+        return None
+            

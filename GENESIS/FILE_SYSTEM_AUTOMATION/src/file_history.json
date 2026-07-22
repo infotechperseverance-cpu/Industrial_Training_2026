@@ -1,1 +1,42 @@
-[]
+[
+    {
+        "action": "Create",
+        "file": "adc.pdf"
+    },
+    {
+        "action": "Rename",
+        "file": "adc.pdf -> pqr.pdf"
+    },
+    {
+        "action": "Create",
+        "file": "xyz.pdf"
+    },
+    {
+        "action": "Create",
+        "file": "image.png"
+    },
+    {
+        "action": "Create",
+        "file": "rte.docs"
+    },
+    {
+        "action": "Create",
+        "file": "xyz.pdf"
+    },
+    {
+        "action": "Create",
+        "file": "rte.ppt"
+    },
+    {
+        "action": "Create",
+        "file": "image.png"
+    },
+    {
+        "action": "Create",
+        "file": "abc.pdf"
+    },
+    {
+        "action": "Rename",
+        "file": "abc.pdf -> pqr.pdf"
+    }
+]

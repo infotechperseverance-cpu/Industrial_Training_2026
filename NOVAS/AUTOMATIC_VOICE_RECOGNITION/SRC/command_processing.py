@@ -1,9 +1,16 @@
 from assistant_state import check_assistant_state
 from voice_recognition import speech
-from Regsitry import RegistryLauncher
-from voice import speak
+from Regsitry import RegistryLauncher,process as registry_process
 import os
 import assistant_state
+from settings import process as settings_process
+import asyncio
+from voice import speak
+from file_folder_management import process as file_process
+from reminder import process as reminder_process
+from logs import process as logs_process
+from config import ASSISTANT_NAME,EXIT_COMMANDS
+from search import web_search
 
 launcher = RegistryLauncher()
 
@@ -14,28 +21,38 @@ launcher = RegistryLauncher()
                requested operation.
 @Inputparam  : command (User command)
 @OutputPara  : None
-@Author      : Vaishnavi Teli
+@Author      : bhoomi sapke
 
 '''
 
 def detect_intent(command):
 
-    command = command.lower()
+    command = command.lower().strip()
 
-    if command.startswith("open"):
-        launcher.launch(command)
+    if settings_process(command):
+        return
 
-    elif "file" in command or "folder" in command:
-       pass
+    if reminder_process(command):
+        return
 
-    elif "email" in command:
-        pass
+    if logs_process(command):
+        return
 
-    elif "system" in command:
-        pass
+    if file_process(command):
+        return
 
-    else:
+    if registry_process(command):
+        return
+
+    # Search command
+    if command.startswith("search") or "search for" in command:
+        web_search(command)
+        return
+    
+    asyncio.run(
         speak("Command not recognized.")
+    )
+
 
 '''
 
@@ -48,14 +65,16 @@ def detect_intent(command):
 @Author        : Vaishnavi Teli
 
 '''
+
 def process_command():
 
+    username = os.getlogin()
     while True:
 
         # Sleep mode - wait only for wake word
         while not assistant_state.assistant_active:
 
-            wake_command = speech()
+            wake_command = speech(language="en-IN")
 
             if not wake_command:
                 continue
@@ -66,13 +85,12 @@ def process_command():
                 return
 
             if result:
+                print(f"{username} : {wake_command}")
 
-                print(f"You said : {wake_command}")
+            
 
-                username = os.getlogin()
-
-                print(f"Hello {username}! How can I help you?")
-                speak(f"Hello {username}! How can I help you?")
+                print(f"{ASSISTANT_NAME}: Hello {username}! How can I help you?")
+                asyncio.run(speak(f"Hello {username}! How can I help you?"))
 
         # Assistant is active
         while assistant_state.assistant_active:
@@ -82,12 +100,19 @@ def process_command():
             if not command:
                 continue
 
-            print(f"You said : {command}")
+            print(f"{username}: {command}")
 
-            # Exit
-            if command.lower() == "exit":
-                speak("Closing NOVA.")
-                return
+            # Exit NOVA
+
+            if command.lower() in EXIT_COMMANDS:
+
+                print(f"{ASSISTANT_NAME}: Closing NOVA...")
+
+                asyncio.run(
+                    speak("Closing NOVA. Goodbye!")
+                )
+
+                os._exit(0)
 
             # Sleep
             if command.lower() == "go to sleep":
