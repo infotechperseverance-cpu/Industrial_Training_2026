@@ -71,7 +71,11 @@ def schedule_task():
 
     from voice_recognition import speech
 
-    ask("What would you like me to remind you about?")
+    ask(
+        "Please tell your reminder along with the date and time. "
+        "For example, say: "
+        "Remind me to attend the meeting tomorrow at 9 A M."
+    )
 
     command = speech()
 

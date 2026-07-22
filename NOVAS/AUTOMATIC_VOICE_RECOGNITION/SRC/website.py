@@ -87,7 +87,7 @@ def find_website(name):
 
             url = prefix + name + ext
 
-            print("Checking:", url)
+            # print("Checking:", url)
 
             if check_url(url):
                 return url
@@ -113,7 +113,9 @@ def open_website(command):
         return
 
     website = command.lower().strip()
-
+    if not website:
+        asyncio.run(speak("Please tell me the website name."))
+        return
     if website.startswith("open "):
         website = website[5:].strip()
 

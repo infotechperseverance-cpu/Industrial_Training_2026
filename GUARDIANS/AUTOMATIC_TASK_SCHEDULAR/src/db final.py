@@ -50,7 +50,3 @@ def restore_task(id,user_id):
     cursor.execute(delete_query, (id, user_id))
     conn.commit()
     print("Task restored successfully.")
-
-
-
-

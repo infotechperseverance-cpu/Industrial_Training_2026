@@ -15,7 +15,7 @@
 
 import asyncio
 import time
-
+from assistant_state import check_assistant_state
 import speech_recognition as sr
 
 from logs import add_log
@@ -117,9 +117,16 @@ def speech(language=DEFAULT_SPEECH_LANGUAGE):
 
     except sr.WaitTimeoutError:
 
-        asyncio.run(
-            speak("No speech detected.")
-        )
+    # Don't speak while assistant is sleeping
+        if check_assistant_state() == "sleep":
+            return None
+
+        try:
+            asyncio.run(
+                speak("No speech detected.")
+            )
+        except Exception:
+            pass
 
         return None
 
