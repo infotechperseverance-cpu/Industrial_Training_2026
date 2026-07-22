@@ -178,7 +178,6 @@ class StorageOptimization:
 
     @Author        : Srushti Subhash Mahajan
     '''
-
     def scan_folder(self):
 
         if self.selected_folder == "":
@@ -189,8 +188,10 @@ class StorageOptimization:
         elif not self.folder_scanned:
             print("\nSelected folder is not scanned.")
             print(f"Scanning Selected Folder : {self.selected_folder}")
-        
+
         self.files.clear()
+
+        inaccessible_files = 0
 
         try:
 
@@ -202,7 +203,11 @@ class StorageOptimization:
 
                     try:
 
+                        if not os.path.isfile(full_path):
+                            continue
+
                         size = os.path.getsize(full_path)
+
                         accessed_time = datetime.fromtimestamp(os.path.getatime(full_path))
                         modified_time = datetime.fromtimestamp(os.path.getmtime(full_path))
 
@@ -214,20 +219,223 @@ class StorageOptimization:
                             "last_modified": modified_time
                         })
 
-                    except Exception:
+                    except (PermissionError, FileNotFoundError, OSError):
+
+                        inaccessible_files += 1
                         continue
 
-            print(f"\nTotal Files Scanned : {len(self.files)}")
             self.folder_scanned = True
-            self.log_operation(operation_type="Folder Scan", file_path=self.selected_folder, remarks=f"{len(self.files)} files scanned.")
+
+            print(f"\nTotal Files Scanned : {len(self.files)}")
+
+            if inaccessible_files > 0:
+                print(f"Inaccessible Files Skipped : {inaccessible_files}")
+
+            self.log_operation(
+                operation_type="Folder Scan",
+                file_path=self.selected_folder,
+                remarks=f"{len(self.files)} files scanned."
+            )
 
         except Exception as error:
             print(f"\nScan Error : {error}")
 
+
+    def calculate_folder_size(self):
+
+        total_size = 0
+
+        for root, directories, files in os.walk(self.selected_folder):
+
+            for file in files:
+
+                path = os.path.join(root, file)
+
+                try:
+                    total_size += os.path.getsize(path)
+
+                except (PermissionError, FileNotFoundError, OSError):
+                    continue
+
+        return total_size
+    
+    def get_unused_days(self, file):
+
+        current_time = datetime.now()
+
+        access_days = (current_time - file["last_access"]).days
+        modified_days = (current_time - file["last_modified"]).days
+
+        return max(access_days, modified_days)
+    
+    '''
+    @Function Name : detect_duplicate_files
+
+    @Description   : Detects duplicate files using SHA-256 hash.
+
+    @InputParam    : NONE
+
+    @OutParam      : NONE
+
+    @Author        : Srushti Subhash Mahajan
+    '''
+
+    def detect_duplicate_files(self):
+
+        if not self.files:
+            self.scan_folder()
+
+        file_hashes = {}
+        duplicate_files = []
+        skipped_files = 0
+
+        print("\nSearching for duplicate files...\n")
+
+        for file in self.files:
+
+            file_hash = self.generate_hash(file["path"])
+
+            if file_hash is None:
+                skipped_files += 1
+                continue
+
+            if file_hash in file_hashes:
+
+                original = file_hashes[file_hash]
+
+                if original["size"] == file["size"]:
+
+                    duplicate_files.append((original, file))
+
+            else:
+
+                file_hashes[file_hash] = file
+
+        if not duplicate_files:
+
+            print("No duplicate files found.")
+
+            if skipped_files > 0:
+                print(f"Skipped Files : {skipped_files}")
+
+            self.log_operation(
+                operation_type="Duplicate Scan",
+                status="Success",
+                remarks="No duplicate files found."
+            )
+
+            return
+
+        print("\n" + "=" * 120)
+        print(f"{'Original File':<40} {'Duplicate File':<40} {'Size (MB)':>12}")
+        print("=" * 120)
+
+        for original, duplicate in duplicate_files:
+
+            size_mb = duplicate["size"] / (1024 * 1024)
+
+            print(f"{original['name'][:40]:<40} {duplicate['name'][:40]:<40} {size_mb:>12.2f}")
+            print(f"Original Path  : {original['path']}")
+            print(f"Duplicate Path : {duplicate['path']}")
+            print("-" * 120)
+
+            self.log_operation(
+                operation_type="Duplicate File Found",
+                file_name=duplicate["name"],
+                file_path=duplicate["path"],
+                file_size=duplicate["size"],
+                remarks=f"Duplicate of {original['path']}"
+            )
+
+        print(f"\nTotal Duplicate Files : {len(duplicate_files)}")
+
+        if skipped_files > 0:
+            print(f"Skipped Files : {skipped_files}")
+
+    '''
+    @Function Name : identify_large_files
+
+    @Description   : Displays files larger than or equal to the
+                    user specified size.
+
+    @InputParam    : NONE
+
+    @OutParam      : NONE
+
+    @Author        : Srushti Subhash Mahajan
+    '''
+
+    def identify_large_files(self):
+
+        if not self.files:
+            self.scan_folder()
+
+        try:
+
+            limit = input("\nEnter minimum file size in MB (Default 100): ").strip()
+
+            if limit == "":
+                limit = 100
+
+            limit = float(limit)
+
+            if limit <= 0:
+                print("\nSize must be greater than 0.")
+                return
+
+            limit_bytes = limit * 1024 * 1024
+
+        except ValueError:
+
+            print("\nInvalid size.")
+            return
+
+        large_files = []
+
+        for file in self.files:
+
+            if file["size"] >= limit_bytes:
+                large_files.append(file)
+
+        if not large_files:
+
+            print(f"\nNo files larger than or equal to {limit} MB found.")
+
+            self.log_operation(
+                operation_type="Large File Scan",
+                remarks="No large files found."
+            )
+
+            return
+
+        large_files.sort(key=lambda file: file["size"], reverse=True)
+
+        print("\n" + "=" * 120)
+        print(f"{'No.':<5} {'File Name':<35} {'Size (MB)':>15} {'Last Modified':>28}")
+        print("=" * 120)
+
+        for index, file in enumerate(large_files, start=1):
+
+            size_mb = file["size"] / (1024 * 1024)
+
+            print(f"{index:<5} {file['name'][:35]:<35} {size_mb:>15.2f} {str(file['last_modified']):>28}")
+            print(f"Path : {file['path']}")
+            print("-" * 120)
+
+            self.log_operation(
+                operation_type="Large File Found",
+                file_name=file["name"],
+                file_path=file["path"],
+                file_size=file["size"],
+                remarks="Large file detected."
+            )
+
+        print(f"\nTotal Large Files : {len(large_files)}")
+    
     '''
     @Function Name : generate_hash
 
-    @Description   : Generates SHA-256 hash for a file.
+    @Description   : Generates SHA-256 hash value for a file.
 
     @InputParam    : file_path
 
@@ -255,65 +463,10 @@ class StorageOptimization:
 
             return sha256.hexdigest()
 
-        except Exception:
+        except (PermissionError, FileNotFoundError, OSError):
+
+            print(f"Unable to access : {file_path}")
             return None
-
-    '''
-    @Function Name : detect_duplicate_files
-
-    @Description   : Detects duplicate files using SHA-256 hash.
-
-    @InputParam    : NONE
-
-    @OutParam      : NONE
-
-    @Author        : Srushti Subhash Mahajan
-    '''
-
-    def detect_duplicate_files(self):
-
-        if not self.files:
-            self.scan_folder()
-
-        file_hashes = {}
-        duplicate_files = []
-
-        print("\nSearching for duplicate files...\n")
-
-        for file in self.files:
-
-            file_hash = self.generate_hash(file["path"])
-
-            if file_hash is None:
-                continue
-
-            if file_hash in file_hashes:
-                duplicate_files.append((file_hashes[file_hash], file))
-            else:
-                file_hashes[file_hash] = file
-
-        if not duplicate_files:
-
-            print("No duplicate files found.")
-
-            self.log_operation(operation_type="Duplicate Scan", status="Success", remarks="No duplicate files found.")
-            return
-
-        print("\n" + "=" * 120)
-        print(f"{'Original File':<58} {'Duplicate File'}")
-        print("=" * 120)
-
-        for original, duplicate in duplicate_files:
-
-            print(f"{original['name']:<55} -> {duplicate['name']}")
-            print(f"{'Original Path :':<18} {original['path']}")
-            print(f"{'Duplicate Path:':<18} {duplicate['path']}")
-            print(f"{'Size (MB)     :':<18} {duplicate['size'] / (1024 * 1024):.2f}")
-            print("-" * 120)
-
-            self.log_operation(operation_type="Duplicate File Found", file_name=duplicate["name"], file_path=duplicate["path"], file_size=duplicate["size"], remarks=f"Duplicate of {original['path']}")
-
-        print(f"\nTotal Duplicate Files : {len(duplicate_files)}")
 
     '''
     @Function Name : identify_large_files
@@ -416,8 +569,8 @@ class StorageOptimization:
     '''
     @Function Name : find_unused_files
 
-    @Description   : Displays files that have not been accessed
-                     for the specified number of days.
+    @Description   : Displays files that have not been accessed or
+                    modified for the specified number of days.
 
     @InputParam    : NONE
 
@@ -440,48 +593,63 @@ class StorageOptimization:
 
             days = int(days)
 
+            if days <= 0:
+                print("\nDays must be greater than 0.")
+                return
+
         except ValueError:
+
             print("\nInvalid number.")
             return
 
-        current_time = datetime.now()
         unused_files = []
 
         for file in self.files:
 
-            difference = (current_time - file["last_access"]).days
+            unused_days = self.get_unused_days(file)
 
-            if difference >= days:
-                unused_files.append((file, difference))
+            if unused_days >= days:
+                unused_files.append((file, unused_days))
 
         if not unused_files:
 
             print(f"\nNo files unused for more than {days} days.")
 
-            self.log_operation(operation_type="Unused File Scan", remarks="No unused files found.")
+            self.log_operation(
+                operation_type="Unused File Scan",
+                remarks="No unused files found."
+            )
+
             return
 
+        unused_files.sort(key=lambda file: file[1], reverse=True)
+
         print("\n" + "=" * 120)
-        print(f"{'File Name':<35} {'Unused Days':>15} {'Size (MB)':>15}")
+        print(f"{'No.':<5} {'File Name':<35} {'Unused Days':>15} {'Size (MB)':>15}")
         print("=" * 120)
 
-        for file, difference in unused_files:
+        for index, (file, unused_days) in enumerate(unused_files, start=1):
 
             size_mb = file["size"] / (1024 * 1024)
 
-            print(f"{file['name'][:35]:<35} {difference:>15} {size_mb:>15.2f}")
+            print(f"{index:<5} {file['name'][:35]:<35} {unused_days:>15} {size_mb:>15.2f}")
             print(f"Path : {file['path']}")
             print("-" * 120)
 
-            self.log_operation(operation_type="Unused File Found", file_name=file["name"], file_path=file["path"], file_size=file["size"], remarks=f"Unused for {difference} days.")
+            self.log_operation(
+                operation_type="Unused File Found",
+                file_name=file["name"],
+                file_path=file["path"],
+                file_size=file["size"],
+                remarks=f"Unused for {unused_days} days."
+            )
 
         print(f"\nTotal Unused Files : {len(unused_files)}")
-
     '''
     @Function Name : find_temporary_files
 
     @Description   : Displays temporary files available in the
-                     selected folder.
+                    selected folder.
 
     @InputParam    : NONE
 
@@ -500,39 +668,53 @@ class StorageOptimization:
         for file in self.files:
 
             extension = os.path.splitext(file["name"])[1].lower()
+            filename = file["name"].lower()
 
-            if extension in self.TEMP_EXTENSIONS:
+            if extension in self.TEMP_EXTENSIONS or filename.startswith("~") or filename.endswith(".tmp"):
+
                 temporary_files.append(file)
 
         if not temporary_files:
 
             print("\nNo temporary files found.")
 
-            self.log_operation(operation_type="Temporary File Scan", remarks="No temporary files found.")
+            self.log_operation(
+                operation_type="Temporary File Scan",
+                remarks="No temporary files found."
+            )
+
             return
 
+        temporary_files.sort(key=lambda file: file["size"], reverse=True)
+
         print("\n" + "=" * 120)
-        print(f"{'File Name':<35} {'Extension':>15} {'Size (MB)':>15}")
+        print(f"{'No.':<5} {'File Name':<35} {'Extension':>15} {'Size (MB)':>15}")
         print("=" * 120)
 
-        for file in temporary_files:
+        for index, file in enumerate(temporary_files, start=1):
 
             extension = os.path.splitext(file["name"])[1]
             size_mb = file["size"] / (1024 * 1024)
 
-            print(f"{file['name'][:35]:<35} {extension:>15} {size_mb:>15.2f}")
+            print(f"{index:<5} {file['name'][:35]:<35} {extension:>15} {size_mb:>15.2f}")
             print(f"Path : {file['path']}")
             print("-" * 120)
 
-            self.log_operation(operation_type="Temporary File Found", file_name=file["name"], file_path=file["path"], file_size=file["size"], remarks="Temporary file detected.")
+            self.log_operation(
+                operation_type="Temporary File Found",
+                file_name=file["name"],
+                file_path=file["path"],
+                file_size=file["size"],
+                remarks="Temporary file detected."
+            )
 
         print(f"\nTotal Temporary Files : {len(temporary_files)}")
 
     '''
     @Function Name : display_storage_statistics
 
-    @Description   : Displays storage usage statistics of the
-                     selected folder.
+    @Description   : Displays storage statistics of the selected
+                    folder along with drive information.
 
     @InputParam    : NONE
 
@@ -548,30 +730,42 @@ class StorageOptimization:
             if self.selected_folder == "":
                 self.selected_folder = os.getcwd()
 
+            folder_size = self.calculate_folder_size()
+
             usage = shutil.disk_usage(self.selected_folder)
 
             total = usage.total / (1024 ** 3)
             used = usage.used / (1024 ** 3)
             free = usage.free / (1024 ** 3)
-            percentage = (usage.used / usage.total) * 100
+
+            folder_size_mb = folder_size / (1024 ** 2)
+            folder_size_gb = folder_size / (1024 ** 3)
+
+            percentage = (folder_size / usage.total) * 100
 
             print("\n========== Storage Statistics ==========")
             print(f"Selected Folder : {self.selected_folder}")
-            print(f"Total Space     : {total:.2f} GB")
-            print(f"Used Space      : {used:.2f} GB")
-            print(f"Free Space      : {free:.2f} GB")
-            print(f"Usage           : {percentage:.2f}%")
+            print(f"Folder Size     : {folder_size_mb:.2f} MB ({folder_size_gb:.2f} GB)")
+            print(f"Drive Capacity  : {total:.2f} GB")
+            print(f"Drive Used      : {used:.2f} GB")
+            print(f"Drive Free      : {free:.2f} GB")
+            print(f"Folder Usage    : {percentage:.4f}% of Drive")
             print("========================================")
 
-            self.log_operation(operation_type="Storage Statistics", file_path=self.selected_folder, remarks="Storage statistics displayed.")
+            self.log_operation(
+                operation_type="Storage Statistics",
+                file_path=self.selected_folder,
+                remarks="Storage statistics displayed."
+            )
 
         except Exception as error:
-            print(f"\nError : {error}")
 
+            print(f"\nError : {error}")
     '''
     @Function Name : show_free_storage_space
 
-    @Description   : Displays available free storage space.
+    @Description   : Displays available free storage space for the
+                    drive containing the selected folder.
 
     @InputParam    : NONE
 
@@ -590,21 +784,33 @@ class StorageOptimization:
             usage = shutil.disk_usage(self.selected_folder)
 
             free_space = usage.free / (1024 ** 3)
+            total_space = usage.total / (1024 ** 3)
+
+            folder_size = self.calculate_folder_size() / (1024 ** 3)
 
             print("\n========== Free Storage Space ==========")
             print(f"Selected Folder : {self.selected_folder}")
+            print(f"Folder Size     : {folder_size:.2f} GB")
+            print(f"Drive Capacity  : {total_space:.2f} GB")
             print(f"Available Space : {free_space:.2f} GB")
             print("========================================")
 
-            self.log_operation(operation_type="Free Storage Check", file_path=self.selected_folder, remarks=f"{free_space:.2f} GB free.")
+            self.log_operation(
+                operation_type="Free Storage Check",
+                file_path=self.selected_folder,
+                remarks=f"{free_space:.2f} GB free."
+            )
 
         except Exception as error:
+
             print(f"\nError : {error}")
 
+    
     '''
     @Function Name : suggest_files_to_delete
 
-    @Description   : Displays files that are recommended for deletion.
+    @Description   : Displays files recommended for deletion based
+                    on priority.
 
     @InputParam    : NONE
 
@@ -619,53 +825,77 @@ class StorageOptimization:
             self.scan_folder()
 
         suggestions = []
-        current_time = datetime.now()
 
         for file in self.files:
 
             extension = os.path.splitext(file["name"])[1].lower()
-            unused_days = (current_time - file["last_access"]).days
+            unused_days = self.get_unused_days(file)
 
-            if file["size"] >= self.LARGE_FILE_SIZE or extension in self.TEMP_EXTENSIONS or unused_days >= self.UNUSED_DAYS:
-                suggestions.append((file, unused_days))
+            priority = 0
+            reasons = []
+
+            if extension in self.TEMP_EXTENSIONS:
+                priority += 3
+                reasons.append("Temporary")
+
+            if file["size"] >= self.LARGE_FILE_SIZE:
+                priority += 2
+                reasons.append("Large")
+
+            if unused_days >= self.UNUSED_DAYS:
+                priority += 1
+                reasons.append("Unused")
+
+            if priority > 0:
+
+                suggestions.append({
+                    "file": file,
+                    "priority": priority,
+                    "reason": ", ".join(reasons),
+                    "unused_days": unused_days
+                })
 
         if not suggestions:
 
             print("\nNo files suggested for deletion.")
 
-            self.log_operation(operation_type="Deletion Suggestion", remarks="No files suggested.")
+            self.log_operation(
+                operation_type="Deletion Suggestion",
+                remarks="No files suggested."
+            )
             return
 
+        suggestions.sort(
+            key=lambda item: (
+                -item["priority"],
+                -item["file"]["size"]
+            )
+        )
+
         print("\n" + "=" * 120)
-        print(f"{'No.':<5} {'File Name':<35} {'Reason':<20} {'Unused Days':>15} {'Size (MB)':>15}")
+        print(f"{'No.':<5} {'File Name':<35} {'Reason':<25} {'Unused Days':>15} {'Size (MB)':>15}")
         print("=" * 120)
 
-        for index, (file, unused_days) in enumerate(suggestions, start=1):
+        for index, item in enumerate(suggestions, start=1):
 
-            extension = os.path.splitext(file["name"])[1].lower()
-
-            if extension in self.TEMP_EXTENSIONS:
-                reason = "Temporary File"
-            elif file["size"] >= self.LARGE_FILE_SIZE:
-                reason = "Large File"
-            else:
-                reason = "Unused File"
+            file = item["file"]
 
             size_mb = file["size"] / (1024 * 1024)
 
-            print(f"{index:<5} {file['name'][:35]:<35} {reason:<20} {unused_days:>15} {size_mb:>15.2f}")
+            print(f"{index:<5} {file['name'][:35]:<35} {item['reason']:<25} {item['unused_days']:>15} {size_mb:>15.2f}")
             print(f"Path : {file['path']}")
             print("-" * 120)
 
         print(f"\nTotal Suggested Files : {len(suggestions)}")
 
-        self.log_operation(operation_type="Deletion Suggestion", remarks=f"{len(suggestions)} files suggested.")
-
+        self.log_operation(
+            operation_type="Deletion Suggestion",
+            remarks=f"{len(suggestions)} files suggested."
+        )
     '''
     @Function Name : delete_file
 
-    @Description   : Deletes the selected file after user
-                     confirmation.
+    @Description   : Deletes the selected file safely after user confirmation.
 
     @InputParam    : NONE
 
@@ -681,33 +911,104 @@ class StorageOptimization:
 
         path = input("\nEnter complete file path to delete : ").strip()
 
+        if path == "":
+            print("\nFile path cannot be empty.")
+            return
+
         if not os.path.exists(path):
             print("\nFile not found.")
             return
 
-        confirm = input("Delete this file? (Y/N) : ").strip().upper()
-
-        if confirm != "Y":
-            print("\nDeletion cancelled.")
+        if not os.path.isfile(path):
+            print("\nEntered path is not a file.")
             return
-        try:
 
-            file_name = os.path.basename(path)
+        file_name = os.path.basename(path)
+
+        try:
             file_size = os.path.getsize(path)
+
+        except OSError:
+            file_size = 0
+
+        print("\nSelected File Details")
+        print("-" * 50)
+        print(f"File Name : {file_name}")
+        print(f"File Size : {file_size / (1024 * 1024):.2f} MB")
+        print(f"File Path : {path}")
+        print("-" * 50)
+
+        confirm = input("\nType DELETE to permanently delete the file : ").strip().upper()
+
+        if confirm != "DELETE":
+
+            print("\nDeletion cancelled.")
+
+            self.log_operation(
+                operation_type="File Deletion Cancelled",
+                file_name=file_name,
+                file_path=path,
+                file_size=file_size,
+                status="Cancelled",
+                remarks="User cancelled deletion."
+            )
+
+            return
+
+        try:
 
             os.remove(path)
 
             print("\nFile deleted successfully.")
 
-            self.log_operation(operation_type="File Deleted", file_name=file_name, file_path=path, file_size=file_size, remarks="Deleted successfully.")
+            self.log_operation(
+                operation_type="File Deleted",
+                file_name=file_name,
+                file_path=path,
+                file_size=file_size,
+                remarks="Deleted successfully."
+            )
 
             self.scan_folder()
+
+        except PermissionError:
+
+            print("\nFile is currently in use or permission denied.")
+
+            self.log_operation(
+                operation_type="File Delete Failed",
+                file_name=file_name,
+                file_path=path,
+                file_size=file_size,
+                status="Failed",
+                remarks="File is in use or permission denied."
+            )
+
+        except FileNotFoundError:
+
+            print("\nFile no longer exists.")
+
+            self.log_operation(
+                operation_type="File Delete Failed",
+                file_name=file_name,
+                file_path=path,
+                file_size=file_size,
+                status="Failed",
+                remarks="File not found."
+            )
 
         except Exception as error:
 
             print(f"\nDeletion Failed : {error}")
 
-            self.log_operation(operation_type="File Delete Failed", file_name=os.path.basename(path), file_path=path, status="Failed", remarks=str(error))
+            self.log_operation(
+                operation_type="File Delete Failed",
+                file_name=file_name,
+                file_path=path,
+                file_size=file_size,
+                status="Failed",
+                remarks=str(error)
+            )
 
     '''
     @Function Name : close_connection
