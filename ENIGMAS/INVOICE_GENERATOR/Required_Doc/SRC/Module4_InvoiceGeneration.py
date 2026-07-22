@@ -1,7 +1,3 @@
-
-
-
-
 import mysql.connector
 from datetime import datetime 
 
@@ -15,46 +11,56 @@ from datetime import datetime
 @outParam     : NONE
 @Author       : Dimpal Rajput
 '''
-def invoice_generation(db_connection, username):
+def invoice_generation(db_connection):
     print("-" * 15 + "GENERATING INVOICE" + "-" * 15)
     cursor = db_connection.cursor()
-
+    
     final_subtotal = 0.0
     final_gst = 0.0
     
-    
+    # 1. Cashier Validation 
+    while True:
+        
+        username = input("Enter User Name: ").strip()
+
+        cursor.execute(
+            "SELECT user_id, username FROM users WHERE LOWER(username) = LOWER(%s)",
+            (username,)
+        )
+
+        userData = cursor.fetchone()
+
+        if userData:
+            userId = userData[0]        # user_id
+            username = userData[1]      # username
+
+            print(f"Cashier : {username}")
+            break
+        else:
+            print("Invalid Username")
+
         
 
-    print(f"Cashier: {username}")
-
-    cursor.execute(
-        "SELECT user_id FROM users WHERE username = %s",
-        (username,)
-    )
-
-    user = cursor.fetchone()
-
-    if user:
-        userId = user[0]
-    else:
-        print("User not found in database.")
-        return None
-
-   
     # 2. User Validation
     while True:
         try:
             customerId = int(input("Enter Customer Id : "))
-            cursor.execute("SELECT * FROM customers WHERE customer_id = %s", (customerId,))
-            customerData = cursor.fetchone()
-            if customerData:
-                print(f"Customer is found {customerData[1]}")
-                break
-            elif not customerData:
-                print(f"Customer Id not found ,please try again")
-        except ValueError:
-            print("ERROR : Customer Id must be a Number ")
 
+            cursor.execute(
+                "SELECT * FROM customers WHERE customer_id = %s",
+                (customerId,)
+            )
+
+            customerData = cursor.fetchone()
+
+            if customerData is not None:
+                print(f"Customer found : {customerData[1]}")
+                break
+            else:
+                print("Customer Id not found, please try again")
+
+        except ValueError:
+            print("ERROR : Customer Id must be a Number")
     invoice_list = [] #add invoice list of products
 
     # 3. Product Selection Loop
@@ -71,10 +77,10 @@ def invoice_generation(db_connection, username):
             cursor.execute("SELECT * FROM products WHERE product_id = %s", (productId,))
             productData = cursor.fetchone()
 
-            if not productData:
+            if productData is None:
                 print("There is no product please first add the product")
                 continue
-            
+                        
             print(f"product Found product Name: {productData[1]} Price {productData[3]} Stock: {productData[5]}")
             
             #check if stocks are greater than or equals to 0
@@ -127,10 +133,25 @@ def invoice_generation(db_connection, username):
     # 4. Final Bill Calculations & Database Storage Execution
     try:
         currentDate = datetime.now().strftime(r"%Y-%m-%d")
-        try:
-            inputDiscount = float(input("Enter discount or 0 : "))
-        except ValueError:
-            inputDiscount = 0.0
+        while True:
+    
+            try:
+                inputDiscount = float(input("Enter discount or 0 : "))
+
+                # TC58: Reject negative discount
+                if inputDiscount < 0:
+                    print("Discount cannot be negative.")
+                    continue
+
+                # TC57: Discount cannot exceed subtotal
+                if inputDiscount > final_subtotal:
+                    print("Discount cannot be greater than subtotal.")
+                    continue
+
+                break
+
+            except ValueError:
+                print("Discount must be a number.")
 
         final_total = (final_subtotal - inputDiscount) + final_gst
 
@@ -159,11 +180,11 @@ def invoice_generation(db_connection, username):
         # FIXED: Moved outside of the 'for' loop to commit the whole cart transaction cleanly at once
         db_connection.commit()
         print(f"\nTransaction saved successfully! Generated Invoice ID: {invoice_id}")
-        return invoice_id
-    
+
     except mysql.connector.Error as e:
         db_connection.rollback()
         print(f"Database error encountered: Transaction rolled back. -> {e}")
-        return None
+        
     finally:
         cursor.close()
+

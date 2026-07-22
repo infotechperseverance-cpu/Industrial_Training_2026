@@ -12,33 +12,38 @@ from Connetion_Module import connection
 @Author       : Dimpal Rajput
 '''
 def gst_rates():
-    """Loads GST rates from the JSON  file."""
-    # Default rates in case the JSON file is missing
+    """Loads GST rates from the JSON file."""
+
     default_rates = {
         "Electronics": 18,
         "Grocery": 5,
         "Clothing": 12,
         "Medicines": 12,
         "Luxury": 28,
-        "Stationary":18
+        "Stationary": 18
     }
-    #if json file doesnt find then new json file is created 
+
     if os.path.exists("gst_rates.json"):
         try:
             with open("gst_rates.json", "r") as file:
                 return json.load(file)
-        except json.JSONDecodeError:
-            print("gst_rates.json not found. Using default rates.")
+
+        except (json.JSONDecodeError, OSError):
+            print("gst_rates.json is corrupted. Recreating file with default GST rates.")
+
+            with open("gst_rates.json", "w") as file:
+                json.dump(default_rates, file, indent=4)
+
             return default_rates
+
     else:
-        
         with open("gst_rates.json", "w") as file:
             json.dump(default_rates, file, indent=4)
+
         return default_rates
-    
 
 '''
-@Function Name: add_product
+@Function Name: add_product()
 @Description  : Ask user for details Of product and stores a new item record.
 @inputParam   : db_connection (an active database connection object)
 @outParam     : NA
@@ -198,20 +203,33 @@ def update_product(db_connection):
         print("✅product Price updated Successfully !")
 
     # asks user to delete the entire product
-    elif ch=='3':
+    elif ch == '3':
         while True:
-           
-            delete=input(f"Are you sure to delete product {product_data[1]} permanently ? ").lower().strip()
-            if delete =="yes" or delete=='y':
-                cursor.execute("DELETE FROM products WHERE product_id=%s",(productId,))   
-                print(f"Product {product_data[1]} has been deleted successfully !")
+
+            delete = input(f"Are you sure to delete product {product_data[1]} permanently? ").lower().strip()
+
+            if delete == "yes" or delete == "y":
+                try:
+                    cursor.execute(
+                        "DELETE FROM products WHERE product_id=%s",
+                        (productId,)
+                    )
+
+                    conn.commit()
+                    print(f"Product {product_data[1]} has been deleted successfully!")
+
+                except Exception:
+                    conn.rollback()
+                    print("Product cannot be deleted because it is already used in an invoice.")
+
                 break
-            elif delete=="no" or delete=='n':
-                print("Deletion cancelled ! Your product is safe")
+
+            elif delete == "no" or delete == "n":
+                print("Deletion cancelled! Your product is safe")
                 break
+
             else:
                 print("Type Yes or No")
-            break
     #back to main menu
     elif ch=="4":
         print("Moving back to main menu ")
@@ -232,22 +250,38 @@ def update_product(db_connection):
 @Author       : Dimpal Rajput
 '''
 def display_products(db_connection):
-    print("-"*38,"Available Product List","-"*38)
-    conn = db_connection  # FIXED: Standardized connection strategy
-    cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM products")
-    records=cursor.fetchall()
+    print("-"*38, "Available Product List", "-"*38)
 
-    cursor.close()
-    if(len(records)==0):
-        print("NO Product Found in the database, first add products ")
-    else:
-        print(f"{'product_id':<15} {'product_name':<15} {'category':<15} {'price':<10} {'gst_percent %':<14} {'stock_quantity':<15} ")
-        for row in records:
-            print(f"{row[0]:<15} {row[1]:<15} {row[2]:<15} Rs.{row[3]:<8.2f} {row[4]:<14} {row[5]:<15} ")
-    print("-" * 100)
+    try:
+        if db_connection is None:
+            print("Database connection failed.")
+            return
 
+        conn = db_connection
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT * FROM products")
+        records = cursor.fetchall()
+
+        
+
+        if len(records) == 0:
+            print("NO Product Found in the database, first add products")
+
+        else:
+            print(f"{'product_id':<15} {'product_name':<15} {'category':<15} {'price':<10} {'gst_percent %':<14} {'stock_quantity':<15}")
+
+            for row in records:
+                print(f"{row[0]:<15} {row[1]:<15} {row[2]:<15} Rs.{row[3]:<8.2f} {row[4]:<14} {row[5]:<15}")
+
+        cursor.close()
+        print("-"*100)
+
+    except Exception as e:
+        print("Database Error :", e)
+
+    
 
 def product_menu(db_connection):
 
@@ -275,9 +309,3 @@ def product_menu(db_connection):
 
         else:
             print("Invalid Choice. Please Try Again.")
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> 1295afc (Final code)

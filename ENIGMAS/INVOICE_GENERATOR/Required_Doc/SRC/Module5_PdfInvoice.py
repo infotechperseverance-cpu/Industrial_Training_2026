@@ -23,13 +23,23 @@ def pdfInvoice(db_conn, invoice_id):
 
         # 2. Get the main bill details and customer information
         customer_info = """
-            SELECT invoices.invoice_id, invoices.invoice_date, invoices.subtotal, 
-                   invoices.gst_amount, invoices.discount, invoices.total_amount,
-                   customers.customer_name, customers.mobile_no, customers.email 
-            FROM invoices 
-            JOIN customers ON invoices.customer_id = customers.customer_id
-            WHERE invoices.invoice_id = %s
-        """
+            SELECT invoices.invoice_id,
+       invoices.invoice_date,
+       invoices.subtotal,
+       invoices.gst_amount,
+       invoices.discount,
+       invoices.total_amount,
+       customers.customer_name,
+       customers.mobile_no,
+       customers.email,
+       users.username
+       FROM invoices
+       JOIN customers
+       ON invoices.customer_id = customers.customer_id
+       JOIN users
+       ON invoices.user_id = users.user_id
+       WHERE invoices.invoice_id = %s
+                """
         cursor.execute(customer_info, (invoice_id,))
         bill_data = cursor.fetchone()
         
@@ -45,9 +55,11 @@ def pdfInvoice(db_conn, invoice_id):
         gst_amt = float(bill_data[3])
         discount_amt = float(bill_data[4])
         final_amt = float(bill_data[5])
+
         name = bill_data[6]
         phone = bill_data[7]
         email = bill_data[8]
+        cashier_name = bill_data[9]
 
         # 3. Get all the product items bought under this invoice number
         product_item = """
@@ -82,36 +94,19 @@ def pdfInvoice(db_conn, invoice_id):
 
         # 6. Build the Customer Information text table block
         customer_table_data = [
-            [Paragraph("<b>Invoice ID:</b> #" + str(bill_id), body_font), 
-             Paragraph("<b>Customer Name:</b> " + str(name), body_font)],
-            [Paragraph("<b>Date:</b> " + str(bill_date), body_font), 
-             Paragraph("<b>Mobile No:</b> " + str(phone), body_font)],
-            [Paragraph("", body_font), 
-             Paragraph("<b>Email:</b> " + str(email), body_font)]
-        ]
+        [Paragraph("<b>Invoice ID:</b> #" + str(bill_id), body_font),
+        Paragraph("<b>Customer Name:</b> " + str(name), body_font)],
+
+        [Paragraph("<b>Date:</b> " + str(bill_date), body_font),
+        Paragraph("<b>Mobile No:</b> " + str(phone), body_font)],
+
+        [Paragraph("<b>Cashier:</b> " + str(cashier_name), body_font),
+        Paragraph("<b>Email:</b> " + str(email), body_font)]
+]
         info_table = Table(customer_table_data, colWidths=[250, 250])
-        page_elements.append(Paragraph("<b>ENIGMAS SUPERMARKET</b>", title_font))
-        page_elements.append(Paragraph("Automatic Invoice Generator", body_font))
-        page_elements.append(Paragraph("Phone: +91-9876543210", body_font))
-        page_elements.append(Paragraph("Email: enigmassupermarket@gmail.com", body_font))
-        page_elements.append(Spacer(1, 15))
+        page_elements.append(info_table)
+        page_elements.append(Spacer(1, 20))
 
-        page_elements.append(Paragraph("<b>TAX INVOICE</b>", title_font))
-        page_elements.append(Spacer(1, 15))
-
-
-        customer_table_data = [
-            [Paragraph("<b>Invoice ID:</b> #" + str(bill_id), body_font),
-            Paragraph("<b>Customer Name:</b> " + str(name), body_font)],
-
-            [Paragraph("<b>Date:</b> " + str(bill_date), body_font),
-            Paragraph("<b>Mobile No:</b> " + str(phone), body_font)],
-
-            [Paragraph("<b>Cashier:</b> Counter 1", body_font),
-            Paragraph("<b>Email:</b> " + str(email), body_font)]
-        ]
-        
-        
         # 7. Build the main Purchased Products  chart grid
         grid_data = [[
             Paragraph("<b>Product Name</b>", body_font), 
@@ -157,46 +152,6 @@ def pdfInvoice(db_conn, invoice_id):
             ('LINEABOVE', (0, 3), (-1, 3), 1, 'black')
         ]))
         page_elements.append(totals_table)
-        page_elements.append(Spacer(1, 25))
-
-        page_elements.append(
-            Paragraph(
-                "<b>Thank you for shopping with ENIGMAS SUPERMARKET!</b>",
-                body_font
-            )
-        )
-
-        page_elements.append(
-            Paragraph(
-                "Please visit us again.",
-                body_font
-            )
-        )
-
-        page_elements.append(
-            Paragraph(
-                "Goods once sold will be returned as per store return policy.",
-                body_font
-            )
-        )
-
-        page_elements.append(Spacer(1, 20))
-
-        page_elements.append(
-            Paragraph(
-                "------------------------------------------------------------",
-                body_font
-            )
-        )
-
-        page_elements.append(
-            Paragraph(
-                "This is a computer-generated invoice. No signature required.",
-                body_font
-            )
-        )
-
-
 
         # 9. Print out and build the final PDF report document file
         pdf_file.build(page_elements)
@@ -213,24 +168,3 @@ def pdfInvoice(db_conn, invoice_id):
     except Exception as error:
         print("PDF Generation Error: " + str(error))
         return None
-    
-
-'''
-@Function Name : generate_pdf
-@Description   : Generates PDF for the latest invoice.
-@Input Param   : db_conn, invoice_id
-@Output Param  : None
-'''
-
-def generate_pdf(db_conn, invoice_id):
-
-    if invoice_id is None:
-        print("No invoice available.")
-        return
-
-    pdf_path = pdfInvoice(db_conn, invoice_id)
-
-    if pdf_path:
-        print("PDF Generated Successfully.")
-    else:
-        print("PDF Generation Failed.")
