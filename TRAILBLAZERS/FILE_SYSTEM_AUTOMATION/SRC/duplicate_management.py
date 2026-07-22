@@ -6,6 +6,7 @@ Author: Komal Mahajan'''
 import os
 from datetime import datetime
 import shutil
+import hashlib
 
 class DuplicateFileManager:
     '''
@@ -79,6 +80,32 @@ class DuplicateFileManager:
 
             self.write_log("Folder Scan","Status : Failed\nReason : {}".format(error))
             return file_list
+    '''
+    @Function Name: get_file_hash
+    @Description  : This function generates the SHA-256 hash value of a file
+                and is used to compare file contents for detecting
+                duplicate files accurately.
+    @inputParam   : file_path (Path of the file for which hash is generated)
+    @outParam     : Returns SHA-256 hash value of the file as a string.
+                Returns None if any error occurs.
+    @Author       : Komal Mahajan
+    '''    
+    def get_file_hash(self, file_path):
+        try:
+           sha256 = hashlib.sha256()
+
+           with open(file_path, "rb") as file:
+             while True:
+                data = file.read(4096)
+                if not data:
+                    break
+                sha256.update(data)
+
+           return sha256.hexdigest()
+
+        except Exception as error:
+          self.write_log("Hash Error","File : {}\nReason : {}".format(file_path, error))                   
+          return None    
 
     '''
     @Function Name: detect_duplicate_files
@@ -101,8 +128,12 @@ class DuplicateFileManager:
                     file_name = os.path.basename(file)
                     file_size = os.path.getsize(file)
 
-                    key = ( file_name.lower(),file_size)
+                    file_hash = self.get_file_hash(file)
 
+                    if file_hash is None:
+                      continue
+
+                    key = file_hash
                 except Exception as error:
                     self.write_log( "Duplicate Detection Failed",
                         "File : {}\nReason : {}".format(file, error))
@@ -413,42 +444,7 @@ class DuplicateFileManager:
 def main():
 
     obj = DuplicateFileManager()   
-
-    while True:
-        print("\n========== DUPLICATE FILE MANAGEMENT ==========")
-        print("1. Detect Duplicate Files")
-        print("2. Display Duplicate Files")
-        print("3. Move Duplicate Files")
-        print("4. Delete Duplicate Files")
-        print("5. Show Storage Saved")
-        print("6. Display Duplicate Report")
-        print("7. Exit")
-
-        choice = input("Enter Your Choice : ")
-
-        if choice == "1":
-            obj.detect_duplicate_files()
-
-        elif choice == "2":
-            obj.display_duplicate_files()
-
-        elif choice == "3":
-            obj.move_duplicate_files()
-
-        elif choice == "4":
-            obj.delete_duplicate_files()
-
-        elif choice == "5":
-            obj.show_storage_saved()
-
-        elif choice == "6":
-            obj.display_duplicate_report()
-
-        elif choice == "7":
-            break
-
-        else:
-            print("Invalid Choice")
-
+    obj.main_menu()
+   
 if __name__ == "__main__":
     main()    

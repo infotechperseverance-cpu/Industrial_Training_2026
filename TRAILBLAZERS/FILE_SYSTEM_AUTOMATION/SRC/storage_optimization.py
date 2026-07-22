@@ -185,8 +185,7 @@ class StorageOptimization:
             print("\nNo folder selected.")
             print(f"Scanning Current Directory : {self.selected_folder}")
 
-        elif not self.folder_scanned:
-            print("\nSelected folder is not scanned.")
+        elif not self.folder_scanned:  
             print(f"Scanning Selected Folder : {self.selected_folder}")
 
         self.files.clear()
@@ -351,6 +350,7 @@ class StorageOptimization:
 
         if skipped_files > 0:
             print(f"Skipped Files : {skipped_files}")
+          
 
     '''
     @Function Name : identify_large_files
@@ -463,10 +463,17 @@ class StorageOptimization:
 
             return sha256.hexdigest()
 
-        except (PermissionError, FileNotFoundError, OSError):
+        except PermissionError:
 
-            print(f"Unable to access : {file_path}")
-            return None
+         print(f"\nAccess Denied :")
+         print(file_path)
+         print("Skipped inaccessible file.")
+         return None
+
+        except (FileNotFoundError, OSError):
+
+         print(f"\nUnable to access : {file_path}")
+         return None
 
     '''
     @Function Name : identify_large_files

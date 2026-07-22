@@ -5,6 +5,7 @@ import json
 import csv
 import base64
 from datetime import datetime
+import hashlib
 '''
 @Function Name : create_files
 @Description   : This function creates the required files for the
@@ -39,6 +40,17 @@ def create_files():
     print("Required Files Created Successfully.")
 
 '''
+@Function Name : hash_password
+@Description   : Generates SHA-256 hash of the password.
+@Input Param   : password
+@Output Param  : Hashed Password
+@Author        : Mamata Chaudhari
+'''
+def hash_password(password):
+
+    return hashlib.sha256(password.encode()).hexdigest()    
+
+'''
 @Function Name : protect_file
 @Description   : This function protects the selected file by
                  accepting a password, saving the file details
@@ -56,9 +68,12 @@ def protect_file():
         print("File Not Found.")
         return
 
-    password = pwinput.pwinput(
-    prompt="Enter Password : ",
-    mask="*")
+    password = pwinput.pwinput(prompt="Enter Password : ",mask="*").strip()
+    
+    if password=="":
+        print("Password cannot be empty.")
+        return
+
    #--Read saved protected files
     with open("protected_files.json","r") as file:
         data = json.load(file)
@@ -74,7 +89,7 @@ def protect_file():
     record = {
 
         "file_path": file_path,
-        "password": password
+        "password": hash_password(password)
 
     }
 
@@ -114,7 +129,7 @@ def verify_password(file_path):
                 prompt="Enter Password : ",
                 mask="*")
 
-            if password == record["password"]:
+            if hash_password(password)==record["password"]: 
                 return True
 
             else:
@@ -173,6 +188,7 @@ def open_protected_file():
         save_access_log(os.path.basename(file_path),"Authorized")
 
         os.startfile(file_path)
+        input("\nPress enter after closing the file...")
 
         print("File Opened Successfully.")
 
@@ -238,9 +254,9 @@ def change_password():
                prompt="Enter Current Password : ",
                mask="*"
             )
-
-            #--Verify current password
-            if old_password != record["password"]:
+        
+             #--Verify current password
+            if hash_password(old_password)!=record["password"]: 
 
                 print("Incorrect Password.")
                 return
@@ -249,8 +265,12 @@ def change_password():
                 prompt="Enter New Password : ",
                 mask="*"
             )
+            new_password = new_password.strip()
+            if new_password == "":
+             print("New Password cannot be empty.")
+             return
             #--Update password
-            record["password"] = new_password
+            record["password"] = hash_password(new_password)
 
             with open("protected_files.json","w") as file:
                 json.dump(
@@ -292,11 +312,11 @@ def remove_password():
         if record["file_path"] == file_path:
 
             password = pwinput.pwinput(
-                 prompt="Enter New Password : ",
+                 prompt="Enter Current Password : ",
                  mask="*"
             )
             #--Verify password
-            if password != record["password"]:
+            if hash_password(password)!=record["password"]:
 
                 print("Incorrect Password.")
                 return
@@ -333,6 +353,13 @@ def encrypt_file(file_path):
 
         with open(file_path,"rb") as file:
             data = file.read()
+
+        try:
+            base64.b64decode(data,validate=True)
+            print("File is already encrypted.")
+            return
+        except:
+            pass    
         #--Convert data into encrypted format
         encrypted_data = base64.b64encode(data)
         #--save data in file 
@@ -360,6 +387,8 @@ def decrypt_file(file_path):
 
         with open(file_path,"rb") as file:
             encrypted_data = file.read()
+
+        encrypted_data += b'='*(-len(encrypted_data)%4)    
         #--Convert data back to original format
         original_data = base64.b64decode(encrypted_data)
         #--save data in file 

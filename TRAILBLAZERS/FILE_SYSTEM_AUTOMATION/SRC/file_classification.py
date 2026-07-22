@@ -101,6 +101,33 @@ class AutomaticFileClassification:
         return os.path.exists(destination_path)
     
     '''
+    @Function Name : get_unique_filename
+    @Description   : Generates a unique filename if the same file
+                 already exists in the destination folder.
+    @InputParam    : destination_folder
+                 file_name
+    @OutParam      : Unique file path
+    @Author        : Srushti Subhash Mahajan
+    '''
+    def get_unique_filename(self, destination_folder, file_name):
+
+     name, extension = os.path.splitext(file_name)
+
+     destination_path = os.path.join(destination_folder, file_name)
+
+     count = 1
+
+     while os.path.exists(destination_path):
+
+        new_name = "{}_{}{}".format(name, count, extension)
+
+        destination_path = os.path.join(destination_folder, new_name)
+
+        count += 1
+
+     return destination_path
+    
+    '''
     @Function Name : classify_from_folder
 
     @Description   : Classifies files from the selected folder into
@@ -139,13 +166,8 @@ class AutomaticFileClassification:
                 category = self.get_category(extension)
 
                 destination_folder = os.path.join(self.classification_folder, category)
-                destination_path = os.path.join(destination_folder, file_name)
-
-                if self.destination_exists(destination_path):
-                    print(f"{file_name} already exists in {category} folder.")
-                    skipped += 1
-                    continue
-
+                destination_path = self.get_unique_filename(destination_folder,file_name)
+    
                 try:
 
                     if operation == "copy":

@@ -213,9 +213,18 @@ class SmartFileSearch:
 
             stored_path = os.path.abspath(file["file_path"])
 
-            if stored_path.startswith(active_folder):
-                active_files.append(file)
+            if not os.path.exists(stored_path):
 
+             cursor.execute(
+            "DELETE FROM Files WHERE file_id=%s",
+            (file["file_id"],)
+             )
+
+             self.connection.commit()
+
+             continue
+            if stored_path.startswith(active_folder):
+             active_files.append(file)
         return active_files
 
 
