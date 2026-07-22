@@ -20,7 +20,7 @@ from voice import speak
 from voice_customization import select_voice
 from laptop_setting import brightness, shutdown
 from voice_setting import get_settings
-from config import SETTINGS_TEXT
+from config import SETTINGS_TEXT,EXIT_COMMANDS
 
 
 def open_settings():
@@ -68,7 +68,7 @@ def open_settings():
             elif "shutdown" in command:
                 shutdown()
 
-            elif "back" in command:
+            elif EXIT_COMMANDS in command:
                 return
 
             else:

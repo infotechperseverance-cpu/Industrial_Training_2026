@@ -6,14 +6,15 @@
 
 import asyncio
 import time
-
+from voice_recognition import speak
 from config import (
     VOICE_OPTIONS,
     NUMBER_WORDS,
     LANGUAGE_ALIASES,
     SAMPLE_TEXT,
     YES_WORDS,
-    NO_WORDS
+    NO_WORDS,
+    EXIT_COMMANDS
 )
 
 from voice_setting import save_voice
@@ -54,6 +55,10 @@ def get_language_choice(command, languages):
         return None
 
     command = command.lower().strip()
+
+    if EXIT_COMMANDS in command:
+        asyncio.run(speak("Voice customization cancelled."))
+        return
 
     if command in LANGUAGE_ALIASES:
         language = LANGUAGE_ALIASES[command]
@@ -97,6 +102,10 @@ def select_voice():
 
             command = speech()
 
+            if EXIT_COMMANDS in command:
+                asyncio.run(speak("Voice customization cancelled."))
+                return
+            
             language_choice = get_language_choice(command, languages)
 
             if language_choice is None:
@@ -139,6 +148,10 @@ def select_voice():
 
             command = speech()
 
+            if EXIT_COMMANDS in command:
+                asyncio.run(speak("Voice customization cancelled."))
+                return
+            
             voice_choice = word_to_number(command)
 
             if voice_choice is None:
@@ -172,6 +185,10 @@ def select_voice():
 
             answer = speech()
 
+            if EXIT_COMMANDS in command:
+                asyncio.run(speak("Voice customization cancelled."))
+                return
+            
             if not answer:
                 asyncio.run(speak("I didn't hear you."))
                 continue

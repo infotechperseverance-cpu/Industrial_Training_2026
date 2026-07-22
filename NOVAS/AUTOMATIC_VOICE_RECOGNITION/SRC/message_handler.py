@@ -20,7 +20,7 @@ def success(message):
     '''
     Displays and speaks a success message.
     '''
-    print(f"SUCCESS: {message}")
+    print(f"{ASSISTANT_NAME}: {message}")
     asyncio.run(speak(message))
 
 
@@ -28,7 +28,7 @@ def error(message):
     '''
     Displays and speaks an error message.
     '''
-    print(f"ERROR : {message}")
+    print(f"{ASSISTANT_NAME}: {message}")
     asyncio.run(speak(message))
 
 
@@ -36,7 +36,7 @@ def information(message):
     '''
     Displays and speaks an information message.
     '''
-    print(f"INFO : {message}")
+    print(f"{ASSISTANT_NAME}: {message}")
     asyncio.run(speak(message))
 
 
@@ -44,7 +44,7 @@ def confirm(message):
     '''
     Displays and speaks a confirmation message.
     '''
-    print(f"CONFIRM : {message}")
+    print(f"{ASSISTANT_NAME}: {message}")
     asyncio.run(speak(message))
 
 

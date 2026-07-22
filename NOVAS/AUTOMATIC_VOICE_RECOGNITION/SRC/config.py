@@ -49,7 +49,10 @@ EXIT_COMMANDS = [
     "close nova",
     "stop nova",
     "shutdown nova",
-    "goodbye"
+    "goodbye",
+    "Back",
+    "stop",
+    "close"
 ]
 
 
