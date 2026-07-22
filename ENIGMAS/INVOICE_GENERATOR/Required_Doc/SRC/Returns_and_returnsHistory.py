@@ -21,7 +21,7 @@ def return_product(invoice_id=None):
         quantity = int(input("Enter Return Quantity : "))
         reason = input("Enter Return Reason : ").strip()
 
-        # FIX 2: Reason is mandatory
+        # Reason 
         if reason == "":
             print("Return Reason cannot be blank")
             return
@@ -73,7 +73,7 @@ def return_product(invoice_id=None):
             print("Return quantity must be greater than 0")
             return
 
-        # FIX 1: Check quantity already returned for this invoice+product
+        #  Check quantity already returned for this invoice+product
         cursor.execute("""
             SELECT COALESCE(SUM(quantity), 0) FROM returns
             WHERE invoice_id=%s AND product_id=%s
