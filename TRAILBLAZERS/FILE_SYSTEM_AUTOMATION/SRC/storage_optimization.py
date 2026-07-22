@@ -2,7 +2,7 @@ import os
 import hashlib
 import shutil
 from datetime import datetime
-from db_connection import get_connection
+from database import get_connection
 
 
 class StorageOptimization:
@@ -813,75 +813,13 @@ class StorageOptimization:
             else:
                 print("\nInvalid Choice. Please Enter a Valid Option.")
 
-def close_connection(self):
-        if self.cursor:
-            self.cursor.close()
-
-        if self.connection:
-            self.connection.close() 
-
-def main():
-
-     obj = StorageOptimization()
-
-     while True:
-
-        print("\n========== STORAGE OPTIMIZATION ==========")
-        print("1. Select Folder")
-        print("2. Scan Folder")
-        print("3. Detect Duplicate Files")
-        print("4. Identify Large Files")
-        print("5. Find Unused Files")
-        print("6. Find Temporary Files")
-        print("7. Display Storage Statistics")
-        print("8. Show Free Storage Space")
-        print("9. Suggest Files To Delete")
-        print("10. Delete File")
-        print("11. Display Scanned Files")
-        print("12. Exit")
-
-        choice = input("Enter Your Choice : ")
-
-        if choice == "1":
-            obj.select_folder()
-
-        elif choice == "2":
-            obj.scan_folder()
-
-        elif choice == "3":
-            obj.detect_duplicate_files()
-
-        elif choice == "4":
-            obj.identify_large_files()
-
-        elif choice == "5":
-            obj.find_unused_files()
-
-        elif choice == "6":
-            obj.find_temporary_files()
-
-        elif choice == "7":
-            obj.display_storage_statistics()
-
-        elif choice == "8":
-            obj.show_free_storage_space()
-
-        elif choice == "9":
-            obj.suggest_files_to_delete()
-
-        elif choice == "10":
-            obj.delete_file()
-
-        elif choice == "11":
-            obj.display_scanned_files()
-
-        elif choice == "12":
-            obj.close_connection()
-            break
-
-        else:
-            print("Invalid Choice.")
-
 
 if __name__ == "__main__":
-    main()
+
+    optimizer = StorageOptimization()
+
+    try:
+        optimizer.menu()
+
+    finally:
+        optimizer.close_connection()
