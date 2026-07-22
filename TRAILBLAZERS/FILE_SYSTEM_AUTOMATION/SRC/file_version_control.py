@@ -1,24 +1,9 @@
-'''
-@Library Name : db_connection
-@Description  : Used to establish a connection with the MySQL database.
 
-@Library Name : os
-@Description  : Used for file and directory handling operations.
-
-@Library Name : shutil
-@Description  : Used to copy, move and manage files.
-
-@Library Name : datetime
-@Description  : Used to get the current system date and time.
-
-@Library Name : difflib
-@Description  : Used to compare two file versions and display the differences.
-'''
-from db_connection import get_connection 
+from db_connection import get_connection #used to connect with database
 import os  
-import shutil
+import shutil  #Used to copy, move and manage files.
 from datetime import datetime
-import difflib
+import difflib #Used to compare two file versions and display the differences.
 
 '''
 @Function Name : add_file
@@ -44,7 +29,7 @@ def add_file():
     file_name = os.path.basename(file_path)
 
     try:
-        #--Connect to MySQL database
+        
         connection = get_connection()
         cursor = connection.cursor()
 
@@ -56,9 +41,9 @@ def add_file():
         values = (file_id, file_name, file_path)
 
         cursor.execute(query, values)
-        #--Save changes permanently
+        
         connection.commit()
-        #--Close database connection
+        
         cursor.close()
         connection.close()
 
@@ -91,7 +76,6 @@ def get_file_path(file_id):
         """
 
         cursor.execute(query, (file_id,))
-        #--Get single record
         result = cursor.fetchone()
 
         cursor.close()
@@ -100,8 +84,7 @@ def get_file_path(file_id):
         if result:
             return result[0]
 
-        return None  #--file id is not found return none
-
+        return None  
     except Exception as e:
         print("Error :", e)
         return None
@@ -119,7 +102,7 @@ def get_file_path(file_id):
 def create_version_folder():
 
     folder_name = "versions"
-    #--Create folder only if it does not exist
+
     if not os.path.exists(folder_name):
         os.mkdir(folder_name)
         print("Version folder created successfully.")
@@ -157,7 +140,7 @@ def create_version():
 
     file_name = os.path.basename(file_path)
     name, extension = os.path.splitext(file_name)
-    #--Generate next version number
+    
     version_number = get_latest_version(file_id) + 1
 
     version_file = f"versions/{name}_v{version_number}{extension}"
@@ -165,7 +148,7 @@ def create_version():
     shutil.copy(file_path, version_file)
 
     try:
-        #--Connect to MySQL database
+        
         connection = get_connection()
         cursor = connection.cursor()
 
@@ -183,7 +166,7 @@ def create_version():
             datetime.now(),
             version_notes
         )
-        #--Execute INSERT query
+        
         cursor.execute(query, values)
         connection.commit()
 
@@ -208,7 +191,6 @@ def create_version():
 def get_latest_version(file_id):
 
     connection = get_connection()
-    #--Create cursor object
     cursor = connection.cursor()
     #--Get latest version number for the given file
     query = """
@@ -261,7 +243,6 @@ def view_version_history():
         cursor.execute(query, (file_id,))
         #--Fetch all version records
         records = cursor.fetchall()
-        #--check if history exists
         if not records:
             print("No Version History Found.")
 
@@ -299,7 +280,7 @@ def restore_version():
     version_number = int(input("Enter Version Number : "))
 
     file_path = get_file_path(file_id)
-    #--Stop if File ID is invalid
+    
     if file_path is None:
         print("File ID Not Found.")
         return
@@ -312,7 +293,7 @@ def restore_version():
     if not os.path.exists(version_file):
         print("Version File Not Found.")
         return
-    #--Restore selected version
+    
     shutil.copy(version_file, file_path)
 
     print("Version Restored Successfully.")
@@ -346,26 +327,42 @@ def compare_versions():
     file1 = f"versions/{name}_v{version1}{extension}"
     file2 = f"versions/{name}_v{version2}{extension}"
 
-    if not os.path.exists(file1):  #==Check whether both files exist
+    if not os.path.exists(file1):  
         print("First Version File Not Found.")
         return
 
     if not os.path.exists(file2):
-        print("Second Version File Not Found.")
-        return
+         print("Second Version File Not Found.")
+         return
 
-    with open(file1, "r") as f1:
-        old_data = f1.readlines()
+#--Binary files cannot be compared
+    binary_extensions = [
+         ".pdf",
+         ".jpg",
+         ".jpeg",
+         ".png",
+         ".exe",
+         ".zip"
+    ]
 
-    with open(file2, "r") as f2:
-        new_data = f2.readlines()
+    if extension.lower() in binary_extensions:
+         print("Binary files cannot be compared.")
+         return
+
+
+    with open(file1,"r",encoding="utf-8") as f1:
+         old_data = f1.readlines()
+
+    with open(file2,"r",encoding="utf-8") as f2:
+         new_data = f2.readlines()
+
 
     difference = difflib.unified_diff(
-        old_data,
-        new_data,
-        fromfile=file1,
-        tofile=file2,
-        lineterm=""
+         old_data,
+         new_data,
+         fromfile=file1,
+         tofile=file2,
+         lineterm=""
     )
 
     print("\n===== DIFFERENCES =====\n")
@@ -394,7 +391,7 @@ def delete_version():
     if file_path is None:
         print("File ID Not Found.")
         return
-    # Create version file path
+    #--Create version file path
     file_name = os.path.basename(file_path)
     name, extension = os.path.splitext(file_name)
 
@@ -403,14 +400,14 @@ def delete_version():
     if not os.path.exists(version_file):
         print("Version File Not Found.")
         return
-    #--Delete version file
+    
     os.remove(version_file)
 
     try:
 
         connection = get_connection()
         cursor = connection.cursor()
-        #--Delete version record from database
+    
         query = """
         DELETE FROM File_Version
         WHERE file_id=%s AND version_number=%s
@@ -438,7 +435,7 @@ def delete_version():
 @Author        : Mamata Chaudhari
 '''
 def main():
-    #--Create Versions folder if it does not exist
+    
     create_version_folder()
 
     while True:

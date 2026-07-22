@@ -33,7 +33,6 @@ def delete_file():
     #--Save backup copy
     shutil.copy2(file_path,backup_path)
 
-    #--Create Recycle Folder
     recycle_folder = "Recycle_Folder"
 
     if not os.path.exists(recycle_folder):
@@ -89,12 +88,13 @@ def show_deleted_files():
     cursor = connection.cursor()
       #--Get deleted file details from database
     query = """
-    SELECT
-    recovery_id,
-    file_name,
-    deleted_date,
-    recovery_status
-    FROM Recycle_Bin
+         SELECT
+         recovery_id,
+         file_name,
+         deleted_date,
+         recovery_status
+         FROM Recycle_Bin
+         WHERE recovery_status = 'Deleted'
     """
 
     cursor.execute(query)
@@ -122,7 +122,7 @@ def show_deleted_files():
 '''
 @Function Name : preview_file
 @Description   : This function displays complete details of a
-                 selected deleted file using Recovery ID.
+                 selected deleted file using Recovery ID and display also file content.
 @Input Param   : Recovery ID
 @Output Param  : File Details
 @Author        : Mamata Chaudhari
@@ -155,6 +155,32 @@ def preview_file():
         print("Recovered Date :",record[4])
         print("Recovery Status:",record[5])
         print("Deleted By     :",record[6])
+        file_name = record[2]
+
+        recycle_path = os.path.join(
+            "Recycle_Folder",
+            file_name
+        )
+
+
+    if os.path.exists(recycle_path):
+
+        print("\n===== FILE CONTENT =====\n")
+
+
+        if file_name.endswith(".txt"):
+
+            with open(recycle_path,"r",encoding="utf-8") as file:
+                print(file.read())
+
+        elif file_name.endswith((".jpg",".jpeg",".png")):
+            print("Image File Found :",file_name)
+
+        else:
+            print("Preview is not supported for this file type.")
+
+    else:
+        print("Physical File Not Found.")
 
     connection.close()
 
@@ -195,7 +221,7 @@ def recover_file():
     recycle_path = os.path.join("Recycle_Folder",file_name)
 
     recovery_folder = "Recovered_Files"
-     #--Create recovery folder if it does not exist
+     
     if not os.path.exists(recovery_folder):
 
         os.makedirs(recovery_folder)
@@ -254,7 +280,11 @@ def recover_multiple_files():
     for recovery_id in recovery_ids:
 
         recovery_id = recovery_id.strip()
-         #--Get file name using Recovery ID
+    
+        if not recovery_id.isdigit():
+             print(recovery_id,"is an Invalid Recovery ID.")
+             continue
+
         query = """
         SELECT file_name
         FROM Recycle_Bin
@@ -339,8 +369,37 @@ def restore_backup():
         os.makedirs(restore_folder)
 
     restore_path = os.path.join(restore_folder,file_name)
-    #--Copy file from Backup Folder to Recovered Files
-    shutil.copy2(backup_file,restore_path)
+
+#--Generate new name if file already exists
+    if os.path.exists(restore_path):
+
+        file_base,file_extension = os.path.splitext(file_name)
+
+        count = 1
+
+        while True:
+
+            new_name = (
+                 f"{file_base}_{count}"
+                 f"{file_extension}"
+            )
+
+            new_path = os.path.join(
+                 restore_folder,
+                 new_name
+            )
+
+            if not os.path.exists(new_path):
+                 restore_path = new_path
+                 break
+
+        count += 1
+
+     #--Copy file from Backup Folder
+    shutil.copy2(
+         backup_file,
+         restore_path
+    )
 
     connection = get_connection()
     cursor = connection.cursor()
@@ -398,13 +457,22 @@ def permanent_delete():
     file_name = record[0]
 
     recycle_path = os.path.join("Recycle_Folder",file_name)
+
+    if not os.path.exists(recycle_path):
+
+         print("Physical File Not Found.")
+         print("Permanent Deletion Failed.")
+
+         connection.close()
+         return
+
+
     #--Delete file from Recycle Folder
-    if os.path.exists(recycle_path):
-        os.remove(recycle_path)
+    os.remove(recycle_path)
 
     delete_query = """
-    DELETE FROM Recycle_Bin
-    WHERE recovery_id = %s
+         DELETE FROM Recycle_Bin
+         WHERE recovery_id = %s
     """
 
     cursor.execute(delete_query,(recovery_id,))
@@ -439,7 +507,7 @@ def show_recovery_status():
 
     cursor.execute(query)
     records = cursor.fetchall()
-    #--Check if recovery records exist
+    
     if len(records) == 0:
         print("No Recovery Records Found.")
 
