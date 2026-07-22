@@ -54,6 +54,9 @@ def view_by_month(cursor, user_id):
     try:
 
         year, mon = month.split("-")
+        if int(mon) < 1 or int(mon) > 12:
+            print("Invalid Month")
+            return
 
         start_date = f"{month}-01"
 
