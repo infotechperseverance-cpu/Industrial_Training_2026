@@ -2,6 +2,9 @@ import mysql.connector
 from datetime import datetime
 import db
 
+conn=db.getconnection()
+cursor=conn.cursor()
+
 print("Welcome to the Task Scheduler!")
 
 
@@ -34,7 +37,7 @@ def schedule_task(user_id):
         print("Error:", e)
 
 
-def modify_task(user_id):
+def modify_task(task_id,user_id):
     try:
         db.show_tasks(user_id)
         task_id = input("enter task _id:")
@@ -68,14 +71,34 @@ def modify_task(user_id):
         print("error:", e)
 
 
-def delete_task(user_id):
+def delete_task(task_id,user_id):
     db.show_tasks(user_id)
     task_id = input("Enter the task ID to delete: ")
     db.delete_task(task_id, user_id)
 
+def validate2_id(task_id,user_id):
+    cursor.fetchall()
+    check_query="SELECT * FROM tasks WHERE id=%s AND user_id=%s" 
+    temp_cursor=conn.cursor()
+    temp_cursor.execute(check_query,(task_id, user_id))
+    task=temp_cursor.fetchone()
+    temp_cursor.close()
+    if task is None:
+        print("invalid task_id or task doesnot belong to this user")
+        return False
+    return True
+
 
 user_id = int(input("enter user_id:"))
-while True:
+
+check_query="SELECT * FROM tasks WHERE user_id=%s"
+cursor.execute(check_query,(user_id,))
+task= cursor.fetchone()
+if task is None:
+    print("invaild user_id,task not found")
+else:
+
+ while True:
     match input(
         "========== ENTER CHOISE ========== \n 1. Schedule a task\n 2. View tasks\n 3. Modify task\n 4. Delete task\n 5. Restore tasks\n 6. Exit \n choise ?: "):
         case "1":
@@ -85,15 +108,19 @@ while True:
 
             db.show_tasks(user_id)
         case "3":
-
-            modify_task(user_id)
+             task_id = input("Enter the task ID to modify ")
+             if validate2_id(task_id,user_id):
+              modify_task(task_id,user_id)
         case "4":
+            task_id = input("Enter the task ID to delete ")
+            if validate2_id(task_id,user_id):
+              delete_task(task_id,user_id)
 
-            delete_task(user_id)
         case "5":
 
             task_id = input("Enter the task ID to restore: ")
-            db.restore_task(task_id, user_id)
+            if validate2_id(task_id,user_id):
+             db.restore_task(task_id, user_id)
         case "6":
             print("Exiting the Task Scheduler. Goodbye!")
             break
