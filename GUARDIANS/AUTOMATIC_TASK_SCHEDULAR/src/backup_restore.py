@@ -95,7 +95,13 @@ def restore_backup():
 
         else:
             print("\nRestore failed.")
-            print(result.stderr)
+
+            if ("Access denied" in result.stderr or "1045" in result.stderr ):
+                print( "Database authentication error:Invalid MySQL username or password." )
+                
+            else:
+                print(result.stderr)    
+    
 
 
     except FileNotFoundError:
