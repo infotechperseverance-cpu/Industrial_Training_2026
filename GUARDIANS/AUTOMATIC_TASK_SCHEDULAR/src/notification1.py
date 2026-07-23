@@ -15,8 +15,8 @@ def connect_database():
         return None
 
 def send_email(receiver_email, subject, message):
-    sender_email = "adityagahelwar81@gmail.com"
-    sender_password = "enzf ytor vgfz uaud"
+    sender_email = "pushpaghule201@gmail.com"
+    sender_password = "cukc njvg rdlm bqlu"
 
     try:
         msg = MIMEMultipart()
@@ -30,8 +30,9 @@ def send_email(receiver_email, subject, message):
         server.login(sender_email, sender_password)
         server.send_message(msg)
         server.quit()
-    except Exception:
-        pass
+        print("Email send succesfully!")
+    except Exception as e:
+        print("Email sending failed:",e)
 
 def show_notification(title, message):
     try:
