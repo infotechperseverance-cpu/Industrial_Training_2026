@@ -58,7 +58,7 @@ class AIEmailWriter:
 
             self.client = genai.Client(
 
-                api_key="YOUR_API_KEY"
+                api_key="your_api_key_here"
 
             )
 
