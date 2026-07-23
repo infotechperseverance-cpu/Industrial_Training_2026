@@ -5,10 +5,7 @@ from automation import automation_menu
 from file_handler import file_handler_menu
 from kernel_demo import show_kernel_usage
 
-# ==========================================
 # ADMIN DASHBOARD
-# ==========================================
-
 def admin_dashboard():
 
     while True:
@@ -45,7 +42,7 @@ def admin_dashboard():
             file_handler_menu()
         elif choice == "6":
 
-    show_kernel_usage()
+            show_kernel_usage()
 
         elif choice == "7":
 
@@ -56,10 +53,7 @@ def admin_dashboard():
 
             print("Invalid Choice.")
 
-
-# ==========================================
 # USER DASHBOARD
-# ==========================================
 
 def user_dashboard(user_id):
 
@@ -94,10 +88,7 @@ def user_dashboard(user_id):
 
             print("Invalid Choice.")
 
-
-# ==========================================
 # LOGIN
-# ==========================================
 
 def start():
 
@@ -121,11 +112,8 @@ def start():
     else:
 
         user_dashboard(user_id)
-
-
-# ==========================================
+        
 # MAIN
-# ==========================================
 
 def main():
 
