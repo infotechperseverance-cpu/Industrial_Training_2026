@@ -5,11 +5,13 @@
 #
 # DESCRIPTION :
 # This module manages Email Reminders.
-# Users can:
-#   1. Add Reminder
-#   2. View Reminder
-#   3. Update Reminder Status
-#   4. Delete Reminder
+#
+# FEATURES :
+# 1. Add Reminder
+# 2. View Reminder
+# 3. Update Reminder Status
+# 4. Delete Reminder
+# 5. Automatic Reminder Notification
 #
 # DATABASE :
 # email_automation
@@ -17,13 +19,27 @@
 # TABLE :
 # email_reminders
 #
+# AUTHOR : Mansi More
+# =============================================================================
+
+
+# =============================================================================
+# IMPORT MODULES
 # =============================================================================
 
 import re
+import time
+import threading
 import mysql.connector
 
-from mysql.connector import Error
 from datetime import datetime
+from mysql.connector import Error
+
+try:
+    from plyer import notification
+    PLYER_AVAILABLE = True
+except ImportError:
+    PLYER_AVAILABLE = False
 
 
 # =============================================================================
@@ -32,7 +48,7 @@ from datetime import datetime
 
 HOST = "localhost"
 USER = "root"
-PASSWORD = "root123"          # Change according to your MySQL password
+PASSWORD = "root123"          # Change according to your MySQL Password
 DATABASE = "email_automation"
 
 
@@ -107,7 +123,7 @@ def create_table():
 
             reminder_date DATETIME NOT NULL,
 
-            status VARCHAR(50)
+            status VARCHAR(30)
             DEFAULT 'Pending'
 
         )
@@ -147,6 +163,78 @@ def check_email(email):
     pattern = r'^[A-Za-z0-9._%+-]+@gmail\.com$'
 
     return bool(re.fullmatch(pattern, email))
+
+
+# =============================================================================
+# FUNCTION NAME : show_notification
+#
+# PURPOSE :
+# Displays desktop popup notification.
+#
+# INPUT :
+# Subject
+# Message
+#
+# OUTPUT :
+# Windows Desktop Notification
+# =============================================================================
+
+def show_notification(subject, message):
+
+    if PLYER_AVAILABLE:
+
+        try:
+
+            notification.notify(
+
+                title="Email Reminder",
+
+                message=f"{subject}\n\n{message}",
+
+                timeout=10
+
+            )
+
+        except Exception:
+
+            print("\nNotification Error.")
+
+    else:
+
+        print("\n======================================")
+        print("          EMAIL REMINDER")
+        print("======================================")
+        print("Subject :", subject)
+        print("Message :", message)
+        print("======================================")
+
+
+# =============================================================================
+# FUNCTION NAME : check_due_reminders
+#
+# PURPOSE :
+# Checks database for reminders whose reminder time
+# has arrived.
+#
+# NOTE :
+# Called continuously by background thread.
+#
+# OUTPUT :
+# Shows notification and updates reminder status.
+#
+# Remaining logic will be completed in Part 5.
+# =============================================================================
+
+def check_due_reminders():
+
+    pass
+
+
+# =============================================================================
+# BACKGROUND THREAD OBJECT
+# =============================================================================
+
+reminder_thread = None
 
 # =============================================================================
 # FUNCTION NAME : add_reminder
@@ -237,25 +325,20 @@ def add_reminder():
             break
 
         # ---------------------------------------------------------
-        # Reminder Date
+        # Reminder Date & Time
         # ---------------------------------------------------------
 
         while True:
 
             reminder = input(
-
                 "Reminder Date (YYYY-MM-DD HH:MM:SS) : "
-
             ).strip()
 
             try:
 
                 reminder_datetime = datetime.strptime(
-
                     reminder,
-
                     "%Y-%m-%d %H:%M:%S"
-
                 )
 
                 if reminder_datetime <= datetime.now():
@@ -272,13 +355,12 @@ def add_reminder():
                 print("Example : 2026-08-10 14:30:00")
 
         # ---------------------------------------------------------
-        # Insert Reminder
+        # Save Reminder
         # ---------------------------------------------------------
 
         query = """
 
         INSERT INTO email_reminders
-
         (
 
             recipient_email,
@@ -287,13 +369,16 @@ def add_reminder():
 
             message,
 
-            reminder_date
+            reminder_date,
+
+            status
 
         )
 
         VALUES
-
         (
+
+            %s,
 
             %s,
 
@@ -319,7 +404,9 @@ def add_reminder():
 
                 message,
 
-                reminder_datetime
+                reminder_datetime,
+
+                "Pending"
 
             )
 
@@ -327,7 +414,10 @@ def add_reminder():
 
         conn.commit()
 
-        print("\nReminder Added Successfully.")
+        print("\n========================================")
+        print("Reminder Added Successfully.")
+        print("Status : Pending")
+        print("========================================")
 
     except Error as err:
 
@@ -342,18 +432,17 @@ def add_reminder():
 
         conn.close()
 
-
 # =============================================================================
 # FUNCTION NAME : view_reminders
 #
 # PURPOSE :
-# Displays all reminders stored in database.
+# Displays all reminders stored in the database.
 #
 # INPUT :
 # None
 #
 # OUTPUT :
-# Prints reminder details.
+# Prints reminder details in ascending order of reminder date.
 # =============================================================================
 
 def view_reminders():
@@ -370,56 +459,65 @@ def view_reminders():
 
         cursor = conn.cursor(buffered=True)
 
-        cursor.execute(
+        query = """
 
-            """
+        SELECT
 
-            SELECT
+            id,
 
-                id,
+            recipient_email,
 
-                recipient_email,
+            subject,
 
-                subject,
+            message,
 
-                message,
+            reminder_date,
 
-                reminder_date,
+            status
 
-                status
+        FROM email_reminders
 
-            FROM email_reminders
+        ORDER BY reminder_date ASC
 
-            ORDER BY reminder_date
+        """
 
-            """
-
-        )
+        cursor.execute(query)
 
         records = cursor.fetchall()
 
-        print("\n========================================")
-        print("          EMAIL REMINDERS")
-        print("========================================")
+        print("\n==============================================")
+        print("             EMAIL REMINDERS")
+        print("==============================================")
 
         if len(records) == 0:
 
             print("No Reminder Found.")
-
             return
 
         for row in records:
 
-            print("----------------------------------------")
-
+            print("----------------------------------------------")
             print("Reminder ID     :", row[0])
             print("Recipient Email :", row[1])
             print("Subject         :", row[2])
             print("Message         :", row[3])
-            print("Reminder Date   :", row[4])
+
+            if isinstance(row[4], datetime):
+
+                print(
+                    "Reminder Date   :",
+                    row[4].strftime("%Y-%m-%d %H:%M:%S")
+                )
+
+            else:
+
+                print("Reminder Date   :", row[4])
+
             print("Status          :", row[5])
 
-        print("----------------------------------------")
+        print("----------------------------------------------")
+        print("Total Reminders :", len(records))
+        print("==============================================")
 
     except Error as err:
 
@@ -442,7 +540,7 @@ def view_reminders():
 #
 # INPUT :
 # Reminder ID
-# Status
+# New Status
 #
 # OUTPUT :
 # Updates reminder status in database.
@@ -462,23 +560,15 @@ def update_status():
 
         cursor = conn.cursor(buffered=True)
 
-        reminder_id = input("\nEnter Reminder ID : ").strip()
+        print("\n========================================")
+        print("      UPDATE REMINDER STATUS")
+        print("========================================")
+
+        reminder_id = input("Enter Reminder ID : ").strip()
 
         if not reminder_id.isdigit():
 
             print("Invalid Reminder ID.")
-
-            return
-
-        status = input(
-
-            "Enter Status (Pending/Completed) : "
-
-        ).strip().title()
-
-        if status not in ("Pending", "Completed"):
-
-            print("Status must be Pending or Completed.")
 
             return
 
@@ -495,6 +585,18 @@ def update_status():
             print("Reminder ID not found.")
 
             return
+
+        while True:
+
+            status = input(
+                "Enter Status (Pending/Completed) : "
+            ).strip().title()
+
+            if status in ("Pending", "Completed"):
+
+                break
+
+            print("Invalid Status.")
 
         cursor.execute(
 
@@ -540,13 +642,13 @@ def update_status():
 # FUNCTION NAME : delete_reminder
 #
 # PURPOSE :
-# Deletes reminder from database.
+# Deletes a reminder from the database.
 #
 # INPUT :
 # Reminder ID
 #
 # OUTPUT :
-# Deletes reminder.
+# Deletes reminder permanently.
 # =============================================================================
 
 def delete_reminder():
@@ -563,11 +665,11 @@ def delete_reminder():
 
         cursor = conn.cursor(buffered=True)
 
-        reminder_id = input(
+        print("\n========================================")
+        print("         DELETE REMINDER")
+        print("========================================")
 
-            "\nEnter Reminder ID : "
-
-        ).strip()
+        reminder_id = input("Enter Reminder ID : ").strip()
 
         if not reminder_id.isdigit():
 
@@ -589,9 +691,25 @@ def delete_reminder():
 
             return
 
+        confirm = input(
+            "Are you sure? (Y/N) : "
+        ).strip().upper()
+
+        if confirm != "Y":
+
+            print("Delete Cancelled.")
+
+            return
+
         cursor.execute(
 
-            "DELETE FROM email_reminders WHERE id=%s",
+            """
+
+            DELETE FROM email_reminders
+
+            WHERE id=%s
+
+            """,
 
             (reminder_id,)
 
@@ -614,6 +732,131 @@ def delete_reminder():
 
         conn.close()
 
+# =============================================================================
+# FUNCTION NAME : check_due_reminders
+#
+# PURPOSE :
+# Continuously checks the database for reminders whose
+# reminder time has arrived.
+#
+# OUTPUT :
+# Shows desktop notification and automatically updates
+# reminder status from Pending to Completed.
+# =============================================================================
+
+def check_due_reminders():
+
+    while True:
+
+        conn = db_connection()
+
+        if conn is not None:
+
+            cursor = None
+
+            try:
+
+                cursor = conn.cursor(buffered=True)
+
+                query = """
+
+                SELECT
+
+                    id,
+                    subject,
+                    message
+
+                FROM email_reminders
+
+                WHERE
+
+                    reminder_date <= NOW()
+
+                    AND status='Pending'
+
+                """
+
+                cursor.execute(query)
+
+                reminders = cursor.fetchall()
+
+                for reminder in reminders:
+
+                    reminder_id = reminder[0]
+                    subject = reminder[1]
+                    message = reminder[2]
+
+                    # ----------------------------------------
+                    # Show Notification
+                    # ----------------------------------------
+
+                    show_notification(subject, message)
+
+                    # ----------------------------------------
+                    # Update Status
+                    # ----------------------------------------
+
+                    cursor.execute(
+
+                        """
+
+                        UPDATE email_reminders
+
+                        SET status='Completed'
+
+                        WHERE id=%s
+
+                        """,
+
+                        (reminder_id,)
+
+                    )
+
+                    conn.commit()
+
+            except Error as err:
+
+                print("\nReminder Thread Error")
+                print(err)
+
+            finally:
+
+                if cursor:
+
+                    cursor.close()
+
+                conn.close()
+
+        # --------------------------------------------
+        # Check every 10 seconds
+        # --------------------------------------------
+
+        time.sleep(10)
+
+
+# =============================================================================
+# FUNCTION NAME : start_reminder_thread
+#
+# PURPOSE :
+# Starts background reminder thread only once.
+# =============================================================================
+
+def start_reminder_thread():
+
+    global reminder_thread
+
+    if reminder_thread is None:
+
+        reminder_thread = threading.Thread(
+
+            target=check_due_reminders,
+
+            daemon=True
+
+        )
+
+        reminder_thread.start()
+
 
 # =============================================================================
 # FUNCTION NAME : reminder_menu
@@ -625,6 +868,8 @@ def delete_reminder():
 def reminder_menu():
 
     create_table()
+
+    start_reminder_thread()
 
     while True:
 
@@ -638,7 +883,7 @@ def reminder_menu():
         print("5. Exit")
         print("======================================")
 
-        choice = input("Enter Choice : ").strip()
+        choice = input("\nEnter Choice : ").strip()
 
         if choice == "1":
 

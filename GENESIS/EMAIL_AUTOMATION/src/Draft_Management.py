@@ -26,6 +26,7 @@
 # =============================================================================
 
 
+from ai_email import AIEmailWriter
 import mysql.connector
 from mysql.connector import Error
 from datetime import datetime
@@ -246,58 +247,121 @@ class DraftManagement:
 
     def create_draft(self):
 
-
         print("\n================================")
-
         print("        CREATE EMAIL DRAFT")
-
         print("================================")
 
+        receiver = input("Receiver Email : ").strip()
+
+        print("\nSelect Draft Type")
+        print("1. Manual Draft")
+        print("2. AI Generated Draft")
+
+        choice = input("\nEnter Choice : ").strip()
+
+        # =====================================================
+        # MANUAL DRAFT
+        # =====================================================
+
+        if choice == "1":
+
+            subject = input("\nSubject : ").strip()
+
+            print("\nEnter Email Body")
+            print("Press ENTER twice to finish.\n")
+
+            lines = []
+
+            while True:
+
+                line = input()
+
+                if line == "":
+                    break
+
+                lines.append(line)
+
+            body = "\n".join(lines)
+
+        # =====================================================
+        # AI GENERATED DRAFT
+        # =====================================================
+
+        elif choice == "2":
+
+            topic = input("\nEnter Email Topic : ").strip()
+
+            print("\nSelect Email Tone")
+            print("1. Professional")
+            print("2. Friendly")
+            print("3. Formal")
+            print("4. Apology")
+            print("5. Thank You")
+            print("6. Request")
+            print("7. Invitation")
+
+            tone_choice = input("\nEnter Choice : ").strip()
 
 
-        recipient = input(
-            "Reciever Email : "
-        ).strip()
+            details = input("\nEnter Additional Details : ").strip()
 
+            ai = AIEmailWriter()
 
-
-        subject = input(
-            "Subject : "
-        ).strip()
-
-
-
-        print(
-            "Enter Email Body : "
-        )
-
-
-        body = input()
-
-
-
-        if subject=="" or body=="":
-
-
-            print(
-                "\nSubject and Body cannot be empty."
+            subject, body = ai.generate_email(
+                topic,
+                tone_choice,
+                details
             )
+
+            if subject == "Error":
+
+                print(body)
+
+                return
+
+            print("\n================================")
+            print("      AI GENERATED DRAFT")
+            print("================================")
+
+            print("\nSubject :")
+            print(subject)
+
+            print("\nBody :")
+            print(body)
+
+            confirm = input("\nSave this draft? (Y/N) : ").strip().upper()
+
+            if confirm != "Y":
+
+                print("\nDraft Not Saved.")
+
+                return
+
+        else:
+
+            print("\nInvalid Choice.")
 
             return
 
+        # =====================================================
+        # VALIDATION
+        # =====================================================
 
+        if subject == "" or body == "":
+
+            print("\nSubject and Body cannot be empty.")
+
+            return
 
         self.save_draft(
 
-            recipient,
+            receiver,
 
             subject,
 
             body
 
         )
-
-
 
 
 

@@ -674,382 +674,87 @@ class RetrieveData:
 
 
 
-    # =========================================================================
+        # =========================================================================
     # FUNCTION NAME : view_drafts
     #
     # PURPOSE:
     # Displays saved email drafts.
     #
     # TABLE:
-    # email_drafts
+    # drafts
     #
     # =========================================================================
-
 
     def view_drafts(self):
 
-
         if self.conn is None:
-
 
             return
 
-
-
-
         cursor = self.conn.cursor()
-
-
 
         try:
 
-
-
             cursor.execute("""
 
+                SELECT
 
-            SELECT
+                    id,
 
+                    receiver_email,
 
-            recipient_email,
+                    subject,
 
-            subject,
+                    created_on
 
-            created_date
+                FROM drafts
 
-
-
-            FROM email_drafts
-
-
-
-            ORDER BY created_date DESC
-
-
+                ORDER BY created_on DESC
 
             """)
 
-
-
-
             records = cursor.fetchall()
 
-
-
-
             print("\n================================")
-
-            print("             DRAFT EMAILS")
-
+            print("          DRAFT EMAILS")
             print("================================")
 
+            if len(records) == 0:
 
-
-
-            if len(records)==0:
-
-
-                print("No Draft Emails Found.")
-
-
+                print("No Drafts Found.")
 
             else:
 
-
-
                 print(
-
-                    "{:<30}{:<30}{:<25}".format(
-
+                    "{:<8}{:<35}{:<35}{:<25}".format(
+                        "ID",
                         "Receiver",
-
                         "Subject",
-
-                        "Created Date"
-
+                        "Created On"
                     )
-
                 )
 
-
-
-                print("-"*90)
-
-
+                print("-" * 105)
 
                 for row in records:
 
-
-
                     print(
-
-                        "{:<30}{:<30}{:<25}".format(
-
-                            str(row[0]),
-
-                            str(row[1]),
-
-                            str(row[2])
-
+                        "{:<8}{:<35}{:<35}{:<25}".format(
+                            row[0],
+                            row[1],
+                            row[2],
+                            str(row[3])
                         )
-
                     )
-
-
-
 
         except Error as err:
 
-
-
-            print("\nDraft Fetch Error:")
-
+            print("\nDraft Fetch Error :")
             print(err)
-
-
 
         finally:
 
-
-
             cursor.close()
-
-
-
-
-
-
-
-    # =========================================================================
-    # FUNCTION NAME : view_templates
-    #
-    # PURPOSE:
-    # Displays saved email templates.
-    #
-    # TABLE:
-    # email_templates
-    #
-    # =========================================================================
-
-
-    def view_templates(self):
-
-
-        if self.conn is None:
-
-
-            return
-
-
-
-
-        cursor = self.conn.cursor()
-
-
-
-        try:
-
-
-
-            cursor.execute("""
-
-
-            SELECT
-
-
-            template_id,
-
-            template_name,
-
-            subject
-
-
-
-            FROM email_templates
-
-
-
-            ORDER BY template_name
-
-
-
-            """)
-
-
-
-
-            records = cursor.fetchall()
-
-
-
-
-            print("\n================================")
-
-            print("          EMAIL TEMPLATES")
-
-            print("================================")
-
-
-
-
-            if len(records)==0:
-
-
-                print("No Templates Found.")
-
-                return
-
-
-
-
-            print(
-
-                "{:<10}{:<30}{:<35}".format(
-
-                    "ID",
-
-                    "Template Name",
-
-                    "Subject"
-
-                )
-
-            )
-
-
-
-            print("-"*80)
-
-
-
-
-            for row in records:
-
-
-
-                print(
-
-                    "{:<10}{:<30}{:<35}".format(
-
-                        row[0],
-
-                        row[1],
-
-                        row[2]
-
-                    )
-
-                )
-
-
-
-
-
-            template_id = input(
-
-                "\nEnter Template ID (0 Back): "
-
-            )
-
-
-
-            if template_id=="0":
-
-
-                return
-
-
-
-
-
-            cursor.execute("""
-
-
-            SELECT
-
-
-            template_name,
-
-            subject,
-
-            body
-
-
-
-            FROM email_templates
-
-
-
-            WHERE template_id=%s
-
-
-
-            """,
-
-            (
-
-                template_id,
-
-            )
-
-            )
-
-
-
-
-            template = cursor.fetchone()
-
-
-
-
-            if template:
-
-
-
-                print("\n========== TEMPLATE DETAILS ==========")
-
-                print("Name :", template[0])
-
-                print("Subject :", template[1])
-
-                print("\nBody:")
-
-                print(template[2])
-
-
-
-            else:
-
-
-
-                print("\nInvalid Template ID.")
-
-
-
-
-
-        except Error as err:
-
-
-
-            print("\nTemplate Fetch Error:")
-
-            print(err)
-
-
-
-
-        finally:
-
-
-
-            cursor.close()
-
-
-
-
-
-
 
 
     # =========================================================================
@@ -1517,13 +1222,11 @@ class RetrieveData:
 
             print("5. View Draft Emails")
 
-            print("6. View Email Templates")
+            print("6. Filter Emails By Date")
 
-            print("7. Filter Emails By Date")
+            print("7. View Success / Failed Emails")
 
-            print("8. View Success / Failed Emails")
-
-            print("9. Back")
+            print("8. Back")
 
             print("====================================")
 
@@ -1571,29 +1274,21 @@ class RetrieveData:
                 self.view_drafts()
 
 
-
             elif choice=="6":
-
-
-                self.view_templates()
-
-
-
-            elif choice=="7":
 
 
                 self.filter_by_date()
 
 
 
-            elif choice=="8":
+            elif choice=="7":
 
 
                 self.view_status_records()
 
 
 
-            elif choice=="9":
+            elif choice=="8":
 
 
                 print("\nReturning To Main Menu...")

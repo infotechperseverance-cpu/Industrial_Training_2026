@@ -19,6 +19,9 @@
 
 import smtplib
 import ssl
+
+
+from ai_email import AIEmailWriter
 import mysql.connector
 
 from mysql.connector import Error
@@ -328,16 +331,87 @@ class SendEmail:
         receiver_email = self.add_receiver()
 
         # ---------------------------------------------------------
-        # Email Details
+        # Email Generation Method
         # ---------------------------------------------------------
 
-        subject = input("\nEnter Subject : ").strip()
+        print("\n======================================")
+        print("        EMAIL GENERATION")
+        print("======================================")
+        print("1. Manual Email")
+        print("2. AI Generated Email")
+        print("======================================")
 
-        message = input("Enter Message : ").strip()
+        choice = input("Enter Choice : ").strip()
 
-        # ---------------------------------------------------------
-        # Create Email
-        # ---------------------------------------------------------
+        # =========================================================
+        # MANUAL EMAIL
+        # =========================================================
+
+        if choice == "1":
+
+            subject = input("\nEnter Subject : ").strip()
+
+            print("\nEnter Email Message")
+            print("Press ENTER twice to finish.\n")
+
+            lines = []
+
+            while True:
+
+                line = input()
+
+                if line == "":
+                    break
+
+                lines.append(line)
+
+            message = "\n".join(lines)
+
+        # =========================================================
+        # AI GENERATED EMAIL
+        # =========================================================
+
+        elif choice == "2":
+
+            topic = input("\nEnter Email Topic : ").strip()
+
+            tone = input("Enter Email Tone : ").strip()
+
+            details = input("Enter Additional Details : ").strip()
+
+            ai = AIEmailWriter()
+
+            subject, message = ai.generate_email(
+
+            topic,
+
+            tone,
+
+            details
+
+            )
+
+            if subject == "Error":
+
+                print(message)
+
+                return
+
+            print("\n===================================")
+            print("AI EMAIL GENERATED")
+            print("===================================")
+
+            print("\nSubject :")
+            print(subject)
+
+            print("\nBody :")
+            print(message)
+
+        else:
+
+            print("\nInvalid Choice.")
+
+            return
 
         email = EmailMessage()
 
@@ -375,7 +449,7 @@ class SendEmail:
                 print("Attachment Error :", e)
 
                 return
-
+            
         # ---------------------------------------------------------
         # Send Email
         # ---------------------------------------------------------

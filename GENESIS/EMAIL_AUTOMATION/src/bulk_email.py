@@ -21,8 +21,14 @@
 # IMPORT MODULES
 # =============================================================================
 
+import msvcrt
 import smtplib
 import ssl
+import sys
+import sys
+from ai_email import AIEmailWriter
+
+from login import get_password
 import mysql.connector
 import getpass
 
@@ -221,6 +227,58 @@ class BulkEmail:
             return False
 
         return True
+
+    # =============================================================================
+    # FUNCTION : get_password()
+    # =============================================================================
+
+    def get_password(prompt="Enter Gmail App Password : "):
+
+        print(prompt, end="", flush=True)
+
+        password = ""
+
+        while True:
+
+            ch = msvcrt.getch()
+
+            # ENTER KEY
+            if ch in (b'\r', b'\n'):
+
+                print()
+                break
+
+            # BACKSPACE
+            elif ch == b'\x08':
+
+                if len(password) > 0:
+
+                    password = password[:-1]
+
+                    sys.stdout.write("\b \b")
+                    sys.stdout.flush()
+
+            # Ignore Arrow Keys / Function Keys
+            elif ch in (b'\x00', b'\xe0'):
+
+                msvcrt.getch()
+
+            else:
+
+                try:
+
+                    character = ch.decode("utf-8")
+
+                    password += character
+
+                    sys.stdout.write("*")
+                    sys.stdout.flush()
+
+                except:
+
+                    pass
+
+        return password
     
     # =========================================================================
     # FUNCTION : send_bulk_email()
@@ -296,7 +354,13 @@ class BulkEmail:
 
         sender_email = input("Enter Gmail ID : ").strip()
 
-        password = getpass.getpass("Enter Gmail App Password : ").strip()
+        password = get_password("Enter Gmail App Password : ")
+
+        password = password.replace(" ", "")
+
+        if password == "":
+            print("\nPassword cannot be empty.")
+            return
         # -------------------------------------------------------------
         # Email Subject
         # -------------------------------------------------------------
@@ -304,25 +368,81 @@ class BulkEmail:
         subject = input("\nEnter Email Subject : ").strip()
 
         # -------------------------------------------------------------
-        # Email Body
+        # Email Generation Method
         # -------------------------------------------------------------
 
-        print("\nEnter Email Message")
-        print("Press ENTER twice to finish.\n")
+        print("\n===================================")
+        print("      EMAIL GENERATION")
+        print("===================================")
+        print("1. Manual Email")
+        print("2. AI Generated Email")
+        print("===================================")
 
-        lines = []
+        choice = input("Enter Choice : ").strip()
 
-        while True:
+        # =============================================================
+        # MANUAL EMAIL
+        # =============================================================
 
-            line = input()
+        if choice == "1":
 
-            if line == "":
+            print("\nEnter Email Message")
+            print("Press ENTER twice to finish.\n")
 
-                break
+            lines = []
 
-            lines.append(line)
+            while True:
 
-        body = "\n".join(lines)
+                line = input()
+
+                if line == "":
+                    break
+
+                lines.append(line)
+
+            body = "\n".join(lines)
+
+        # =============================================================
+        # AI EMAIL
+        # =============================================================
+
+        elif choice == "2":
+
+            print("\n===================================")
+            print("      AI EMAIL GENERATOR")
+            print("===================================")
+
+            topic = input("Enter Email Topic : ")
+
+            tone = input("Enter Email Tone : ")
+
+            details = input("Enter Additional Details : ")
+
+            ai = AIEmailWriter()
+
+            ai_subject, body = ai.generate_email(
+                topic,
+                tone,
+                details
+            )
+
+            # Use AI generated subject if available
+            if ai_subject != "Error":
+                subject = ai_subject
+
+            print("\n===================================")
+            print("AI EMAIL GENERATED")
+            print("===================================")
+
+            print("\nSubject :", subject)
+
+            print("\nBody:\n")
+            print(body)
+
+        else:
+
+            print("\nInvalid Choice.")
+            return
 
         # -------------------------------------------------------------
         # SMTP Login
@@ -393,11 +513,11 @@ class BulkEmail:
 
                     f"""Hello {name},
 
-{body}
+                {body}
 
-Regards,
-{sender_email}
-"""
+                Regards,
+                {sender_email}
+                """
                 )
 
                 server.send_message(message)
